@@ -18,12 +18,11 @@ canvas{display:block}
 #red{position:fixed;inset:0;pointer-events:none;background:radial-gradient(#c0100800 20%,#c01008ee 70%);opacity:0;transition:opacity .4s}
 #vig{position:fixed;inset:0;pointer-events:none;box-shadow:inset 0 0 180px 30px #000;opacity:.5}
 #eye{font-size:16px;transition:background .3s,border-color .3s,transform .2s}
-#eye.es-patrol{background:#1d3a1dcc;border-color:#5f5}
-#eye.es-hear{background:#4a3a00cc;border-color:#fd3}
-#eye.es-search{background:#5a2e00cc;border-color:#f92}
-#eye.es-chase{background:#6a1010cc;border-color:#f55}
-#eye.es-see,#eye.es-doom{background:#a00c;border-color:#f33;animation:ep .5s infinite alternate}
-#eye.es-stun{background:#1d2a5acc;border-color:#8af}
+#eye.et-normal{background:#2a2a33cc;border-color:#9aa}
+#eye.et-hunter{background:#5a1400cc;border-color:#f64}
+#eye.et-paranoid{background:#3a1450cc;border-color:#c6f}
+#eye.et-blind{background:#10333acc;border-color:#4de}
+
 @keyframes ep{to{transform:scale(1.12)}}
 .scr{position:fixed;inset:0;background:radial-gradient(#2a1a2e,#07050a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:20px;z-index:5}
 .scr h1{font-size:54px;color:#ff9a2a;text-shadow:4px 4px 0 #5a1070;letter-spacing:2px}
@@ -983,7 +982,7 @@ function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.
   NET.sim(dt);updProj(dt);egorAudio(dt);setListener();updTeachers(dt);if(time>botChatAt){botChatAt=time+18+Math.random()*15;const b=bots.find(b=>b.alive&&!b.hidden&&b.state==='flee')||bots.filter(b=>b.alive)[Math.random()*bots.filter(b=>b.alive).length|0];if(b)addChat(b.name,b.state==='flee'?'Егор рядом! Я убегаю!':b.inv.tomato?'Нашёл помидор. Держимся вместе.':'Ищу вещи в кабинетах.')}if(recorder?.state==='recording'&&time%1<dt)noise(P.pos,9);
   // HUD
   $('hSt').style.width=P.stam+'%';$('hTime').textContent=fmt(time);$('hRoom').textContent=roomAt(P.pos);
-  {const st=E.stun>0||E.slip>0?['stun','😵 ОГЛУШЁН']:E.state==='chase'&&E.target?.who==='player'?['see','👁️ ВИДИТ ТЕБЯ']:E.state==='chase'?['chase','🏃 ГОНИТСЯ']:E.state==='doomed'?['doom','🔒💀 НАШЁЛ ТЕБЯ']:E.state==='search'?['search','🔍 ИЩЕТ']:E.state==='investigate'?['hear','👂 СЛЫШИТ']:['patrol','🚶 ПАТРУЛЬ'];const d=E.pos.distanceTo(P.pos.clone().setY(0))|0,el=$('eye'),t=E.type.ic+' '+E.type.name+' · '+st[1]+' · '+d+'м · смена через '+Math.ceil(55-time%55)+'с';if(el.textContent!==t)el.textContent=t;if(el.dataset.s!==st[0]){el.dataset.s=st[0];el.className='b es-'+st[0];if(st[0]!=='patrol')beep(st[0]==='see'?900:500,.08,'square',.05)}}  if(msgT>0){msgT-=dt;if(msgT<=0)$('msg').style.opacity=0}
+  {const el=$('eye'),t=E.type.ic+' '+E.type.name;if(el.textContent!==t)el.textContent=t;if(el.dataset.s!==E.type.id){if(el.dataset.s)beep(320,.12,'square',.06);el.dataset.s=E.type.id;el.className='b et-'+E.type.id}}  if(msgT>0){msgT-=dt;if(msgT<=0)$('msg').style.opacity=0}
   // audio
   const ed=E.pos.distanceTo(P.pos.clone().setY(0));sawG.gain.value=E.weapon==='saw'&&E.stun<=0&&E.state!=='patrol'?Math.max(0,.09*(1-ed/16)):0;sawO.frequency.value=70+Math.sin(tt*30)*8+(E.state==='chase'?30:0);
   heartT-=dt;if(ed<10&&heartT<=0){heartT=.25+ed*.06;beep(55,.12,'sine',.25)}
