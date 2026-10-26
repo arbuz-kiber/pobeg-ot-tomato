@@ -207,6 +207,11 @@ body.touch #prog{width:clamp(110px,24vmin,200px);height:7px}
 #ring.arm{opacity:.9;transform:scale(.8)}
 #ring.go{opacity:.95;transform:scale(.9);background:#ffd27a33;box-shadow:0 0 24px #ffd27a;transition:none}
 @media(orientation:portrait){body.touch #inv{left:8px;right:8px;bottom:calc(var(--sb) + var(--u)*2.5 + 28px)}body.touch #msg{top:calc(var(--st) + 80px);max-width:84vw}body.touch #chatPanel{top:calc(var(--st) + 120px)}}
+body.touch #mapPanel{overflow:auto;justify-content:flex-start;align-items:flex-start;padding:6px;-webkit-overflow-scrolling:touch}
+body.touch #mapPanel header{position:sticky;left:0;top:0;z-index:2;width:calc(100vw - 12px);gap:8px;background:#11181ecc;border-radius:10px;padding:2px 6px}
+body.touch #mapPanel #coords{flex:1;font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+body.touch #mapClose,body.touch #mapZ{font-size:22px;padding:6px 16px;border-radius:12px;min-width:52px;min-height:44px}
+body.touch #mapCanvas{width:1250px;max-width:none;max-height:none;flex:none;touch-action:pan-x pan-y}
 </style></head><body>
 <div id="hud" class="hidden">
  <span class="b" id="hRoom">Коридор</span>
@@ -330,7 +335,7 @@ function rollTasks(){const pool=[...TASK_POOL].sort(()=>Math.random()-.5).slice(
  TASKS=pool.map(t=>{const need=t.parts[0]+(Math.random()*(t.parts[1]-t.parts[0]+1)|0);return{...t,need,got:0,code:t.id==='code'?Array.from({length:need},()=>Math.random()*10|0).join(''):''}});
  TASK_SLOTS=[];TASKS.forEach((t,i)=>{for(let k=0;k<t.need;k++)TASK_SLOTS.push(i)});TASK_SLOTS.sort(()=>Math.random()-.5);NN=TASK_SLOTS.length}
 const TASK_DEST={key:['Вчительська'],power:['Кабінет директора','Вчительська'],gen:['Їдальня','Актова зала'],radio:['Актова зала','Бібліотека'],code:['Кабінет директора','Бібліотека']};
-function assignDest(){const names=rooms.filter(r=>r.type).map(r=>r.name);TASKS.forEach(t=>{t.carry=0;t.dest=(TASK_DEST[t.id]||[]).find(n=>names.includes(n))||names[Math.random()*names.length|0]||'Коридор'})}
+function assignDest(){const names=rooms.filter(r=>r.type&&!r.locked).map(r=>r.name);TASKS.forEach(t=>{t.carry=0;t.dest=(TASK_DEST[t.id]||[]).find(n=>names.includes(n))||names[Math.random()*names.length|0]||'Коридор'})}
 function taskDone(t,n){t.got=Math.min(t.need,t.got+n);P.notes+=n;
  let m;if(t.id==='code')m=`🧩 Часть кода вписана в замок (${t.got}/${t.need})`+(t.got>=t.need?` — код <b>${t.code}</b> введён!`:'');
  else if(t.id==='gen')m=t.got>=t.need?'🔧 Генератор починен! Он загудел где-то в подвале…':`🔧 Деталь установлена (${t.got}/${t.need})`;
@@ -347,8 +352,8 @@ const FXC={key:0x8a5a2a,power:0x4a5a6a,gen:0x5a6a2a,radio:0x2a3a4a,code:0x3a3a5a
 function darkRoom(){const t=TASKS.find(t=>t.id==='power');return t&&t.got<t.need?t.dest:null}
 function installFx(t){if(t.got>=t.need){say(t.icon+' Уже готово');return}if(!t.carry){say(`${t.icon} Нужен <b>${t.item}</b> — найди его в нычках.`,3);beep(150,.15);return}const n=t.carry;t.carry=0;NET.send({t:'dlv',k:TASKS.indexOf(t),n});beep(1200,.25,'sine',.2,1800);say('🔧 '+taskDone(t,n),3);fxUpd(t);updHUD();if(P.notes===NN-1)egorSay('Хватит рыться в моей школе!');if(P.notes>=NN)unlockExit()}
 function fxUpd(t){if(t.fx&&t.got>=t.need)t.fx.led.material=new THREE.MeshBasicMaterial({color:0x40ff60})}
-function buildFixtures(){TASKS.forEach((t,i)=>{t.fx=null;const r=rooms.find(r=>r.name===t.dest);if(!r)return;const c=floorCells.filter(([x,y])=>x>r.x0&&x<r.x1&&y>r.y0&&y<r.y1);if(!c.length)return;const cy=(r.y0+r.y1)/2;c.sort((a,b)=>(a[0]-b[0])*3+Math.abs(a[1]-cy)-Math.abs(b[1]-cy));const [cx,cz]=c[0],X=wc(cx),Z=wc(cz),y0=rampY(X,Z);const mat=new THREE.MeshStandardMaterial({color:FXC[t.id]||0x444444,roughness:.5,metalness:.4,emissive:0x221100});const post=box(.12,1,.12,M.metal,X,y0+.5,Z,world);const body=box(.7,.8,.35,mat,X,y0+1.35,Z,world);body.userData={kind:'fixture',ref:t};interact.push(body);const led=box(.12,.12,.05,new THREE.MeshBasicMaterial({color:0xff3020}),X,y0+1.62,Z+.19,world);const tag=box(.3,.18,.05,M.white,X,y0+1.3,Z+.19,world);t.fx={led,goal:new THREE.Vector3(X+CS,0,Z)};fxUpd(t)})}
-function destGoal(name){const r=rooms.find(r=>r.name===name);if(!r)return randomGoal();const c=floorCells.filter(([x,y])=>x>r.x0&&x<r.x1&&y>r.y0&&y<r.y1);const p=c[Math.random()*c.length|0];return p?new THREE.Vector3(wc(p[0]),0,wc(p[1])):randomGoal()}
+function buildFixtures(){TASKS.forEach((t,i)=>{t.fx=null;const r=rooms.find(r=>r.name===t.dest&&!r.locked);if(!r)return;const c=floorCells.filter(([x,y])=>x>r.x0&&x<r.x1&&y>r.y0&&y<r.y1);if(!c.length)return;const cy=(r.y0+r.y1)/2;c.sort((a,b)=>(a[0]-b[0])*3+Math.abs(a[1]-cy)-Math.abs(b[1]-cy));const [cx,cz]=c[0],X=wc(cx),Z=wc(cz),y0=rampY(X,Z);const mat=new THREE.MeshStandardMaterial({color:FXC[t.id]||0x444444,roughness:.5,metalness:.4,emissive:0x221100});const post=box(.12,1,.12,M.metal,X,y0+.5,Z,world);const body=box(.7,.8,.35,mat,X,y0+1.35,Z,world);body.userData={kind:'fixture',ref:t};interact.push(body);const led=box(.12,.12,.05,new THREE.MeshBasicMaterial({color:0xff3020}),X,y0+1.62,Z+.19,world);const tag=box(.3,.18,.05,M.white,X,y0+1.3,Z+.19,world);t.fx={led,goal:new THREE.Vector3(X+CS,0,Z)};fxUpd(t)})}
+function destGoal(name){const r=rooms.find(r=>r.name===name&&!r.locked);if(!r)return randomGoal();const c=floorCells.filter(([x,y])=>x>r.x0&&x<r.x1&&y>r.y0&&y<r.y1);const p=c[Math.random()*c.length|0];return p?new THREE.Vector3(wc(p[0]),0,wc(p[1])):randomGoal()}
 function botTake(b,o){const tk=o.tk??0,t=TASKS[tk];if(!t)return;(b.carry=b.carry||[]).push(tk);botNotes++;b.goal=null;b.path=null;say(`${b.name} нашёл ${taskDesc(o)} — несёт в «${t.dest}»`,3);addChat(b.name,'Нашёл '+taskDesc(o)+'! Несу в «'+t.dest+'»');updHUD()}
 function botDeliver(b){const rn=roomAt(b.pos);let any=false;b.carry=b.carry.filter(k=>{const t=TASKS[k];if(t&&(t.fx?Math.hypot(b.pos.x-t.fx.goal.x,b.pos.z-t.fx.goal.z)<2.2:rn===t.dest)){any=true;say(`📦 ${b.name}: `+taskDone(t,1),3);fxUpd(t);NET.send({t:'dlv',k,n:1});return false}return true});if(any){beep(1200,.2,'sine',.15,1800);addChat(b.name,'Отнёс на место!');updHUD();if(P.notes>=NN)unlockExit()}}
 function dropNote(x,z,tk){const p={x:cell(x),y:cell(z),item:'note',n:1,tk,seen:true};pickups.push(p);const m=itemMesh('note');m.position.set(x,.1,z);m.scale.multiplyScalar(1.25);world.add(m);p.mesh=m;m.traverse(o=>{o.userData={kind:'pickup',ref:p};interact.push(o)})}
@@ -544,7 +549,7 @@ function buildShell(){
   box(CS,.9,CS,M.wall,X0+1,2.75,Z0+1,world);
   box(.12,2.3,CS,M.wood,X0+.06,1.15,Z0+1,world);box(.12,2.3,CS,M.wood,X0+CS-.06,1.15,Z0+1,world);
   const zf=dz<0?Z0:Z0+CS;
-  if(g[y][x]===6){const r=rooms.find(r=>r.locked&&r.door[0]===x&&r.door[1]===y);const lg=new THREE.Group();world.add(lg);const lf=box(CS-.24,2.25,.12,A.door,X0+1,1.125,Z0+1,lg);box(.14,.2,.18,M.metal,X0+1.55,1.05,Z0+1,lg);box(.3,.3,.14,new THREE.MeshStandardMaterial({color:0x8a1a1a}),X0+1,1.7,Z0+1,lg);lf.userData={kind:'ldoor',ref:r};interact.push(lf);if(r){r.doorG=lg;r.doorM=lf}}
+  if(g[y][x]===6){const r=rooms.find(r=>r.locked&&r.door[0]===x&&r.door[1]===y);const lg=new THREE.Group();world.add(lg);const lf=box(CS-.24,2.25,.12,A.door,X0+1,1.125,Z0+1,lg);box(.14,.2,.18,M.metal,X0+1.55,1.05,Z0+1,lg);box(.3,.3,.14,new THREE.MeshStandardMaterial({color:0x8a1a1a}),X0+1,1.7,Z0+1,lg);const lp2=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.3),plateMat('🔒 ЗАПЕРТО'));lp2.position.set(X0+1,1.3,Z0+1+(dz<0?.07:-.07));if(dz>0)lp2.rotation.y=Math.PI;lg.add(lp2);lf.userData={kind:'ldoor',ref:r};interact.push(lf);if(r){r.doorG=lg;r.doorM=lf}}
   else for(const hx of[X0+.2,X0+CS-.2]){box(.05,2.2,.95,A.door,hx,1.1,zf+dz*.5,world);box(.07,.08,.16,M.metal,hx,1.05,zf+dz*.85,world)}
   const zc=dz<0?Z0+CS:Z0,pl=new THREE.Mesh(new THREE.PlaneGeometry(1.5,.38),plateMat(label));pl.position.set(X0+1,2.62,zc+(dz<0?.03:-.03));if(dz>0)pl.rotation.y=Math.PI;world.add(pl)}
 }
@@ -757,7 +762,9 @@ function openChat(){if(mapOpen)return;chatOpen=true;clearKeys();$('chatPanel').c
 function openRead(){if(!P.papers.length){say('У тебя нет записок. Ищи их по школе 📜');return}closePanels(false);readOpen=true;document.exitPointerLock();$('pause').classList.add('hidden');$('readList').innerHTML=P.papers.map(p=>`<article><h3>${p.title}</h3><p>${p.text}</p></article>`).join('');$('readPanel').classList.remove('hidden')}
 $('readClose').onclick=()=>closePanels();
 function addPaper(pp){P.papers.push(pp||{title:'📝 Записка Егора',text:'«'+EGOR_QUOTES[0]+'»'});P.inv.paper=P.papers.length;beep(700,.2,'sine',.15,1100);say((pp===EGOR_LORE?'📖 Найдена <b>предыстория Егора</b>!':'📝 Найдена записка Егора!')+' Прочитать: <b>R</b> (или выбери 📜 и брось)',4);updHUD()}
-function toggleMap(){if(mapOpen){closePanels();return}closePanels(false);mapOpen=true;document.exitPointerLock();$('pause').classList.add('hidden');$('mapPanel').classList.remove('hidden');drawMap();}
+if(!CanvasRenderingContext2D.prototype.roundRect)CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){r=Array.isArray(r)?r[0]:(r||0);r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath()};
+let mapZ=1;function mapView(){if(!TOUCH)return;const mc=$('mapCanvas'),pn=$('mapPanel'),w=[Math.max(320,innerWidth-16),1250,1900][mapZ];mc.style.width=w+'px';mc.style.maxWidth='none';mc.style.maxHeight='none';const G=mapG(),[px,py]=mapPt(P.pos.x/CS,P.pos.z/CS,G),k=w/mc.width;pn.scrollLeft=mc.offsetLeft+px*k-pn.clientWidth/2;pn.scrollTop=mc.offsetTop+py*k-pn.clientHeight/2}
+function toggleMap(){if(mapOpen){closePanels();return}closePanels(false);mapOpen=true;document.exitPointerLock();$('pause').classList.add('hidden');$('mapPanel').classList.remove('hidden');try{drawMap()}catch(e){console.error(e)}try{mapView()}catch(e){}}
 $('mapClose').onclick=()=>closePanels();
 function addChat(name,text,audioUrl){const row=document.createElement('div');const who=document.createElement('b');who.textContent=name+': ';row.append(who,document.createTextNode(text));if(audioUrl){const a=document.createElement('audio');a.controls=true;a.src=audioUrl;row.append(a)}$('chatLog').append(row);while($('chatLog').children.length>40)$('chatLog').firstElementChild.remove();$('chatLog').scrollTop=$('chatLog').scrollHeight;$('chatPanel').classList.remove('hidden');}
 function resetChat(){stopVoice();voiceUrls.forEach(u=>URL.revokeObjectURL(u));voiceUrls=[];chatCount=0;botChatAt=0;$('chatLog').replaceChildren();$('chatPanel').classList.remove('hidden');addChat('Школа',NET.on?('Игроков: '+NET.players.length+', ботов: '+NET.nBots+'. Чат слышат все.'):'Вы + '+NET.nBots+' бота. Сетевых игроков нет.');}
@@ -849,6 +856,7 @@ if(TOUCH){document.body.classList.add('touch');
  joy.addEventListener('touchstart',e=>{e.preventDefault();const t=e.changedTouches[0];jid=t.identifier;setJoy(t)},{passive:false});
  joy.addEventListener('touchmove',e=>{e.preventDefault();for(const t of e.changedTouches)if(t.identifier===jid)setJoy(t)},{passive:false});
  joy.addEventListener('touchend',e=>{for(const t of e.changedTouches)if(t.identifier===jid)endJoy()});joy.addEventListener('touchcancel',endJoy);
+ {const z=document.createElement('button');z.id='mapZ';z.textContent='🔍';z.setAttribute('aria-label','Масштаб карты');z.onclick=()=>{mapZ=(mapZ+1)%3;try{drawMap();mapView()}catch(e){}};$('mapClose').before(z)}
  const HOLD=260,vib=n=>{try{navigator.vibrate&&navigator.vibrate(n)}catch(e){}};
  const ring=document.createElement('div');ring.id='ring';$('touch').appendChild(ring);$('touch').appendChild($('inv'));
  let hT=0,hs=false,hx=0,hy=0,mv=false;
@@ -893,6 +901,8 @@ function useKey(){
 }
 function unlockRoom(r,mine){if(!r||!r.locked)return;r.locked=false;g[r.door[1]][r.door[0]]=1;if(r.doorG){world.remove(r.doorG);const i=interact.indexOf(r.doorM);if(i>=0)interact.splice(i,1)}
  stashes.forEach(s=>{if(s.locked===r)s.locked=null});lockers.forEach(L=>{if(L.locked===r)L.locked=null});
+ {const d=layout.doors.find(d=>d[0]===r.door[0]&&d[1]===r.door[1]);if(d){const A=shellAssets(),X0=d[0]*CS,Z0=d[1]*CS,zf=d[2]<0?Z0:Z0+CS;for(const hx of[X0+.2,X0+CS-.2])box(.05,2.2,.95,A.door,hx,1.1,zf+d[2]*.5,world)}}
+ if(E){E.path=null;E.pathT=0}bots.forEach(b=>{b.path=null});
  for(let y=r.y0;y<=r.y1;y++)for(let x=r.x0;x<=r.x1;x++)if(g[y][x]===1)floorCells.push([x,y]);floorCells.push([r.door[0],r.door[1]]);
  if(mine){NET.send({t:'unl',i:rooms.indexOf(r)});beep(900,.08,'square',.12);setTimeout(()=>beep(1400,.12,'square',.12),120);noise(P.pos.clone().setY(0),6);say('🔓 Отмычка сработала! «'+r.name+'» открыт. Обыщи всё внутри.',3)}else say('🔓 Кто-то вскрыл «'+r.name+'»',2.5)}
 let RAGE=false,sirenO=null;function rageOn(){if(RAGE)return;RAGE=true;let d=document.getElementById('rageFx');if(!d){d=document.createElement('div');d.id='rageFx';d.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:5;background:radial-gradient(circle,#ff000033 30%,#b0000099);animation:rageP 1s ease-in-out infinite alternate';const st=document.createElement('style');st.textContent='@keyframes rageP{from{opacity:.55}to{opacity:1}}';document.head.appendChild(st);document.body.appendChild(d)}d.style.display='block';try{if(AC){const o=AC.createOscillator(),l=AC.createOscillator(),lg=AC.createGain(),g=AC.createGain();o.type='sawtooth';o.frequency.value=750;l.frequency.value=.7;lg.gain.value=320;l.connect(lg);lg.connect(o.frequency);g.gain.value=.07;o.connect(g);g.connect(AC.destination);o.start();l.start();sirenO=[o,l]}}catch(e){}}
