@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Побег от Егора 3D — Хеллоуин в лицее</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -111,6 +111,52 @@ button:active{transform:translateY(3px);box-shadow:0 1px 0 #8a3a00}
 #hub .hn{color:#ffd27a;text-shadow:0 0 8px #ff9a2a88}
 @media(prefers-reduced-motion:reduce){.scr,.scr::before,.scr h1,#hub h2,#mface,#play{animation:none}}
 @media(max-width:650px){.scr h1{font-size:30px;letter-spacing:1px}#play{font-size:24px;padding:14px 44px}}
+
+/* ===== COMPACT TOUCH UI (override) ===== */
+body.touch #hud{padding:max(3px,env(safe-area-inset-top)) max(6px,env(safe-area-inset-right)) 3px max(6px,env(safe-area-inset-left));gap:3px;font-size:10px;flex-wrap:wrap;background:none}
+body.touch .b{padding:1px 5px;border-radius:5px;background:#0007;border-width:1px}
+body.touch #bar{width:38px;height:6px}
+body.touch #eye{font-size:13px;padding:0 4px}
+body.touch #cross{width:4px;height:4px;margin:-2px}
+body.touch #prompt{font-size:11px;padding:3px 9px;top:58%;background:#000a}
+body.touch #prog{width:110px;height:5px;top:63%}
+body.touch #nametag{font-size:11px;padding:1px 8px;top:42%}
+body.touch #speak{top:max(26px,env(safe-area-inset-top));font-size:10px;padding:2px 10px}
+body.touch #msg{top:28px;bottom:auto;left:50%;font-size:11px;line-height:1.25;padding:3px 10px;max-width:44vw;border-radius:6px;background:#000a}
+body.touch #inv{top:26px;right:max(6px,env(safe-area-inset-right));left:auto;bottom:auto;transform:none;width:auto;gap:3px;flex-wrap:wrap;justify-content:flex-end;max-width:40vw}
+body.touch #inv div{font-size:10px;padding:1px 6px;border-width:1px;border-radius:5px;background:#0008}
+/* joystick */
+body.touch #joy{width:104px;height:104px;left:max(10px,env(safe-area-inset-left));bottom:max(10px,env(safe-area-inset-bottom));background:radial-gradient(#ffffff1a,#ffffff08);border:1px solid #ffffff40;box-shadow:none}
+body.touch #joy::before{content:"";position:absolute;inset:-26px}
+body.touch #stick{width:42px;height:42px;left:29px;top:29px;background:radial-gradient(#ffc35aaa,#ff8a14aa);box-shadow:none}
+/* look area: whole screen except under the buttons (buttons are above it) */
+body.touch #look{top:0;bottom:0;right:0;width:62%}
+/* buttons */
+body.touch #tbtns{grid-template-columns:repeat(4,34px) 50px;grid-auto-rows:34px;gap:4px;right:max(8px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom));opacity:.8}
+body.touch #tbtns button{width:34px;height:34px;font-size:16px;line-height:1;border-width:1px;box-shadow:none;position:relative}
+body.touch #tbtns button::after{content:"";position:absolute;inset:-2px}
+body.touch #tbtns button[data-a=use]{grid-column:5;grid-row:1/3;align-self:center;justify-self:center;width:50px;height:50px;font-size:22px}
+body.touch #tbtns button:active,body.touch #tbtns button.on{transform:scale(.9)}
+/* chat: tiny, transparent, auto-hides */
+body.touch #chatPanel{top:26px;bottom:auto;left:max(6px,env(safe-area-inset-left));width:min(230px,36vw);padding:2px 6px;background:none;border:0;box-shadow:none;border-radius:6px;opacity:.9;pointer-events:none;transition:opacity .6s}
+body.touch #chatPanel header{font-size:10px;margin:0}
+body.touch #chatPanel:not(.open) header span:first-child{display:none}
+body.touch #chatLog{max-height:44px;overflow:hidden;font-size:10px;line-height:1.3;text-shadow:0 1px 2px #000,0 0 3px #000;display:flex;flex-direction:column;justify-content:flex-end}
+body.touch #chatLog audio{height:20px}
+body.touch #chatPanel:not(.open):not(.fresh){opacity:0}
+body.touch #chatPanel.open{width:min(340px,62vw);padding:5px 6px;background:var(--panel-bg);border:1px solid var(--panel-border);box-shadow:var(--panel-shadow);opacity:1;pointer-events:auto}
+body.touch #chatPanel.open #chatLog{max-height:70px;overflow:auto;display:block;pointer-events:auto}
+body.touch #chatForm{margin-top:4px;gap:4px}
+body.touch #chatInput{font-size:16px;padding:3px 6px}
+body.touch #chatForm button{font-size:14px;padding:2px 10px}
+/* map */
+body.touch #mapPanel{padding:4px}
+body.touch #mapPanel h2{font-size:13px;letter-spacing:1px}
+body.touch #mapClose{font-size:16px;padding:0 10px}
+body.touch #coords{font-size:10px}
+body.touch #mapCanvas{width:860px}
+body.touch #mapLegend{font-size:9px;gap:6px}
+body.touch #pause h1{font-size:22px}
 </style></head><body>
 <div id="hud" class="hidden">
  <span class="b" id="hRoom">Коридор</span>
@@ -670,6 +716,11 @@ if(TOUCH){document.body.classList.add('touch');
   if(a==='throw'&&!panelOpen())throwItem();else if(a==='item')cycle();else if(a==='light')toggleFlash();else if(a==='map')toggleMap();else if(a==='chat')openChat();
   else if(a==='run'){runT=!runT;K.ShiftLeft=runT;document.querySelector('[data-a=run]').classList.toggle('on',runT)}};
  for(const b of document.querySelectorAll('#tbtns button')){const a=b.dataset.a;b.addEventListener('touchstart',e=>{e.preventDefault();act(a,true)},{passive:false});const up=e=>{e.preventDefault();act(a,false)};b.addEventListener('touchend',up,{passive:false});b.addEventListener('touchcancel',up,{passive:false})}
+
+ {const cp=$('chatPanel'),cf=$('chatForm');let ft=null;
+  const fresh=()=>{cp.classList.add('fresh');clearTimeout(ft);ft=setTimeout(()=>cp.classList.remove('fresh'),7000)};
+  new MutationObserver(fresh).observe(cp,{childList:true,subtree:true,characterData:true});
+  new MutationObserver(()=>{cp.classList.toggle('open',!cf.classList.contains('hidden'))}).observe(cf,{attributes:true,attributeFilter:['class']});}
 }
 
 // ================= GAMEPLAY =================
