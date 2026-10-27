@@ -81,6 +81,14 @@ body.touch #hud{padding-top:max(6px,env(safe-area-inset-top))}
 body.touch #speak{top:max(44px,env(safe-area-inset-top))}
 @media(max-height:500px){.scr{justify-content:flex-start;gap:8px;padding:10px}.scr img{width:64px;height:64px}.scr h1{font-size:24px}.scr>p{font-size:12px;padding:6px 10px}#play{font-size:22px;padding:10px 40px}#hub button{padding:8px 20px;font-size:16px}#hub h2{font-size:24px}}
 @supports(height:100dvh){.scr,#mapPanel{height:100dvh}}
+#camPanel{position:fixed;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;pointer-events:none}
+#camScreen{position:relative;width:min(88vw,calc(70vh*1.78),980px);aspect-ratio:16/9;border:10px solid #1a1d20;border-radius:14px;box-shadow:0 0 0 3px #3a4046,0 0 0 100vmax #000c;overflow:hidden;background:transparent}
+#camScreen::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(#2cff7a18,#2cff7a18),repeating-linear-gradient(0deg,#0000 0 2px,#0007 3px);box-shadow:inset 0 0 90px #000}
+#camHud{position:absolute;left:12px;top:8px;z-index:2;color:#7dffa6;font:bold 15px monospace;text-shadow:0 0 6px #000}#camHud b{color:#ff4a4a;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+#camNo{display:none;position:absolute;inset:0;z-index:1;align-items:center;justify-content:center;flex-direction:column;text-align:center;color:#7dffa6;font:bold 26px monospace;background:#05080a repeating-linear-gradient(0deg,#ffffff10 0 2px,#0000 2px 5px)}
+#camScreen.nosig #camNo{display:flex}
+#camHint{color:#cfe;font-weight:bold;text-shadow:0 0 6px #000;margin:0}
 /* ===== MENU 10x ===== */
 :root{--or:#ff9a2a;--pu:#b44cff;--bl:#6b0f1a}
 .scr{background:radial-gradient(ellipse at 50% 35%,#3a1442 0%,#16091d 55%,#05030a 100%);overflow:auto;animation:scrIn .5s ease both}
@@ -259,7 +267,7 @@ body.touch #mapCanvas{width:1250px;max-width:none;max-height:none;flex:none;touc
 <div class="scr hidden" id="pause" style="background:#000a"><h1>ПАУЗА</h1><p>Кликни, чтобы продолжить</p></div>
 
 <section id="chatPanel" class="hidden"><header><span>Локальный чат · 4 бота</span><span id="micStatus"></span></header><div id="chatLog" aria-live="polite"></div><form id="chatForm" class="hidden"><input id="chatInput" maxlength="240" placeholder="Сообщение…" aria-label="Сообщение"><button type="submit" title="Отправить" aria-label="Отправить">➤</button></form></section>
-<section id="readPanel" class="hidden"><header><h2>📜 Записки</h2><button id="readClose" aria-label="Закрыть">×</button></header><div id="readList"></div></section><section id="mapPanel" class="hidden"><header><h2>План лицея</h2><span id="coords"></span><button id="mapClose" aria-label="Закрыть карту" title="Закрыть карту">×</button></header><canvas id="mapCanvas" width="1500" height="470"></canvas><div id="mapLegend">▲ Вы · ● Ученики (с именами) · ▣ Шкафы · ■ Мебель · ◆ Выход/лестница · ▮ Двери · ■ жёлтое — учителя · 🖱 наведи мышь на карту — увидишь координаты</div></section>
+<section id="camPanel" class="hidden"><div id="camScreen"><div id="camHud"><b>● REC</b> <span id="camName">КАМ</span></div><div id="camNo">📡 НЕТ СИГНАЛА<br><small>Егор не попал ни на одну камеру</small></div></div><p id="camHint">[E] или движение — выйти</p></section><section id="readPanel" class="hidden"><header><h2>📜 Записки</h2><button id="readClose" aria-label="Закрыть">×</button></header><div id="readList"></div></section><section id="mapPanel" class="hidden"><header><h2>План лицея</h2><span id="coords"></span><button id="mapClose" aria-label="Закрыть карту" title="Закрыть карту">×</button></header><canvas id="mapCanvas" width="1500" height="470"></canvas><div id="mapLegend">▲ Вы · ● Ученики (с именами) · ▣ Шкафы · ■ Мебель · ◆ Выход/лестница · ▮ Двери · ■ жёлтое — учителя · 🖱 наведи мышь на карту — увидишь координаты</div></section>
 <section id="guide" class="hidden"><div class="gw"><header><h2>📖 Гайд</h2><button id="guideClose" aria-label="Закрыть">×</button></header>
 <details open><summary>🎯 Цель игры</summary><div class="gb"><p>Лицей «Профессионал», ночь Хеллоуина. Ты и ещё 4 ученика заперты в школе, а по коридорам ходит <b>Егор</b> с бензопилой. Каждый раунд школа генерируется заново: другие коридоры, кабинеты, шкафы и тайники. Инвентарь в начале пуст (кроме того, что ты взял из магазина).</p>
 <ul><li>В раунде выпадают <b>3 случайных задания</b> из 5. Для каждого нужны предметы-«части», спрятанные по школе.</li><li>Найденную часть <b>отнеси к устройству</b> в нужной комнате и поставь (E / тап).</li><li>Когда выполнены <b>все</b> задания, открывается <b>выход</b> в конце коридора 1 этажа. Включается сирена, Егор приходит в ярость. Добеги до выхода и нажми E.</li><li>Поражение: Егор догнал тебя (или вырубил молотком, если закончились сердца).</li></ul></div></details>
@@ -274,7 +282,7 @@ body.touch #mapCanvas{width:1250px;max-width:none;max-height:none;flex:none;touc
 <details><summary>🙈 Шкафы и прятки</summary><div class="gb"><ul><li>Шкафы, туалетные кабинки и подобные укрытия: наведись и нажми E, чтобы спрятаться. Изнутри виден узкий обзор. E снова: выйти.</li><li><b>Если Егор увидел, как ты залез,</b> дверцу заклинивает, и выбраться нельзя («Пути назад нет»). Прячься только когда он тебя не видит: за углом или далеко позади.</li><li>Егор проверяет шкафы рядом с местом, где потерял тебя. Параноик делает это особенно часто. Если слышишь «Проверю-ка шкафы…», лучше уйти.</li><li>В шкаф может поместиться только один: если место занято, ты услышишь шёпот ученика.</li></ul></div></details>
 <details><summary>🎒 Предметы</summary><div class="gb"><ul><li>🍅 <b>Помидор:</b> бросок оглушает Егора на ~2,6 секунды. Лучший способ выиграть время.</li><li>🧨 <b>Петарда:</b> упав, взрывается через ~1,3 с. Егор бежит смотреть на взрыв. Отвлекает от тебя или от нужного места.</li><li>🧻 <b>Рулон:</b> бросай на пол: Егор наступит и поскользнётся на ~2 секунды.</li><li>🔦 <b>Фонарик:</b> включается отдельно. Освещает путь, но видим ты дальше.</li><li>🪙 <b>Монетка:</b> брось, и Егор пойдёт на звук (радиус ~18 м).</li><li>🔑 <b>Отмычка:</b> вскрывает одну запертую комнату.</li><li>📱 <b>Телефон:</b> показывает направление и примерное расстояние до ближайшей записки или части задания (раз в 12 секунд). Если она на другом этаже, скажет об этом.</li><li>🧃 <b>Энергетик:</b> выносливость сразу полная и 10 секунд не тратится.</li><li>📢 <b>Колонка:</b> бросаешь, и через секунду она орёт ~7 секунд на всю школу: Егор идёт туда.</li><li>📜 <b>Записки:</b> история Егора. Выбери слот и используй (или R на компьютере), чтобы прочитать. Их нельзя выбросить.</li></ul>
 <p>🪙 помидор, 🧨 петарду и 🧻 рулон иногда можно найти, а можно взять из магазина. Монету, отмычку, телефон, энергетик и колонку в магазине не купить, только найти.</p></div></details>
-<details><summary>🏫 Школа: этажи, запертые двери, учителя, карта</summary><div class="gb"><ul><li><b>Два этажа</b>, их соединяют лестницы (на карте жёлтые). Выход всегда на 1 этаже.</li><li><b>Запертые кабинеты:</b> иногда 1–3 класса закрыты красной дверью с табличкой 🔒. Внутри только монеты, находки и редкие записки, <b>ничего обязательного для прохождения там нет</b>. Нужна отмычка: хотя бы одна всегда лежит в обычных тайниках. После вскрытия дверь открыта для всех, включая ботов, других игроков и Егора.</li><li><b>Учителя</b> иногда обходят школу. Если они увидят, что ты бежишь, то закричат «Не бегать!», и Егор услышит.</li><li><b>Шум:</b> ходьба тихая, бег громкий (радиус ~13 м против ~3,5 м), поиск и взрывы шумят, у многих бросков есть звук. Идти шагом рядом с Егором безопаснее, чем бежать.</li><li><b>Карта (M / 🗺):</b> названия комнат, шкафы, обыскано/нет, найденные записки, ученики, учителя и твой взгляд. Тап или наведение показывает координаты. На телефоне кнопка 🔍 меняет масштаб.</li></ul></div></details>
+<details><summary>🏫 Школа: этажи, запертые двери, учителя, карта</summary><div class="gb"><ul><li><b>Два этажа</b>, их соединяют лестницы (на карте жёлтые). Выход всегда на 1 этаже. Ты, Егор и ученики появляетесь на <b>случайном этаже</b> — на 1-м или на 2-м.</li><li><b>📹 Комната камер</b> (есть в каждой школе): на столе монитор без питания. Найди <b>🔋 батарею</b> (тайник или пол; для побега она не нужна), подойди к монитору и нажми <b>E</b>, затем ещё раз <b>E</b> — увидишь Егора, если он в коридоре. Пока смотришь, ты уязвим.</li><li><b>Предметы лежат и на столах, партах и полках.</b></li><li><b>Запертые кабинеты:</b> иногда 1–3 класса закрыты красной дверью с табличкой 🔒. Внутри только монеты, находки и редкие записки, <b>ничего обязательного для прохождения там нет</b>. Нужна отмычка: хотя бы одна всегда лежит в обычных тайниках. После вскрытия дверь открыта для всех, включая ботов, других игроков и Егора.</li><li><b>Учителя</b> иногда обходят школу. Если они увидят, что ты бежишь, то закричат «Не бегать!», и Егор услышит.</li><li><b>Шум:</b> ходьба тихая, бег громкий (радиус ~13 м против ~3,5 м), поиск и взрывы шумят, у многих бросков есть звук. Идти шагом рядом с Егором безопаснее, чем бежать.</li><li><b>Карта (M / 🗺):</b> названия комнат, шкафы, обыскано/нет, найденные записки, ученики, учителя и твой взгляд. Тап или наведение показывает координаты. На телефоне кнопка 🔍 меняет масштаб.</li></ul></div></details>
 <details><summary>🧑‍🎓 Боты и мультиплеер</summary><div class="gb"><ul><li>Ученики (боты) работают сами: обыскивают тайники, носят части заданий, прячутся и кидают помидоры в Егора. Их число видно вверху (🧑‍🎓 4/4). Пойманный бот выбывает и роняет то, что нёс.</li><li><b>Онлайн:</b> «Найти игру» (до 5 игроков), «Создать лобби» (код для друзей) или «Войти по коду». Карта у всех одинаковая, свободные места занимают боты.</li><li><b>Чат:</b> текстовый (T / 💬) и голосовой (держи F / 🎙), слышат все.</li><li>Задания общие: сколько частей отнесли все вместе, столько и засчитано.</li></ul></div></details>
 <details><summary>🪙 Монеты и магазин</summary><div class="gb"><p>Найденные в раунде монеты 🪙 засчитываются после раунда (если ты в аккаунте). В магазине покупаются скины и расходники (помидоры, петарды, рулоны), которые ты берёшь в раунд с собой (до 3 штук). Офлайн-игра без аккаунта монет не даёт. В меню есть 🏆 таблица лидеров: топ по заработанным монетам и по самому быстрому побегу.</p></div></details>
 <details><summary>💡 Советы</summary><div class="gb"><ul><li>Ходи шагом, бегай только когда нужно. Следи за полоской ⚡.</li><li>Сначала осмотри ближайшие комнаты: части заданий разбросаны по обоим этажам, не больше одной в комнате.</li><li>Всегда держи один помидор про запас. Петарду и колонку используй, чтобы увести Егора от нужной комнаты.</li><li>Прячься, когда Егор не видит тебя. Не лезь в шкаф у него на глазах.</li><li>Выполняй задания вместе с ботами: смотри на карту, кто куда несёт.</li><li>Перед последним заданием заранее продумай путь к выходу: после него Егор в ярости.</li></ul></div></details>
@@ -288,7 +296,7 @@ const SUPABASE_URL='https://lgqcnbxjivhubccdsbis.supabase.co';       // напр
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxncWNuYnhqaXZodWJjY2RzYmlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwMDk5MzUsImV4cCI6MjEwODU4NTkzNX0.ymWQ1Y0bR7nd77JQ0kUmvCSq5O7hHnjBLgoPpbtsRbg';  // anon public key
 //GEN-START
 const GAME_RULES={notesNeeded:4,floorOffset:28,width:40,height:56,searchSeconds:.7};
-const emptyInventory=()=>({tomato:0,petarda:0,roll:0,torch:0,coin:0,lockpick:0,phone:0,energy:0,speaker:0,paper:0});
+const emptyInventory=()=>({tomato:0,petarda:0,roll:0,torch:0,coin:0,lockpick:0,phone:0,energy:0,speaker:0,battery:0,paper:0});
 const searchContinues=(held,onTarget,hidden)=>!!held&&!!onTarget&&!hidden;
 const stairLink=(st,x,y)=>{for(const[a,b]of st){if(a[0]===x&&a[1]===y)return b;if(b[0]===x&&b[1]===y)return a}return null};
 const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
@@ -453,11 +461,12 @@ function buildGridOnce(){
   assignDest();stashes.forEach(s=>s.content=null);pk.forEach((s,i)=>{s.content='note';s.tk=TASK_SLOTS[i]});
   let tor=0;for(const s of stashes)if(!s.content){const r=Math.random();let it=r<.042?'tomato':r<.063?'petarda':r<.084?'roll':r<.098?'torch':null;if(it){if(it==='torch'&&tor++>=2)it='tomato';s.content=it}}
   // found-only items spread around (can't be bought)
-  for(const s of stashes)if(!s.content&&!s.locked&&Math.random()<.05)s.content=['coin','coin','energy','energy','phone','speaker','lockpick'][Math.random()*7|0];
+  const NRM=new Set(stashes.filter(s=>s.content==='note').map(s=>roomAt({x:wc(s.cx),z:wc(s.cy)})).filter(n=>n!=='Коридор')),inNR=s=>NRM.has(roomAt({x:wc(s.cx),z:wc(s.cy)}));
+   for(const s of stashes)if(!s.content&&!s.locked&&Math.random()<.05){const it=['coin','coin','energy','energy','phone','speaker','lockpick'][Math.random()*7|0];s.content=(it==='lockpick'&&inNR(s))?'coin':it}
   // Egor's quote notes anywhere
   {const fr=shuf(stashes.filter(s=>!s.content&&!s.locked)),q=shuf([...EGOR_QUOTES]);let nq=Math.random()<.7?1:0;if(Math.random()<.4)nq++;if(Math.random()<.15)nq++;fr.slice(0,nq).forEach((s,i)=>{s.content='paper';s.paper={title:'📝 Записка Егора',text:'«'+q[i]+'»'}})}
   // locked rooms loot: coins + items, rare backstory; guaranteed lockpick outside
-  const LR=rooms.filter(r=>r.locked);if(LR.length){const fr=stashes.filter(s=>!s.content&&!s.locked);const lp=fr[Math.random()*fr.length|0];if(lp)lp.content='lockpick';}
+  const LR=rooms.filter(r=>r.locked);if(LR.length){const fr0=stashes.filter(s=>!s.content&&!s.locked),fr1=fr0.filter(s=>!inNR(s)),pl=fr1.length?fr1:fr0;const lp=pl[Math.random()*pl.length|0];if(lp)lp.content='lockpick';}
   for(const r of LR){const ins=shuf(stashes.filter(s=>s.locked===r));ins.forEach((s,i)=>{if(i===0||Math.random()<.22){s.content='coins';s.n=rnd(8,25)}else if(i===1||Math.random()<.5){s.content=['coin','energy','phone','speaker','lockpick','torch','petarda','tomato'][Math.random()*8|0]}});
    if(Math.random()<.25){const s=ins.find(s=>!s.content)||ins[ins.length-1];if(s){s.content='paper';s.paper=EGOR_LORE}}}
  }
@@ -465,9 +474,24 @@ function buildGridOnce(){
  for(const r of rooms)if(r.locked&&r.loot)for(const[x,y]of r.loot)pickups.push({x,y,item:['coin','energy','phone','speaker','torch','petarda','tomato','roll'][Math.random()*8|0],n:1});
  {const nook=floorCells.filter(([x,y])=>!rooms.some(r=>r.locked&&x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1)&&rooms.some(r=>r.type&&x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1)&&[[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy])=>{const v=g[y+dy]?.[x+dx];return v===0||v===2||v===3}));
   shuf(nook).slice(0,3).forEach(([x,y],i)=>pickups.push({x,y,item:['tomato','roll','petarda'][i],n:1}));
-  const FCo=floorCells.filter(([x,y])=>!rooms.some(r=>r.locked&&x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1));for(let i=0;i<NFL;i++){const c=(i===0&&pickups.length)?[pickups[0].x,pickups[0].y]:FCo[Math.random()*FCo.length|0];pickups.push({x:c[0],y:c[1],item:'note',n:1,tk:TASK_SLOTS[NN-NFL+i]})}
+  const FCo=floorCells.filter(([x,y])=>!rooms.some(r=>r.locked&&x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1));const LPR=new Set(stashes.filter(s=>s.content==='lockpick'&&!s.locked).map(s=>roomAt({x:wc(s.cx),z:wc(s.cy)})).filter(n=>n!=='Коридор')),FCn=FCo.filter(([x,y])=>!LPR.has(roomAt({x:wc(x),z:wc(y)})));for(let i=0;i<NFL;i++){let c=(i===0&&pickups.length)?[pickups[0].x,pickups[0].y]:(FCn[Math.random()*FCn.length|0]||FCo[Math.random()*FCo.length|0]);if(LPR.has(roomAt({x:wc(c[0]),z:wc(c[1])})))c=FCn[Math.random()*FCn.length|0]||c;pickups.push({x:c[0],y:c[1],item:'note',n:1,tk:TASK_SLOTS[NN-NFL+i]})}
   if(Math.random()<.35){const c=FCo[Math.random()*FCo.length|0];pickups.push({x:c[0],y:c[1],item:'paper',n:1,paper:{title:'📝 Записка Егора',text:'«'+EGOR_QUOTES[Math.random()*EGOR_QUOTES.length|0]+'»'}})}
   if(Math.random()<.5){const c=FCo[Math.random()*FCo.length|0];pickups.push({x:c[0],y:c[1],item:'coin',n:rnd(1,2)})}}
+ // rare room with a monitor: watch Egor through corridor cameras
+ camSpot=null;{const dn=TASKS.map(t=>t.dest),inL=(x,y)=>rooms.some(r=>r.locked&&x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1),
+  free=f=>!inL(f.x,f.y)&&!stashes.some(s=>s.cx===f.x&&s.cy===f.y)&&!pickups.some(p=>p.x===f.x&&p.y===f.y),
+  dirOf=f=>[[1,0],[-1,0],[0,1],[0,-1]].find(([dx,dy])=>g[f.y+dy]?.[f.x+dx]===1);
+  for(const ps of [r=>r.type&&!r.locked&&!dn.includes(r.name),r=>r.type&&!r.locked,null]){if(camSpot)break;const cr=ps?shuf(rooms.filter(ps)):[null];
+   for(const r of cr){const f=shuf(furn.filter(f=>(f.t==='desk'||(!ps&&f.t==='table'))&&(!r||(f.x>=r.x0&&f.x<=r.x1&&f.y>=r.y0&&f.y<=r.y1))&&free(f)&&dirOf(f)))[0];if(!f)continue;const d=dirOf(f);camSpot={x:f.x,y:f.y,h:f.t==='desk'?.8:.75,dx:d[0],dy:d[1],room:r?r.name:roomAt({x:wc(f.x),z:wc(f.y)}),on:false};break}}}
+ // battery for the monitor (not needed to escape): hidden in a stash, else on the floor
+ if(camSpot){const cr=camSpot.room,fr=stashes.filter(s=>!s.content&&!s.locked),f2=fr.filter(s=>roomAt({x:wc(s.cx),z:wc(s.cy)})!==cr),pl=f2.length?f2:fr;
+  if(pl.length)pl[Math.random()*pl.length|0].content='battery';
+  else{const c=floorCells.filter(([x,y])=>!rooms.some(r=>r.locked&&x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1)),q=c[Math.random()*c.length|0];if(q)pickups.push({x:q[0],y:q[1],item:'battery',n:1})}}
+ // items lying on desks, tables and shelves
+ {const top={desk:.8,table:.75,shelf:1.4},inL=(x,y)=>rooms.some(r=>r.locked&&x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1);
+  const cand=shuf(furn.filter(f=>top[f.t]&&!inL(f.x,f.y)&&!(camSpot&&f.x===camSpot.x&&f.y===camSpot.y)&&!stashes.some(s=>s.cx===f.x&&s.cy===f.y)&&!pickups.some(p=>p.x===f.x&&p.y===f.y)&&[[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy])=>g[f.y+dy]?.[f.x+dx]===1)&&rooms.some(r=>r.type&&f.x>=r.x0&&f.x<=r.x1&&f.y>=r.y0&&f.y<=r.y1)));
+  const pool=['tomato','tomato','roll','petarda','coin','energy','phone','torch','speaker'];let n=rnd(4,7);
+  for(const f of cand){if(n--<=0)break;let it=pool[Math.random()*pool.length|0];if(it==='torch'&&pickups.some(p=>p.item==='torch'))it='tomato';pickups.push({x:f.x,y:f.y,item:it,n:1,h:top[f.t]})}}
 }
 function validateMap(){ // nothing may be blocked: every floor cell, locker door and stash must be reachable
  const seen=new Uint8Array(W*H),q=[spawnCell[1]*W+spawnCell[0]];seen[q[0]]=1;
@@ -585,7 +609,8 @@ function buildShell(){
   const zf=dz<0?Z0:Z0+CS;
   if(g[y][x]===6){const r=rooms.find(r=>r.locked&&r.door[0]===x&&r.door[1]===y);const lg=new THREE.Group();world.add(lg);const lf=box(CS-.24,2.25,.12,A.door,X0+1,1.125,Z0+1,lg);box(.14,.2,.18,M.metal,X0+1.55,1.05,Z0+1,lg);box(.3,.3,.14,new THREE.MeshStandardMaterial({color:0x8a1a1a}),X0+1,1.7,Z0+1,lg);const lp2=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.3),plateMat('🔒 ЗАПЕРТО'));lp2.position.set(X0+1,1.3,Z0+1+(dz<0?.07:-.07));if(dz>0)lp2.rotation.y=Math.PI;lg.add(lp2);lf.userData={kind:'ldoor',ref:r};interact.push(lf);{const hb=box(CS,2.5,1.6,new THREE.MeshBasicMaterial({visible:false}),X0+1,1.25,Z0+1,lg);hb.userData=lf.userData;interact.push(hb)}if(r){r.doorG=lg;r.doorM=lf}}
   else for(const hx of[X0+.2,X0+CS-.2]){box(.05,2.2,.95,A.door,hx,1.1,zf+dz*.5,world);box(.07,.08,.16,M.metal,hx,1.05,zf+dz*.85,world)}
-  const zc=dz<0?Z0+CS:Z0,pl=new THREE.Mesh(new THREE.PlaneGeometry(1.5,.38),plateMat(label));pl.position.set(X0+1,2.62,zc+(dz<0?.03:-.03));if(dz>0)pl.rotation.y=Math.PI;world.add(pl)}
+  const zc=dz<0?Z0+CS:Z0,pl=new THREE.Mesh(new THREE.PlaneGeometry(1.5,.38),plateMat(label));pl.position.set(X0+1,2.62,zc+(dz<0?.03:-.03));if(dz>0)pl.rotation.y=Math.PI;world.add(pl);
+  if(camSpot&&label===camSpot.room){const cp=new THREE.Mesh(new THREE.PlaneGeometry(1.5,.3),new THREE.MeshBasicMaterial({map:ctex(256,52,(x,w,h)=>{x.fillStyle='#6b1d1d';x.fillRect(0,0,w,h);x.strokeStyle='#ffd27a';x.lineWidth=4;x.strokeRect(2,2,w-4,h-4);x.fillStyle='#ffe9b0';x.textAlign='center';let fs=28;x.font='bold '+fs+'px Trebuchet MS';while(x.measureText('(тут камера)').width>w-20&&fs>12){fs-=2;x.font='bold '+fs+'px Trebuchet MS'}x.fillText('(тут камера)',w/2,h/2+fs*.35)})}));cp.position.set(X0+1,3.0,zc+(dz<0?.03:-.03));if(dz>0)cp.rotation.y=Math.PI;world.add(cp)}}
 }
 function buildWorld(){
  rePaint();
@@ -639,10 +664,16 @@ function buildWorld(){
   else if(s.pos.y<0.45){m=new THREE.Mesh(G.cyl,M.dark);m.scale.set(.25,.6,.25);m.position.set(s.pos.x+.5,.3,s.pos.z+.5);world.add(m);s.pos.copy(m.position)}
   else{m=box(1.2,.4,.6,new THREE.MeshBasicMaterial({visible:false}),s.pos.x,s.pos.y,s.pos.z,world)}
   m.userData={kind:'stash',ref:s};interact.push(m);s.mesh=m}
- for(const p of pickups){const m=itemMesh(p.item);m.position.set(wc(p.x)+(Math.random()-.5)*1.2,.1,wc(p.y)+(Math.random()-.5)*1.2);m.scale.multiplyScalar(1.25);world.add(m);p.mesh=m;m.traverse(o=>{o.userData={kind:'pickup',ref:p};interact.push(o)})}
+ for(const p of pickups){const m=itemMesh(p.item);m.position.set(wc(p.x)+(Math.random()-.5)*(p.h?.35:1.2),p.h||.1,wc(p.y)+(Math.random()-.5)*(p.h?.35:1.2));m.scale.multiplyScalar(1.25);world.add(m);p.mesh=m;m.traverse(o=>{o.userData={kind:'pickup',ref:p};interact.push(o)})}
  // exit
  const ed=box(.1,2.3,3.6,new THREE.MeshStandardMaterial({color:0x5a1a1a,metalness:.4,roughness:.5}),wc(W-1)-.95,1.15,CS*(exitY+1),world);ed.userData={kind:'exit'};interact.push(ed);exitDoor=ed;
  const es=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.45),new THREE.MeshBasicMaterial({map:T.exit}));es.position.set(wc(W-1)-1,2.65,CS*(exitY+1));es.rotation.y=-Math.PI/2;world.add(es);
+ if(camSpot){const cs=camSpot,gr=new THREE.Group(),mm=new THREE.MeshStandardMaterial({color:0x101418,metalness:.5,roughness:.4}),sc=new THREE.MeshStandardMaterial({color:0x050805,emissive:0x33ff77,emissiveIntensity:0});
+  box(.7,.5,.07,mm,0,.5,0,gr);box(.6,.4,.02,sc,0,.5,.045,gr);box(.12,.2,.12,mm,0,.2,-.02,gr);box(.4,.04,.25,mm,0,.1,0,gr);
+  const pl=new THREE.Mesh(new THREE.PlaneGeometry(1,.25),plateMat('📹 КАМЕРЫ'));pl.position.set(0,1.0,.05);gr.add(pl);
+  cs.sc=sc;gr.position.set(wc(cs.x),cs.h,wc(cs.y));gr.rotation.y=Math.atan2(cs.dx,cs.dy);world.add(gr);
+  const hb=box(1.1,1,1.1,new THREE.MeshBasicMaterial({visible:false}),wc(cs.x),cs.h+.5,wc(cs.y),world);hb.userData={kind:'cam'};interact.push(hb)}
+ camPts=[];for(const sg of layout.corrSegs){const f=sg.y>=FO?1:0;for(let x=sg.x0+3;x<=sg.x1-2;x+=9)camPts.push({x:wc(x),z:(sg.y+2)*CS,y:(f?FH:0)+WH-.3,f})}
  // decor: garland, webs, pumpkins, posters, ghosts, bats
  const gn=60,gim=new THREE.InstancedMesh(new THREE.SphereGeometry(.06,8,6),new THREE.MeshBasicMaterial(),layout.corrSegs.length*2*gn);let k=0;
  for(const s of layout.corrSegs)for(const side of [0,3])for(let i=0;i<gn;i++){const xa0=s.x0*CS+1.5,xb0=(s.x1+1)*CS-1.5,x=xa0+i*(xb0-xa0)/(gn-1),zz=wc(s.y+side);mm.makeTranslation(x,WH-.25-Math.abs(Math.sin(i*.7))*.25+(s.y>=FO?FH:0),zz);gim.setMatrixAt(k,mm);gim.setColorAt(k++,new THREE.Color(i%2?0xff7a10:0x9a3aff))}world.add(gim);garland=gim;
@@ -661,7 +692,7 @@ function buildWorld(){
    const mkSp=base=>{const gl=new THREE.Sprite(new THREE.SpriteMaterial({map:gt,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false})),ar=new THREE.Sprite(new THREE.SpriteMaterial({map:at,transparent:true,depthWrite:false}));gl.visible=ar.visible=false;world.add(gl,ar);return{gl,ar,base}};
    for(const p of pickups)if(p.item==='note'){const o=pickups.find(q=>q!==p&&q.item!=='note'&&q.x===p.x&&q.y===p.y);if(o)p.mesh.position.set(o.mesh.position.x,.28,o.mesh.position.z)}
    for(const s of stashes)s.glint=mkSp(new THREE.Vector3(s.pos.x,s.pos.y+.15,s.pos.z));
-   for(const p of pickups)p.glint=mkSp(new THREE.Vector3(p.mesh.position.x,.3,p.mesh.position.z))}
+   for(const p of pickups)p.glint=mkSp(new THREE.Vector3(p.mesh.position.x,p.h?p.h+.25:.3,p.mesh.position.z))}
  decorExtra();shiftUpper();
 }
 function shiftUpper(){for(const c of world.children){if(c.isLight||c.isInstancedMesh)continue;if(c.position.z>=FO*CS)c.position.y+=FH}}
@@ -674,8 +705,8 @@ function updGlints(tt){const cp=camera.position,up=P.pos.z>=FO*CS;
 function nearWall(x,y){for(const d of[[0,-1],[0,1],[-1,0],[1,0]])if(g[y+d[1]]?.[x+d[0]]===0)return[d];return[[0,-1]]}
 let lamps=[],lampDefs=[],POOL=[],lampT=0,garland,ghosts=[],bats=[],exitDoor;
 // ================= CHARACTERS =================
-const ITEMS={tomato:'🍅 помидор',petarda:'🧨 петарда',roll:'🧻 рулон',torch:'🔦 фонарик',coin:'🪙 монетка',lockpick:'🔑 отмычка',phone:'📱 телефон',energy:'🧃 энергетик',speaker:'📢 колонка',paper:'📜 записки'};
-const FOUND_ONLY=['coin','lockpick','phone','energy','speaker'];
+const ITEMS={tomato:'🍅 помидор',petarda:'🧨 петарда',roll:'🧻 рулон',torch:'🔦 фонарик',coin:'🪙 монетка',lockpick:'🔑 отмычка',phone:'📱 телефон',energy:'🧃 энергетик',speaker:'📢 колонка',battery:'🔋 батарея',paper:'📜 записки'};
+const FOUND_ONLY=['coin','lockpick','phone','energy','speaker','battery'];
 const EGOR_QUOTES=['Завтра принесу помидоры. Много помидоров. Всем хватит.','Я не жиршко. Я — ВЕЛИКИЙ.','Катана уже заказана. Доставка в пятницу.','Кто назовёт меня помидором — тот сам станет кетчупом.','Бегайте, бегайте. На большой перемене я всегда догоняю.','Молоток в рюкзаке. Бензопила — в шкафу у трудовика.','Ляшко?.. Я запомнил каждого.','Мама говорит, что я просто ширококостный.','Сегодня Хеллоуин. Сегодня я не вожу. Сегодня я ОХОЧУСЬ.','Тихо… Я слышу, как ты дышишь.','Кто съел мой бутерброд — найду. Обязательно найду.','Самый высокий в классе видит всех. Даже за шкафом.','Смейтесь громче. Так вас проще найти.','Список: помидоры ✔ молоток ✔ катана … бензопила ✔'];
 const EGOR_LORE={title:'📖 Предыстория Егора',text:'Учебный год начался, вы перешли в 8 класс харьковского Лицея Профессионала.<br><br>Егор Шажко — самый высокий в классе, самый жирный в классе, и над ним стали смеяться в шутку, называли ляшко, жиршко, помидор, и так далее. Все одноклассники на большой перемене любили играть с ним в догонялки и обзывали его, чтобы он становился злее.<br><br>Каждый раз он обещал принести помидоры и закидать ими всех, и ещё принести катану, молоток и бензопилу…'};
 function itemMesh(t){const gr=new THREE.Group();
@@ -688,6 +719,7 @@ function itemMesh(t){const gr=new THREE.Group();
  else if(t==='saw'){box(.12,.18,.3,new THREE.MeshStandardMaterial({color:0xe0a010}),0,0,0,gr);box(.03,.08,.6,M.metal,0,0,.42,gr)}
  else if(t==='coin'){const c=new THREE.Mesh(G.cyl,new THREE.MeshStandardMaterial({color:0xffc83a,metalness:.8,roughness:.3,emissive:0x3a2800}));c.scale.set(.06,.012,.06);gr.add(c)}
  else if(t==='lockpick'){box(.015,.015,.22,M.metal,0,0,0,gr);box(.015,.05,.015,M.metal,0,.02,.11,gr);box(.04,.04,.06,M.dark,0,0,-.11,gr)}
+ else if(t==='battery'){box(.05,.1,.05,new THREE.MeshStandardMaterial({color:0xffd23a,emissive:0x553a00}),0,0,0,gr);box(.02,.02,.02,M.metal,0,.06,0,gr)}
  else if(t==='phone'){box(.08,.015,.15,M.dark,0,0,0,gr);box(.07,.017,.13,new THREE.MeshBasicMaterial({color:0x3a8aff}),0,.001,0,gr)}
  else if(t==='energy'){const c=new THREE.Mesh(G.cyl,new THREE.MeshStandardMaterial({color:0x33dd55,metalness:.6,emissive:0x0a3310}));c.scale.set(.045,.12,.045);gr.add(c)}
  else if(t==='speaker'){box(.16,.22,.14,M.dark,0,0,0,gr);const c=new THREE.Mesh(G.cyl,M.metal);c.scale.set(.05,.01,.05);c.rotation.x=Math.PI/2;c.position.set(0,0,.075);gr.add(c)}
@@ -701,12 +733,13 @@ function human(shirt,pants,skin,tall=1){const gr=new THREE.Group();const s=tall;
 let faceTex=null;{const im=new Image();im.onload=()=>{faceTex=ctex(256,256,(x,w,h)=>{x.beginPath();x.arc(128,128,124,0,7);x.clip();x.drawImage(im,0,0,w,h)});if(E&&E.faceM){E.faceM.material.map=faceTex;E.faceM.material.needsUpdate=true}};im.src=FACE_SRC}
 // ================= STATE =================
 const P={papers:[],coinsFound:0,boostT:0,phoneCd:0,pos:new THREE.Vector3(),yaw:0,pitch:0,hp:3,stam:100,notes:0,inv:emptyInventory(),sel:'tomato',hidden:null,doomed:false,splat:0,search:null,flash:false,bob:0,noiseT:0};
+let camSpot=null,camOpen=false,camPts=[],camCur=null,camCam=null,camLight=null;
 let E,bots=[],proj=[],decals=[],traps=[],teachers=[],teachT=30,botNotes=0,playing=false,time=0,msgT=0;
 const flash=new THREE.SpotLight(0xfff2d8,22,22,0.5,0.45,1.3);camera.add(flash);flash.position.set(.2,-.2,0);flash.target.position.set(0,0,-1);camera.add(flash.target);
 let held=null;function setHeld(){if(held)camera.remove(held);held=P.inv[P.sel]>0?itemMesh(P.sel):null;if(held){held.position.set(.32,-.3,-.6);camera.add(held)}}
 function reset(){
  exitOpen=false;rageOff();shellAssets();{const _r=Math.random;if(NET.seed!=null)Math.random=mulberry32(NET.seed);try{buildGrid();buildWorld();buildFixtures()}finally{Math.random=_r}}flash.intensity=0;closePanels(false);clearKeys();resetChat();
- Object.assign(P,{papers:[],coinsFound:0,boostT:0,phoneCd:0,gone:false,hp:3,stam:100,notes:0,inv:NET.loadout(),sel:'tomato',hidden:null,doomed:false,splat:0,search:null,flash:false,yaw:-Math.PI/2,pitch:0});P.pos.set(wc(spawnCell[0]),1.6,wc(spawnCell[1]));
+ Object.assign(P,{papers:[],coinsFound:0,boostT:0,phoneCd:0,gone:false,hp:3,stam:100,notes:0,inv:NET.loadout(),sel:'tomato',hidden:null,doomed:false,splat:0,search:null,flash:false,yaw:-Math.PI/2,pitch:0});P.spawnF=Math.random()<.5?1:0;P.pos.set(wc(spawnCell[0]),1.6,wc(spawnCell[1]+P.spawnF*FO));
  for(const o of [E?.mesh,...bots.map(b=>b.mesh),...proj.map(p=>p.mesh),...decals,...traps.map(t=>t.mesh),...teachers.map(t=>t.mesh),...REM.map(r=>r.mesh)])if(o)o.parent?.remove(o);
  proj=[];decals=[];traps=[];
  const em=human(new THREE.MeshStandardMaterial({color:0x1d1d24}),new THREE.MeshStandardMaterial({color:0x2a3550}),0xd9a07a,1.12);
@@ -726,8 +759,8 @@ function reset(){
   const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c2),transparent:true}));sp.scale.set(1.1,.28,1);sp.position.set(0,2.62,0);em.add(sp);em.scale.setScalar(1.15)}
  E={type:EGOR_TYPES[NET.seed!=null?Math.abs(NET.seed|0)%4:Math.random()*4|0],mesh:em,faceM:fm,hand,pos:farGoal(),yaw:0,state:'patrol',goal:null,path:[],pathT:0,target:null,stun:0,slip:0,throwCd:4,checkQ:[],checking:null,checkT:0,last:null,lastVel:new THREE.Vector3(),known:null,walk:0,stepAt:0,voiceT:8+Math.random()*8,lastState:'patrol',weapon:'',sees:false,say:0};
  setWeapon('saw');
- bots=[];const names=['Назар','Оксана','Богдан','Соломія'].slice(0,NET.nBots);
- names.forEach((name,i)=>{const m=human(new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL(i/4,.5,.38)}),M.dark,0xe8b896);const p=randomGoal();bots.push({name,mesh:m,pos:p,yaw:0,alive:true,hidden:null,state:'wander',goal:null,path:[],pathT:i*.07,wait:0,inv:emptyInventory(),cd:3,walk:0,safeT:0,loot:null,lootT:0});});
+ bots=[];const botF0=Math.random()*2|0;const names=['Назар','Оксана','Богдан','Соломія'].slice(0,NET.nBots);
+ names.forEach((name,i)=>{const m=human(new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL(i/4,.5,.38)}),M.dark,0xe8b896);const p=floorGoal((i+botF0)%2);bots.push({name,mesh:m,pos:p,yaw:0,alive:true,hidden:null,state:'wander',goal:null,path:[],pathT:i*.07,wait:0,inv:emptyInventory(),cd:3,walk:0,safeT:0,loot:null,lootT:0});});
  NET.spawnRemotes();setHeld();updHUD();time=0;botNotes=0;setTimeout(()=>say('👹 Егор этой ночью: <b>'+E.type.name+'</b>'+(E.type.msg?' — '+E.type.msg:''),4),600);teachers=[];teachT=25+Math.random()*25;
 }
 function setWeapon(w){if(E.weapon===w)return;E.weapon=w;E.hand.clear();if(w){const m=itemMesh(w);m.rotation.x=Math.PI/2;if(w==='saw')m.scale.setScalar(1.3);E.hand.add(m)}}
@@ -791,7 +824,18 @@ function locked(){return TOUCH?(playing&&!panelOpen()):document.pointerLockEleme
 function lockPtr(){if(!TOUCH)cv.requestPointerLock()}
 let chatOpen=false,mapOpen=false,recorder=null,micStream=null,voicePending=false,voiceUrls=[],chatCount=0,botChatAt=0;
 let readOpen=false;const panelOpen=()=>chatOpen||mapOpen||readOpen;
-function closePanels(resume=true){chatOpen=false;mapOpen=false;readOpen=false;$('readPanel').classList.add('hidden');$('chatForm').classList.add('hidden');$('mapPanel').classList.add('hidden');clearKeys();if(resume&&playing)lockPtr();}
+function closeCam(){if(!camOpen)return;camOpen=false;$('camPanel').classList.add('hidden');if(camLight)camLight.visible=false}
+function openCam(){if(!camSpot||camOpen)return;if(!camSpot.on){if(!(P.inv.battery>0)){say('📹 Монитор не работает. Нужна <b>🔋 батарея</b> — её можно только найти (для побега не нужна).');beep(150,.15);return}P.inv.battery--;camSpot.on=true;if(camSpot.sc){camSpot.sc.emissiveIntensity=.9;camSpot.sc.color.set(0x0a2a14)}if(P.sel==='battery'&&!P.inv.battery)P.sel='tomato';setHeld();updHUD();beep(1200,.1,'square',.12);say('🔋 Батарея вставлена. Камеры работают! Нажми <b>E</b> ещё раз',3);return}closePanels(false);camOpen=true;camCur=null;$('camPanel').classList.remove('hidden');beep(900,.08,'square',.1);say('📹 Камеры школы. Пока смотришь — ты уязвим. [E] — выйти',3)}
+const camT=new THREE.Vector3(),camLk=new THREE.Vector3();
+function renderCam(){if(!camOpen||!E)return;if(!camCam){camCam=new THREE.PerspectiveCamera(68,16/9,.1,70);camLight=new THREE.PointLight(0xaaffcc,1.3,16);scene.add(camLight)}
+ const fl=E.pos.z>=FO*CS?1:0,ok=p=>p.f===fl&&Math.hypot(p.x-E.pos.x,p.z-E.pos.z)<28&&los({x:p.x,z:p.z},E.pos);let best=null,bd=1e9;
+ if(camCur&&ok(camCur))best=camCur;else for(const p of camPts)if(ok(p)){const d=Math.hypot(p.x-E.pos.x,p.z-E.pos.z);if(d<bd){bd=d;best=p}}
+ camCur=best;const scr=$('camScreen');scr.classList.toggle('nosig',!best);camLight.visible=!!best;if(!best){$('camName').textContent='КАМ —';return}
+ $('camName').textContent='КАМ '+(camPts.indexOf(best)+1)+' · '+(best.f?'2':'1')+' этаж';
+ camLk.lerp(camT.set(E.pos.x,(fl?FH:0)+1.5,E.pos.z),.25);camCam.position.set(best.x,best.y,best.z);camCam.lookAt(camLk);camLight.position.set(best.x,best.y-.3,best.z);
+ const r=scr.getBoundingClientRect(),w=r.width,h=r.height,vy=innerHeight-r.bottom;camCam.aspect=w/h;camCam.updateProjectionMatrix();
+ renderer.setScissorTest(true);renderer.setViewport(r.left,vy,w,h);renderer.setScissor(r.left,vy,w,h);renderer.render(scene,camCam);renderer.setScissorTest(false);renderer.setViewport(0,0,innerWidth,innerHeight)}
+function closePanels(resume=true){closeCam();chatOpen=false;mapOpen=false;readOpen=false;$('readPanel').classList.add('hidden');$('chatForm').classList.add('hidden');$('mapPanel').classList.add('hidden');clearKeys();if(resume&&playing)lockPtr();}
 function openChat(){if(mapOpen)return;chatOpen=true;clearKeys();$('chatPanel').classList.remove('hidden');$('chatForm').classList.remove('hidden');document.exitPointerLock();$('pause').classList.add('hidden');$('chatInput').focus();}
 function openRead(){if(!P.papers.length){say('У тебя нет записок. Ищи их по школе 📜');return}closePanels(false);readOpen=true;document.exitPointerLock();$('pause').classList.add('hidden');$('readList').innerHTML=P.papers.map(p=>`<article><h3>${p.title}</h3><p>${p.text}</p></article>`).join('');$('readPanel').classList.remove('hidden')}
 $('readClose').onclick=()=>closePanels();
@@ -851,6 +895,7 @@ function drawMap(){const c=$('mapCanvas'),G=mapG(),u=G.u;if(c.width!==G.w||c.hei
  }
  for(const s of stashes){if(!s.seen&&!s.searched)continue;const[a1,b1]=mapPt(s.cx+.5,s.cy+.5,G);ctx.beginPath();ctx.arc(a1,b1,s.searched?2.5:4.5,0,7);ctx.fillStyle=s.searched?'#8a8f94':'#ffd23a';ctx.fill();if(!s.searched){ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.stroke()}}
   for(const p of pickups){if(!p.seen||!p.mesh?.parent)continue;const[a1,b1]=mapPt(p.x+.5,p.y+.5,G);ctx.fillStyle=p.item==='note'?'#fff2a8':'#ff9a2a';ctx.fillRect(a1-3.5,b1-3.5,7,7);ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.strokeRect(a1-3.5,b1-3.5,7,7)}
+  if(camSpot&&camSpot.seen){const[ca,cb]=mapPt(camSpot.x+.5,camSpot.y+.5,G);ctx.font='18px sans-serif';ctx.textAlign='center';ctx.fillText('📹',ca,cb+6)}
   ctx.font='12px Trebuchet MS';ctx.textAlign='left';ctx.fillStyle='#ffd23a';ctx.fillText('● не обыскано   ○ обыскано   ■ предмет / находка для задания',G.ox,c.height-4);
   ctx.fillStyle=color('grid');ctx.textAlign='center';ctx.font='bold 15px Trebuchet MS';ctx.fillText('1 ПОВЕРХ',G.ox+W*u/2,18);ctx.fillText('2 ПОВЕРХ',G.ox+(W*1.5+2)*u,18);
  ctx.font='10px Trebuchet MS';for(let f=0;f<2;f++){ctx.textAlign='center';for(let x=0;x<W;x+=5)ctx.fillText(x,G.ox+(x+.5+f*(W+2))*u,G.oy-5);ctx.textAlign='right';for(let y=0;y<FO;y+=5)ctx.fillText(y,G.ox+f*(W+2)*u-3,G.oy+(y+.8)*u)}
@@ -873,7 +918,7 @@ addEventListener('mousedown',e=>{if(TOUCH||!playing||panelOpen()||e.target.close
 addEventListener('mousemove',e=>{if(TOUCH||!playing||!locked()||P.hidden&&P.doomed&&false)return;P.yaw-=e.movementX*.0022;P.pitch=Math.max(-1.4,Math.min(1.4,P.pitch-e.movementY*.0022))});
 document.addEventListener('pointerlockchange',()=>{if(!locked())clearKeys();$('pause').classList.toggle('hidden',!playing||panelOpen()||locked())});
 $('pause').onclick=()=>lockPtr();
-const startGame=()=>{if(!AC)audio();AC.resume();reset();$('locker').style.display='none';P.hidden=null;renderer.compile(scene,camera);$('menu').classList.add('hidden');$('over').classList.add('hidden');['hud','cross','inv'].forEach(i=>$(i).classList.remove('hidden'));playing=true;lockPtr();say('Задания раунда:<br>'+TASKS.map(t=>t.icon+' '+t.name+(t.need>1?` (${t.need})`:'')).join('<br>'),6);setTimeout(()=>{if(playing&&!locked()&&!panelOpen())$('pause').classList.remove('hidden')},600)};
+const startGame=()=>{closeCam();if(!AC)audio();AC.resume();reset();$('locker').style.display='none';P.hidden=null;renderer.compile(scene,camera);$('menu').classList.add('hidden');$('over').classList.add('hidden');['hud','cross','inv'].forEach(i=>$(i).classList.remove('hidden'));playing=true;lockPtr();say('Задания раунда:<br>'+TASKS.map(t=>t.icon+' '+t.name+(t.need>1?` (${t.need})`:'')).join('<br>'),6);setTimeout(()=>{if(playing&&!locked()&&!panelOpen())$('pause').classList.remove('hidden')},600)};
 $('play').onclick=$('again').onclick=e=>{const b=e.currentTarget,t0=b.textContent;b.textContent='Строим школу…';if(TOUCH)document.documentElement.requestFullscreen?.().catch(()=>{});setTimeout(()=>{startGame();b.textContent=t0},40)};
 function touchTxt(t){return t.replace('[держать E]','👆 держи палец —').replace('[E]','👆').replace(/<b>E<\/b>/g,'<b>👆 тап / держи</b>').replace(/<b>R<\/b>/g,'<b>📜 в слоте</b>')}
 let _ih='';
@@ -924,12 +969,14 @@ function canSee(from,yaw,to,range=18,wide=false){const d=from.distanceTo(to);if(
 function enterLocker(L,who){L.occupant=who;L.open=1;setTimeout(()=>L.open=0,350);const pos=who==='player'?P.pos:who.pos;const seen=E.stun<=0&&canSee(E.pos,E.yaw,pos,22);noise(pos,5);beep(180,.2,'square',.12);
  if(seen&&(!NET.on||NET.host)){E.known=L;E.checkQ=[L];E.state='doomed';if(who==='player'){P.doomed=true;say('<b style="color:#ff4a3a">Егор видел, как ты залез в шкаф… Пути назад нет.</b>',4);egorSay('Я видел тебя! 🪚')}}}
 function useKey(){
+ if(camOpen){closeCam();return}
  if(P.hidden){if(P.doomed){say('Дверцу заклинило… Егор держит её снаружи.');beep(120,.3);return}const L=P.hidden;L.occupant=null;L.open=1;setTimeout(()=>L.open=0,350);NET.hide(-1);P.hidden=null;P.pos.set(wc(L.front[0]),1.6,wc(L.front[1]));$('locker').style.display='none';noise(P.pos,5);return}
  const u=aimed();if(!u)return;
  if(u.kind==='locker'){const L=u.ref;if(L.occupant){say(L.occupant==='player'?'':'Тут занято! — шепчет '+L.occupant.name);return}P.hidden=L;NET.hide(lockers.indexOf(L));enterLocker(L,'player');$('locker').style.display='block';P.yaw=L.yaw;P.pitch=0;if(!P.doomed)say('Ты спрятался. <b>E</b> — выйти')}
  else if(u.kind==='stash'){const s=u.ref;if(s.searched){say('Здесь уже пусто ('+s.name+')');return}P.search={s,t:0}}
  else if(u.kind==='pickup'){const p=u.ref;if(!p.mesh.parent)return;world.remove(p.mesh);NET.pk(p);if(p.item==='note'){beep(1000,.25,'sine',.2,1600);say(taskFound(p,true),4);updHUD();deliverCheck();return}if(p.item==='paper'){addPaper(p.paper);return}P.inv[p.item]+=p.n;say('Подобрано: '+ITEMS[p.item]+' ×'+p.n);beep(900,.1,'sine');setHeld();updHUD()}
- else if(u.kind==='ldoor')openLDoor(u.ref)
+ else if(u.kind==='ldoor')openLDoor(u.ref);
+ else if(u.kind==='cam')openCam()
  else if(u.kind==='fixture')installFx(u.ref);
  else if(u.kind==='exit'){if(exitOpen)win();else say('Выход заперт. Осталось: '+TASKS.filter(t=>t.got<t.need).map(t=>t.icon+' '+t.name+' → «'+t.dest+'»').join(', '),3)}
 }
@@ -960,6 +1007,7 @@ function phoneHint(){if(P.phoneCd>0){say('📱 Телефон обновляет
  const dd=t.d<8?'совсем рядом':t.d<20?'недалеко':'далеко';say(`📱 Записка: <b>${A[k]}</b> · ${dd} (~${Math.max(5,Math.round(t.d/5)*5)} м)`,4)}
 function throwItem(){if(P.hidden)return;const t=P.sel;if(t==='torch'){toggleFlash();return}
  if(t==='paper'){openRead();return}
+ if(t==='battery'){say(camSpot&&!camSpot.on?'🔋 Подойди к монитору в комнате камер и нажми <b>E</b>':'🔋 Батарея нужна для монитора камер');return}
  if(t==='lockpick'){const u=aimed();if(u&&u.kind==='ldoor'){openLDoor(u.ref);return}say(P.inv.lockpick?'🔑 Наведись на запертую дверь и нажми <b>E</b> (или клик / 🎯)':'Нет отмычки — её можно только найти');return}
  if(t==='phone'){if(P.inv.phone<=0){say('Нет телефона — его можно только найти');return}phoneHint();return}
  if(t==='energy'){if(P.inv.energy<=0){say('Нет энергетика — его можно только найти');return}P.inv.energy--;P.stam=100;P.boostT=10;beep(400,.15,'sine',.12,900);say('🧃 Энергетик! Выносливость не тратится 10 секунд');if(!P.inv.energy)P.sel='tomato';setHeld();updHUD();return}
@@ -1008,7 +1056,8 @@ function goTo(a,goal,speed,dt,r=.35){a.pathT-=dt;const gx=cell(goal.x),gy=cell(g
  }
  const dx=tgt.x-a.pos.x,dz=tgt.z-a.pos.z,d=Math.hypot(dx,dz);if(d>.05){const s=Math.min(d,speed*dt);move(a.pos,dx/d*s,dz/d*s,r);const ty=Math.atan2(dx,dz);a.yaw+=((((ty-a.yaw)%(Math.PI*2))+Math.PI*3)%(Math.PI*2)-Math.PI)*Math.min(1,dt*10);a.walk+=s}
  return Math.hypot(goal.x-a.pos.x,goal.z-a.pos.z)}
-function farGoal(){for(let i=0;i<80;i++){const v=randomGoal();if(Math.hypot(v.x-P.pos.x,v.z-P.pos.z)>45)return v}return randomGoal()}
+function floorGoal(f){const c=floorCells.filter(([x,y])=>(y>=FO?1:0)===f);if(!c.length)return randomGoal();const q=c[Math.random()*c.length|0];return new THREE.Vector3(wc(q[0]),0,wc(q[1]))}
+function farGoal(){const pf=P.pos.z>=FO*CS?1:0;for(let i=0;i<60;i++){const f=Math.random()<.5?1:0,v=floorGoal(f);if(f!==pf||Math.hypot(v.x-P.pos.x,v.z-P.pos.z)>30)return v}return randomGoal()}
 function randomGoal(){const c=floorCells[Math.random()*floorCells.length|0];return new THREE.Vector3(wc(c[0]),0,wc(c[1]))}
 const EGOR_TYPES=[{id:'normal',ic:'😐',name:'Обычный',sp:1,hear:1,see:1,par:.35,cd:40},{id:'hunter',ic:'🏹',name:'Охотник',sp:1.3,hear:.5,see:1,par:.35,cd:40,msg:'быстрее, но хуже слышит'},{id:'paranoid',ic:'🚪',name:'Параноик',sp:1,hear:1,see:1,par:.9,cd:10,msg:'постоянно проверяет шкафы'},{id:'blind',ic:'🕶️',name:'Слепой',sp:1,hear:2.2,see:0,par:.35,cd:40,msg:'не видит, но очень хорошо слышит'}];
 function updEgor(dt){
@@ -1055,10 +1104,10 @@ function updBots(dt){for(const b of bots){if(!b.alive)continue;b.cd-=dt;
   if(b.wait>0){b.wait-=dt;continue}
   if(b.carry&&b.carry.length){botDeliver(b);if(b.carry.length){if(!b.goal||b.goal.dest!==b.carry[0]){b.goal=TASKS[b.carry[0]].fx?TASKS[b.carry[0]].fx.goal.clone():destGoal(TASKS[b.carry[0]].dest);b.goal.dest=b.carry[0];b.path=null;b.pk=null;b.loot=null}if(goTo(b,b.goal,3.5,dt)<.65)b.goal=null;continue}b.goal=null}
   if(!b.goal){
-   const cand=[];for(const s of stashes)if(!s.searched&&!s.locked&&s.content!=='paper'&&s.content!=='coins'&&!(s.content==='note'&&botNotes>=2))cand.push({s,x:s.pos.x,z:s.pos.z});for(const p of pickups)if(p.mesh&&p.mesh.parent&&p.item!=='paper'&&!(p.item==='note'&&botNotes>=2))cand.push({p,x:wc(p.x),z:wc(p.y)});
+   const cand=[];for(const s of stashes)if(!s.searched&&!s.locked&&s.content!=='paper'&&s.content!=='coins'&&s.content!=='battery'&&!(s.content==='note'&&botNotes>=2))cand.push({s,x:s.pos.x,z:s.pos.z});for(const p of pickups)if(p.mesh&&p.mesh.parent&&p.item!=='paper'&&p.item!=='battery'&&!(p.item==='note'&&botNotes>=2))cand.push({p,x:wc(p.x),z:wc(p.y)});
    cand.sort((a,c)=>Math.hypot(a.x-b.pos.x,a.z-b.pos.z)-Math.hypot(c.x-b.pos.x,c.z-b.pos.z));
    const t=cand.length?cand[Math.random()*Math.min(5,cand.length)|0]:null;b.loot=t?.s||null;b.pk=t?.p||null;
-   if(b.pk)b.goal=new THREE.Vector3(wc(b.pk.x),0,wc(b.pk.y));
+   if(b.pk){const tx=wc(b.pk.x),tz=wc(b.pk.y);if(b.pk.h){const c=floorCells.filter(([x,y])=>Math.hypot(wc(x)-tx,wc(y)-tz)<2.7).sort((a,c2)=>Math.hypot(wc(a[0])-tx,wc(a[1])-tz)-Math.hypot(wc(c2[0])-tx,wc(c2[1])-tz))[0];b.goal=c?new THREE.Vector3(wc(c[0]),0,wc(c[1])):randomGoal()}else b.goal=new THREE.Vector3(tx,0,tz)}
    else if(b.loot){const c=floorCells.filter(([x,y])=>Math.hypot(wc(x)-b.loot.pos.x,wc(y)-b.loot.pos.z)<2.7).sort((a,c2)=>Math.hypot(wc(a[0])-b.loot.pos.x,wc(a[1])-b.loot.pos.z)-Math.hypot(wc(c2[0])-b.loot.pos.x,wc(c2[1])-b.loot.pos.z))[0];b.goal=c?new THREE.Vector3(wc(c[0]),0,wc(c[1])):randomGoal()}
    else b.goal=randomGoal();b.path=null;b.lootT=0}
   if(goTo(b,b.goal,3.5,dt)<.65){
@@ -1097,7 +1146,7 @@ function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.
   // player
   P.moving=false;
   if(P.hidden){camera.position.copy(P.hidden.hidePos);camera.position.y+=rampY(P.hidden.hidePos.x,P.hidden.hidePos.z);}
-  else{let fx=0,fz=0;if(K.KeyW||K.ArrowUp)fz-=1;if(K.KeyS||K.ArrowDown)fz+=1;if(K.KeyA||K.ArrowLeft)fx-=1;if(K.KeyD||K.ArrowRight)fx+=1;
+  else{let fx=0,fz=0;if(K.KeyW||K.ArrowUp)fz-=1;if(K.KeyS||K.ArrowDown)fz+=1;if(K.KeyA||K.ArrowLeft)fx-=1;if(K.KeyD||K.ArrowRight)fx+=1;if(camOpen&&(fx||fz))closeCam();
    const sprint=(K.ShiftLeft||K.ShiftRight)&&P.stam>5&&(fx||fz);P.sprint=!!sprint;let sp=sprint?5.8:3.2;if(P.splat>0)sp*=.6;if(P.search)sp=0;
    if(fx||fz){const l=Math.hypot(fx,fz);fx/=l;fz/=l;const s=Math.sin(P.yaw),c=Math.cos(P.yaw);move(P.pos,(fx*c+fz*s)*sp*dt,(-fx*s+fz*c)*sp*dt,.3);P.moving=sp>0;P.bob+=dt*sp*2.2}
    P.boostT=Math.max(0,P.boostT-dt);P.phoneCd=Math.max(0,P.phoneCd-dt);P.stam=Math.max(0,Math.min(100,P.stam+(sprint?(P.boostT>0?0:-24):13)*dt));P.noiseT-=dt;if(P.moving&&P.noiseT<=0){P.noiseT=.4;noise(P.pos.clone().setY(0),sprint?13:3.5)}
@@ -1109,14 +1158,14 @@ function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.
   if(P.search){P.search.t+=dt;$('prog').style.display='block';$('progI').style.width=(P.search.t/GAME_RULES.searchSeconds*100)+'%';const u=aimed();if(!searchContinues(K.KeyE,u?.ref===P.search.s,!!P.hidden)){P.search=null}else if(P.search.t>=GAME_RULES.searchSeconds){finishSearch(P.search.s);P.search=null}}
   if(!P.search)$('prog').style.display='none';
   // prompt
-  const u=P.hidden?null:aimed();let pr='';if(P.hidden)pr=P.doomed?'🔒 Заперт…':'[E] выйти из шкафа';else if(u){if(u.kind==='locker')pr=u.ref.occupant?'Занято':'[E] спрятаться в шкаф';else if(u.kind==='stash')pr=u.ref.searched?'Обыскано':'[держать E] обыскать';else if(u.kind==='pickup')pr='[E] подобрать '+(ITEMS[u.ref.item]||taskDesc(u.ref));else if(u.kind==='ldoor')pr=P.inv.lockpick>0?'🔒 [E] вскрыть отмычкой':'🔒 Заперто — нужна отмычка';else if(u.kind==='fixture'){const t=u.ref;pr=t.got>=t.need?t.icon+' Готово ✅':t.carry?`[E] ${FXV[t.id]||'установить'} (${t.icon}×${t.carry})`:`${t.icon} Нужен: ${t.item}`}else if(u.kind==='exit')pr=exitOpen?'[E] СБЕЖАТЬ':'Выход заперт (код)'}
+  const u=P.hidden?null:aimed();let pr='';if(P.hidden)pr=P.doomed?'🔒 Заперт…':'[E] выйти из шкафа';else if(u){if(u.kind==='locker')pr=u.ref.occupant?'Занято':'[E] спрятаться в шкаф';else if(u.kind==='stash')pr=u.ref.searched?'Обыскано':'[держать E] обыскать';else if(u.kind==='pickup')pr='[E] подобрать '+(ITEMS[u.ref.item]||taskDesc(u.ref));else if(u.kind==='cam')pr=camSpot.on?'📹 [E] смотреть камеры':P.inv.battery>0?'🔋 [E] вставить батарею':'📹 Нет питания — нужна 🔋 батарея';else if(u.kind==='ldoor')pr=P.inv.lockpick>0?'🔒 [E] вскрыть отмычкой':'🔒 Заперто — нужна отмычка';else if(u.kind==='fixture'){const t=u.ref;pr=t.got>=t.need?t.icon+' Готово ✅':t.carry?`[E] ${FXV[t.id]||'установить'} (${t.icon}×${t.carry})`:`${t.icon} Нужен: ${t.item}`}else if(u.kind==='exit')pr=exitOpen?'[E] СБЕЖАТЬ':'Выход заперт (код)'}
   $('prompt').style.display=pr?'block':'none';$('prompt').textContent=TOUCH?touchTxt(pr):pr;
   {const nm=P.hidden?null:aimName(),el=$('nametag');el.style.display=nm?'block':'none';if(nm)el.textContent=nm}
   {const cx2=cell(P.pos.x),cy2=cell(P.pos.z);if(!P.hidden&&g[cy2]?.[cx2]===4){if(!P.onStair){const l=stairLink(layout.stairs,cx2,cy2);P.pos.x=wc(l[0]);P.pos.z=wc(l[1])+1.2;P.onStair=true;say(l[1]>=FO?'🪜 Ты поднялся на 2 этаж':'🪜 Ты спустился на 1 этаж',2);beep(220,.2,'triangle',.12,330)}}else P.onStair=false}
   if(exitOpen&&!P.hidden&&P.pos.x>wc(W-2)+.6&&Math.abs(cell(P.pos.z)-exitY)<2)win();
   NET.sim(dt);updProj(dt);egorAudio(dt);setListener();updTeachers(dt);if(time>botChatAt){botChatAt=time+18+Math.random()*15;const b=bots.find(b=>b.alive&&!b.hidden&&b.state==='flee')||bots.filter(b=>b.alive)[Math.random()*bots.filter(b=>b.alive).length|0];if(b)addChat(b.name,b.state==='flee'?'Егор рядом! Я убегаю!':b.inv.tomato?'Нашёл помидор. Держимся вместе.':'Ищу вещи в кабинетах.')}if(recorder?.state==='recording'&&time%1<dt)noise(P.pos,9);
   // HUD
-  $('hSt').style.width=P.stam+'%';$('hTime').textContent=fmt(time);$('hRoom').textContent=roomAt(P.pos);
+  if(camSpot&&!camSpot.seen&&Math.hypot(P.pos.x-wc(camSpot.x),P.pos.z-wc(camSpot.y))<10)camSpot.seen=true;$('hSt').style.width=P.stam+'%';$('hTime').textContent=fmt(time);$('hRoom').textContent=roomAt(P.pos);
   {const el=$('eye'),t=E.type.ic+' '+E.type.name;if(el.textContent!==t)el.textContent=t;if(el.dataset.s!==E.type.id){if(el.dataset.s)beep(320,.12,'square',.06);el.dataset.s=E.type.id;el.className='b et-'+E.type.id}}  if(msgT>0){msgT-=dt;if(msgT<=0)$('msg').style.opacity=0}
   // audio
   const ed=E.pos.distanceTo(P.pos.clone().setY(0));sawG.gain.value=E.weapon==='saw'&&E.stun<=0&&E.state!=='patrol'?Math.max(0,.09*(1-ed/16)):0;sawO.frequency.value=70+Math.sin(tt*30)*8+(E.state==='chase'?30:0);
@@ -1131,7 +1180,7 @@ function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.
  ghosts.forEach((g2,i)=>{g2.position.y=WH-.9+Math.sin(tt*1.5+i)*.12;g2.rotation.y=Math.sin(tt*.7+i)*.5});
  bats.forEach(b=>{b.p+=.016*b.s;b.m.position.set(b.x+Math.sin(b.p)*3,WH-.6+Math.sin(b.p*3)*.2,b.z+Math.cos(b.p*1.3)*1.5);b.m.scale.y=.4+Math.abs(Math.sin(tt*14+b.x))*.8;b.m.lookAt(camera.position)});
  pickups?.forEach(p=>p.mesh&&(p.mesh.rotation.y+=.02));updGlints(tt);
- renderer.render(scene,camera)}
+ renderer.render(scene,camera);renderCam()}
 camera.position.set(0,1.6,0);camera.rotation.set(0,-Math.PI/2,0);
 if(new URLSearchParams(location.search).has('test'))window.gameTest={getState:()=>({width:W,height:H,grid:g,spawn:spawnCell,exitY,notes:P.notes,inventory:{...P.inv},botInventories:bots.map(b=>({...b.inv})),botCount:bots.length,search:P.search?P.search.t:null,stashes:stashes.map(s=>({name:s.name,x:s.pos.x,y:s.pos.y,z:s.pos.z,cx:s.cx,cy:s.cy,searched:s.searched,content:s.content})),player:{x:P.pos.x,z:P.pos.z},playing}),aimStash:(index)=>{const s=stashes[index];const c=floorCells.find(([x,y])=>Math.hypot(wc(x)-s.pos.x,wc(y)-s.pos.z)<2.2);if(!c)return false;P.pos.set(wc(c[0]),1.6,wc(c[1]));E.stun=999;const dx=s.pos.x-P.pos.x,dz=s.pos.z-P.pos.z;P.yaw=Math.atan2(-dx,-dz);P.pitch=Math.atan2(s.pos.y-1.6,Math.hypot(dx,dz));return true},setNearExit:()=>{P.pos.set(wc(W-2),1.6,wc(exitY));P.yaw=-Math.PI/2;P.pitch=0;E.stun=999},freezeBots:()=>bots.forEach(b=>b.wait=999)};
 // ================= SUPABASE: АККАУНТЫ / МОНЕТЫ / МАГАЗИН / ЛОББИ / МУЛЬТИПЛЕЕР =================
