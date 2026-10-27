@@ -240,7 +240,18 @@ body.touch #mapCanvas{width:1250px;max-width:none;max-height:none;flex:none;touc
 #guide .gal img.w{width:100%;height:auto;max-height:70px}
 #guide .gal .em{font-size:54px;line-height:100px}
 #gReady{position:sticky;bottom:0;background:#14101cf2;padding:12px;border-top:1px solid #fff3;display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:14px}
-#gReady.hidden{display:none}#gReady span{font-size:14px}#gBtn{padding:12px 26px;font-size:18px;border-radius:12px} 
+#gReady.hidden{display:none} #sb{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:8;pointer-events:none;font-family:"Trebuchet MS",Verdana,sans-serif}#sb.hidden{display:none}
+#sb .sbw{width:min(900px,96vw);max-height:92vh;overflow:hidden;background:rgba(22,22,24,.9);border:1px solid #ffffff22;border-radius:6px;box-shadow:0 10px 40px #000a;color:#e8e4d8}
+#sb .sbh{display:flex;justify-content:space-between;padding:8px 14px;background:#0006;font-size:14px;letter-spacing:.5px;color:#cfc9b8}
+#sb .sbs{display:flex;gap:30px;justify-content:center;padding:12px;border-bottom:1px solid #ffffff18}
+#sb .sbs div{text-align:center}#sb .sbs b{display:block;font-size:30px;color:#fff}#sb .sbs small{font-size:11px;color:#9a9484;letter-spacing:1px}
+#sb table{width:100%;border-collapse:collapse;font-size:14px}#sb th{font-weight:normal;font-size:12px;color:#9a9484;padding:6px 8px;text-align:center;border-bottom:1px solid #ffffff18}
+#sb td{padding:6px 8px;text-align:center;border-bottom:1px solid #ffffff0c}#sb .l{text-align:left}
+#sb tr.eg td{background:#6b1d1d66;color:#ffd0c0;font-weight:bold}
+#sb tr.me td{background:#2a4a2a77;color:#fff}#sb tr.me td:first-child{box-shadow:inset 3px 0 #5cff7a}
+#sb tr.dead td{opacity:.45}#sb i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:middle}
+#sb em{font-style:normal;font-size:10px;background:#ffffff22;border-radius:3px;padding:1px 4px;margin-right:6px;color:#cfc9b8}
+#sb td.sc{color:#ffd45a;font-weight:bold}#gReady span{font-size:14px}#gBtn{padding:12px 26px;font-size:18px;border-radius:12px} 
 </style></head><body><div id="blk"></div>
 <div id="hud" class="hidden">
  <span class="b" id="hRoom">Коридор</span>
@@ -402,7 +413,7 @@ function taskDone(t,n){t.got=Math.min(t.need,t.got+n);P.notes+=n;
  else if(t.id==='key')m='🔑 Учительская открыта ключом!';
  else m='📻 Рация включена! Шипит: «…держитесь, мы рядом…»';
  if(t.got>=t.need)beep(1400,.3,'sine',.2,2000);return m}
-function taskFound(o,carry){const t=TASKS[o.tk??0];if(!t)return'';
+function taskFound(o,carry){const t=TASKS[o.tk??0];if(!t)return'';P.found=(P.found|0)+1;
  if(!carry)return taskDone(t,1)+' (отнесено в «'+t.dest+'»)';
  t.carry=(t.carry||0)+1;let m=t.id==='code'?`🧩 Часть кода: <b>${t.code[t.got+t.carry-1]}</b>`:t.icon+' Взято: '+t.item;
  return m+` — ${FXV[t.id]||'установи'} в <b>«${t.dest}»</b> (подойди к ${FXN[t.id]||'устройству'} и нажми E)!`}
@@ -413,9 +424,9 @@ function installFx(t){if(t.got>=t.need){say(t.icon+' Уже готово');retur
 function fxUpd(t){if(t.fx&&t.got>=t.need)t.fx.led.material=new THREE.MeshBasicMaterial({color:0x40ff60})}
 function buildFixtures(){TASKS.forEach((t,i)=>{t.fx=null;const r=rooms.find(r=>r.name===t.dest&&!r.locked);if(!r)return;const c=floorCells.filter(([x,y])=>x>r.x0&&x<r.x1&&y>r.y0&&y<r.y1);if(!c.length)return;const cy=(r.y0+r.y1)/2;c.sort((a,b)=>(a[0]-b[0])*3+Math.abs(a[1]-cy)-Math.abs(b[1]-cy));const [cx,cz]=c[0],X=wc(cx),Z=wc(cz),y0=rampY(X,Z);const mat=new THREE.MeshStandardMaterial({color:FXC[t.id]||0x444444,roughness:.5,metalness:.4,emissive:0x221100});const post=box(.12,1,.12,M.metal,X,y0+.5,Z,world);const body=box(.7,.8,.35,mat,X,y0+1.35,Z,world);body.userData={kind:'fixture',ref:t};interact.push(body);const led=box(.12,.12,.05,new THREE.MeshBasicMaterial({color:0xff3020}),X,y0+1.62,Z+.19,world);const tag=box(.3,.18,.05,M.white,X,y0+1.3,Z+.19,world);t.fx={led,goal:new THREE.Vector3(X+CS,0,Z)};fxUpd(t)})}
 function destGoal(name){const r=rooms.find(r=>r.name===name&&!r.locked);if(!r)return randomGoal();const c=floorCells.filter(([x,y])=>x>r.x0&&x<r.x1&&y>r.y0&&y<r.y1);const p=c[Math.random()*c.length|0];return p?new THREE.Vector3(wc(p[0]),0,wc(p[1])):randomGoal()}
-function botTake(b,o){const tk=o.tk??0,t=TASKS[tk];if(!t)return;(b.carry=b.carry||[]).push(tk);botNotes++;b.goal=null;b.path=null;say(`${b.name} нашёл ${taskDesc(o)} — несёт в «${t.dest}»`,3);addChat(b.name,'Нашёл '+taskDesc(o)+'! Несу в «'+t.dest+'»');updHUD()}
+function botTake(b,o){const tk=o.tk??0,t=TASKS[tk];if(!t)return;(b.carry=b.carry||[]).push(tk);botNotes++;b.found=(b.found|0)+1;b.goal=null;b.path=null;say(`${b.name} нашёл ${taskDesc(o)} — несёт в «${t.dest}»`,3);addChat(b.name,'Нашёл '+taskDesc(o)+'! Несу в «'+t.dest+'»');updHUD()}
 function botDeliver(b){const rn=roomAt(b.pos);let any=false;b.carry=b.carry.filter(k=>{const t=TASKS[k];if(t&&(t.fx?Math.hypot(b.pos.x-t.fx.goal.x,b.pos.z-t.fx.goal.z)<2.2:rn===t.dest)){any=true;say(`📦 ${b.name}: `+taskDone(t,1),3);fxUpd(t);NET.send({t:'dlv',k,n:1});return false}return true});if(any){beep(1200,.2,'sine',.15,1800);addChat(b.name,'Отнёс на место!');updHUD();if(P.notes>=NN)unlockExit()}}
-function dropNote(x,z,tk){const p={x:cell(x),y:cell(z),item:'note',n:1,tk,seen:true};pickups.push(p);const m=itemMesh('note');m.position.set(x,.1,z);m.scale.multiplyScalar(1.25);world.add(m);p.mesh=m;m.traverse(o=>{o.userData={kind:'pickup',ref:p};interact.push(o)})}
+function dropNote(x,z,tk){const p={x:cell(x),y:cell(z),item:'note',n:1,tk,seen:true};pickups.push(p);const m=itemMesh('note');m.position.set(x,.1+rampY(x,z),z);m.scale.multiplyScalar(1.25);restOn(m,rampY(x,z));world.add(m);p.mesh=m;m.traverse(o=>{o.userData={kind:'pickup',ref:p};interact.push(o)})}
 function deliverCheck(){return;if(P.hidden||!TASKS.length)return;const rn=roomAt(P.pos);for(const t of TASKS){if(t.carry>0&&rn===t.dest){const n=t.carry;t.carry=0;NET.send({t:'dlv',k:TASKS.indexOf(t),n});beep(1200,.25,'sine',.2,1800);say('📦 '+taskDone(t,n),3);updHUD();if(P.notes===NN-1)egorSay('Хватит рыться в моей школе!');if(P.notes>=NN)unlockExit()}}}
 function taskDesc(o){const t=TASKS[o.tk??0];return t?t.icon+' '+t.item:'предмет'}
 function taskHUD(){return TASKS.map(t=>t.icon+(t.got>=t.need?'✅':t.got+'/'+t.need+(t.carry?'(🎒'+t.carry+'→'+t.dest+')':''))).join(' ')}
@@ -681,7 +692,7 @@ function buildWorld(){
   else if(s.pos.y<0.45){m=new THREE.Mesh(G.cyl,M.dark);m.scale.set(.25,.6,.25);m.position.set(s.pos.x+.5,.3,s.pos.z+.5);world.add(m);s.pos.copy(m.position)}
   else{m=box(1.2,.4,.6,new THREE.MeshBasicMaterial({visible:false}),s.pos.x,s.pos.y,s.pos.z,world)}
   m.userData={kind:'stash',ref:s};interact.push(m);s.mesh=m}
- for(const p of pickups){const m=itemMesh(p.item);m.position.set(wc(p.x)+(Math.random()-.5)*(p.h?.35:1.2),p.h||.1,wc(p.y)+(Math.random()-.5)*(p.h?.35:1.2));m.scale.multiplyScalar(1.25);world.add(m);p.mesh=m;m.traverse(o=>{o.userData={kind:'pickup',ref:p};interact.push(o)})}
+ for(const p of pickups){const m=itemMesh(p.item);m.position.set(wc(p.x)+(Math.random()-.5)*(p.h?.35:1.2),p.h||.1,wc(p.y)+(Math.random()-.5)*(p.h?.35:1.2));m.scale.multiplyScalar(1.25);restOn(m,p.h||0);world.add(m);p.mesh=m;m.traverse(o=>{o.userData={kind:'pickup',ref:p};interact.push(o)})}
  // exit
  const ed=box(.1,2.3,3.6,new THREE.MeshStandardMaterial({color:0x5a1a1a,metalness:.4,roughness:.5}),wc(W-1)-.95,1.15,CS*(exitY+1),world);ed.userData={kind:'exit'};interact.push(ed);exitDoor=ed;
  const es=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.45),new THREE.MeshBasicMaterial({map:T.exit}));es.position.set(wc(W-1)-1,2.65,CS*(exitY+1));es.rotation.y=-Math.PI/2;world.add(es);
@@ -726,6 +737,7 @@ const ITEMS={tomato:'🍅 помидор',petarda:'🧨 петарда',roll:'�
 const FOUND_ONLY=['coin','lockpick','phone','energy','speaker','battery'];
 const EGOR_QUOTES=['Завтра принесу помидоры. Много помидоров. Всем хватит.','Я не жиршко. Я — ВЕЛИКИЙ.','Катана уже заказана. Доставка в пятницу.','Кто назовёт меня помидором — тот сам станет кетчупом.','Бегайте, бегайте. На большой перемене я всегда догоняю.','Молоток в рюкзаке. Бензопила — в шкафу у трудовика.','Ляшко?.. Я запомнил каждого.','Мама говорит, что я просто ширококостный.','Сегодня Хеллоуин. Сегодня я не вожу. Сегодня я ОХОЧУСЬ.','Тихо… Я слышу, как ты дышишь.','Кто съел мой бутерброд — найду. Обязательно найду.','Самый высокий в классе видит всех. Даже за шкафом.','Смейтесь громче. Так вас проще найти.','Список: помидоры ✔ молоток ✔ катана … бензопила ✔'];
 const EGOR_LORE={title:'📖 Предыстория Егора',text:'Учебный год начался, вы перешли в 8 класс харьковского Лицея Профессионала.<br><br>Егор Шажко — самый высокий в классе, самый жирный в классе, и над ним стали смеяться в шутку, называли ляшко, жиршко, помидор, и так далее. Все одноклассники на большой перемене любили играть с ним в догонялки и обзывали его, чтобы он становился злее.<br><br>Каждый раз он обещал принести помидоры и закидать ими всех, и ещё принести катану, молоток и бензопилу…'};
+function restOn(m,y){m.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(m);if(isFinite(b.min.y))m.position.y+=y+.02-b.min.y}
 function itemMesh(t){const gr=new THREE.Group();
  if(t==='torch'){box(.1,.1,.32,M.dark,0,0,0,gr);box(.13,.13,.04,M.white,0,0,.17,gr)}
  else if(t==='tomato'){const s=new THREE.Mesh(G.sph,M.tomato);s.scale.setScalar(.09);gr.add(s);box(.03,.03,.03,M.stem,0,.09,0,gr)}
@@ -756,7 +768,7 @@ const flash=new THREE.SpotLight(0xfff2d8,22,22,0.5,0.45,1.3);camera.add(flash);f
 let held=null;function setHeld(){if(held)camera.remove(held);held=P.inv[P.sel]>0?itemMesh(P.sel):null;if(held){held.position.set(.32,-.3,-.6);camera.add(held)}}
 function reset(){
  exitOpen=false;rageOff();shellAssets();{const _r=Math.random;if(NET.seed!=null)Math.random=mulberry32(NET.seed);try{camBlind=null;buildGrid();buildWorld();fixLockedDoors();buildFixtures()}finally{Math.random=_r}}blk.on=false;blk.next=70+Math.random()*80;$('blk').classList.remove('on','lt');flash.intensity=0;closePanels(false);clearKeys();resetChat();
- Object.assign(P,{papers:[],coinsFound:0,boostT:0,phoneCd:0,gone:false,hp:3,stam:100,notes:0,inv:NET.loadout(),sel:'tomato',hidden:null,doomed:false,splat:0,search:null,flash:false,yaw:-Math.PI/2,pitch:0});P.spawnF=Math.random()<.5?1:0;P.pos.set(wc(spawnCell[0]),1.6,wc(spawnCell[1]+P.spawnF*FO));
+ Object.assign(P,{papers:[],coinsFound:0,boostT:0,phoneCd:0,gone:false,hp:3,stam:100,notes:0,found:0,hits:0,inv:NET.loadout(),sel:'tomato',hidden:null,doomed:false,splat:0,search:null,flash:false,yaw:-Math.PI/2,pitch:0});P.spawnF=Math.random()<.5?1:0;P.pos.set(wc(spawnCell[0]),1.6,wc(spawnCell[1]+P.spawnF*FO));
  for(const o of [E?.mesh,...bots.map(b=>b.mesh),...proj.map(p=>p.mesh),...decals,...traps.map(t=>t.mesh),...teachers.map(t=>t.mesh),...REM.map(r=>r.mesh)])if(o)o.parent?.remove(o);
  proj=[];decals=[];traps=[];
  const em=human(new THREE.MeshStandardMaterial({color:0x1d1d24}),new THREE.MeshStandardMaterial({color:0x2a3550}),0xd9a07a,1.12);
@@ -1033,7 +1045,7 @@ function throwItem(){if(P.hidden)return;const t=P.sel;if(t==='torch'){toggleFlas
  if(t==='energy'){if(P.inv.energy<=0){say('Нет энергетика — его можно только найти');return}P.inv.energy--;P.stam=100;P.boostT=10;beep(400,.15,'sine',.12,900);say('🧃 Энергетик! Выносливость не тратится 10 секунд');if(!P.inv.energy)P.sel='tomato';setHeld();updHUD();return}
  if(P.inv[t]<=0){say('Нет предметов: '+ITEMS[t]);return}P.inv[t]--;const dir=new THREE.Vector3();camera.getWorldDirection(dir);
  const p=camera.position.clone().add(dir.clone().multiplyScalar(.4));spawnProj(t,p,dir.multiplyScalar(t==='roll'?7:t==='speaker'?9:15).add(new THREE.Vector3(0,2,0)),'player');beep(300,.08,'sine',.1,150);setHeld();updHUD()}
-function addDrop(t,x,z){const p={x:cell(x),y:cell(z),item:t,n:1};pickups.push(p);const m=itemMesh(t);m.position.set(x,.1+rampY(x,z),z);world.add(m);p.mesh=m;m.traverse(o=>{o.userData={kind:'pickup',ref:p};interact.push(o)});return p}
+function addDrop(t,x,z){const p={x:cell(x),y:cell(z),item:t,n:1};pickups.push(p);const m=itemMesh(t);m.position.set(x,.1+rampY(x,z),z);restOn(m,rampY(x,z));world.add(m);p.mesh=m;m.traverse(o=>{o.userData={kind:'pickup',ref:p};interact.push(o)});return p}
 function dropItem(){if(P.hidden)return;const t=P.sel;if(t==='paper'){say('Записки выбросить нельзя');return}if(!(P.inv[t]>0)){say('Нечего выбросить: '+ITEMS[t]);return}
  const dir=new THREE.Vector3();camera.getWorldDirection(dir);dir.y=0;dir.normalize();let x=camera.position.x+dir.x*1.1,z=camera.position.z+dir.z*1.1;if(solid(cell(x),cell(z))){x=camera.position.x;z=camera.position.z}
  P.inv[t]--;addDrop(t,x,z);NET.send({t:'drop',k:t,x,z});say('Выброшено: '+ITEMS[t]+' — другой игрок может подобрать');beep(500,.08,'sine',.1,300);setHeld();updHUD()}
@@ -1057,7 +1069,7 @@ function updProj(dt){for(let i=proj.length-1;i>=0;i--){const p=proj[i];p.life-=d
   else{scene.remove(p.mesh);proj.splice(i,1);beep(90,.1)}continue}
  p.mesh.position.copy(np)}}
 function onHit(p,h){
- if(h.isE){NET.ehit(p.t);if(p.t==='tomato'){E.stun=2.6;splat(E.pos);egorGrowl(E.pos,2.4);beep(200,.3,'sawtooth',.15,60);say('🍅 Прямо в Егора! Он ослеплён');egorSay('АААРГХ! Мои глаза!');if(p.owner==='player'&&E.state!=='doomed'){E.state='investigate';E.goal=P.pos.clone().setY(0)}}else if(p.t==='petarda'){E.stun=1}return}
+ if(h.isE){NET.ehit(p.t);if(p.owner==='player')P.hits=(P.hits|0)+1;else if(p.owner&&typeof p.owner==='object'&&p.owner.alive!==undefined)p.owner.hits=(p.owner.hits|0)+1;if(p.t==='tomato'){E.stun=2.6;splat(E.pos);egorGrowl(E.pos,2.4);beep(200,.3,'sawtooth',.15,60);say('🍅 Прямо в Егора! Он ослеплён');egorSay('АААРГХ! Мои глаза!');if(p.owner==='player'&&E.state!=='doomed'){E.state='investigate';E.goal=P.pos.clone().setY(0)}}else if(p.t==='petarda'){E.stun=1}return}
  if(h.c==='player'){if(p.t==='tomato'){P.splat=2.5;say('🍅 Егор попал в тебя помидором!');beep(150,.2,'sawtooth')}else if(p.t==='hammer'){P.hp--;P.splat=1;beep(80,.3,'square',.25);say('🔨 Молоток прилетел в голову!');updHUD();if(P.hp<=0)lose('Егор вырубил тебя молотком.')}}
  else{const b=h.c;if(NET.on&&!NET.host)return;if(p.t==='hammer')catchBot(b);else b.safeT=0}}
 function catchBot(b){if(b.carry&&b.carry.length){b.carry.forEach(k=>dropNote(b.pos.x,b.pos.z,k));say(`${b.name} уронил задание — подбери и отнеси!`,3);b.carry=[]}if(b.remote)NET.send({t:'caught',to:b.id});b.alive=false;b.mesh.visible=false;scream(b.pos.clone(),.8+Math.random()*.7);addChat(b.name,'А-А-А-А-А!!! Егор!!!');if(b.hidden){b.hidden.occupant=null;b.hidden=null}say(`💀 Егор поймал ${b.name}!`,3);beep(100,.5,'sawtooth',.2,40);updHUD()}
@@ -1196,6 +1208,24 @@ function fixLockedDoors(){for(const r of rooms){if(!r.locked||!r.door)continue;c
  lf.userData={kind:'ldoor',ref:r};interact.push(lf);const hb=box(CS,2.5,1.6,new THREE.MeshBasicMaterial({visible:false}),X0+1,1.25,Z0+1,lg);hb.userData=lf.userData;interact.push(hb);r.doorG=lg;r.doorM=lf}}
 function botCount(d){const e=$('bn'),v=e?parseInt(e.value,10):NaN;return Number.isFinite(v)?Math.max(0,Math.min(50,v)):d}
 let LBN=null;addEventListener('input',e=>{if(e.target&&e.target.id==='bn')LBN=e.target.value});
+
+// ===== scoreboard (Tab) =====
+const sbEl=document.createElement('div');sbEl.id='sb';sbEl.className='hidden';document.body.appendChild(sbEl);
+const sumInv=o=>Object.values(o||{}).reduce((a,v)=>a+(typeof v==='number'?v:0),0);
+function sbRows(){const rows=[{name:PROF?.username||NET.name||'Ты',col:(PROF?myColor():'#4a82d6'),found:P.found|0,items:sumInv(P.inv),hits:P.hits|0,coins:P.coinsFound|0,alive:!P.gone,me:1}];
+ for(const r of REM){const s=r.st||[0,0,0,0],pl=NET.players.find(p=>p.id===r.id);rows.push({name:r.name,col:pl?.col||'#4a82d6',found:s[0],hits:s[1],coins:s[2],items:s[3],alive:r.alive})}
+ bots.forEach((b,i)=>rows.push({name:b.name,col:'hsl('+Math.round((i*.618034)%1*360)+',55%,55%)',found:b.found|0,items:sumInv(b.inv),hits:b.hits|0,coins:(b.inv&&b.inv.coin)|0,alive:b.alive,bot:1}));
+ rows.forEach(r=>r.score=r.found*10+r.hits*5+r.coins+(r.alive?10:0));rows.sort((a,b)=>b.score-a.score||(b.alive-a.alive));return rows}
+function renderSB(){const rows=sbRows(),n=rows.length,al=rows.filter(r=>r.alive).length,caught=n-al,mm=Math.floor(time/60),ss=String(Math.floor(time%60)).padStart(2,'0');
+ sbEl.innerHTML=`<div class="sbw"><div class="sbh"><span>🎃 Побег от Егора</span><span>⏱ ${mm}:${ss}</span></div>
+ <div class="sbs"><div><b>${P.notes}/${NN}</b><small>ЗАДАНИЯ</small></div><div><b>${al}/${n}</b><small>УЧЕНИКИ ЖИВЫ</small></div><div><b>${caught}</b><small>ПОЙМАНО ЕГОРОМ</small></div></div>
+ <table><thead><tr><th></th><th class="l">Игрок</th><th>📜 Найдено</th><th>🎒 Вещи</th><th>🍅 Попадания</th><th>🪙 Монеты</th><th>⭐ Очки</th><th>Статус</th></tr></thead><tbody>
+ <tr class="eg"><td>👹</td><td class="l">ЕГОР · ${esc((E&&E.type&&E.type.name)||'')}</td><td colspan="5">Поймал учеников: ${caught}</td><td>🪚</td></tr>
+ ${rows.map(r=>`<tr class="${r.me?'me':''} ${r.alive?'':'dead'}"><td></td><td class="l"><i style="background:${esc(r.col)}"></i>${r.bot?'<em>BOT</em>':''}${esc(r.name)}${r.me?' (ты)':''}</td><td>${r.found}</td><td>${r.items}</td><td>${r.hits}</td><td>${r.coins}</td><td class="sc">${r.score}</td><td>${r.alive?'✅ жив':'💀 пойман'}</td></tr>`).join('')}</tbody></table></div>`}
+let sbT=0;function sbShow(on){clearInterval(sbT);if(on&&!playing)return;sbEl.classList.toggle('hidden',!on);if(on){renderSB();sbT=setInterval(renderSB,250)}}
+addEventListener('keydown',e=>{if(e.code!=='Tab')return;e.preventDefault();if(e.target instanceof HTMLInputElement||e.repeat)return;sbShow(true)},true);
+addEventListener('keyup',e=>{if(e.code==='Tab'){e.preventDefault();sbShow(false)}},true);
+addEventListener('blur',()=>sbShow(false));
 // ================= LOOP =================
 const clock=new THREE.Clock();
 function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.05);const tt=performance.now()/1000;
@@ -1262,7 +1292,7 @@ const NET={on:false,live:false,host:false,started:false,id:null,name:'Гость
  sim(dt){if(!this.on||this.host){updEgor(dt);updBots(dt)}else clientTick(dt);if(this.on)this.tick(dt)},
  ghostTick(dt){time+=dt;if(this.host){updEgor(dt);updBots(dt)}else clientTick(dt);updProj(dt);this.tick(dt)},
  tick(dt){this.acc+=dt;if(this.acc<.125)return;this.acc=0;
-  const m={t:'p',id:this.id,x:+P.pos.x.toFixed(2),z:+P.pos.z.toFixed(2),y:+P.yaw.toFixed(2),m:P.moving?1:0};if(P.gone)m.g=1;
+  const m={t:'p',id:this.id,x:+P.pos.x.toFixed(2),z:+P.pos.z.toFixed(2),y:+P.yaw.toFixed(2),m:P.moving?1:0,f:P.found|0,h:P.hits|0,c:P.coinsFound|0,v:sumInv(P.inv)};if(P.gone)m.g=1;
   if(this.host){const tg=E.target?.who;m.e=[+E.pos.x.toFixed(2),+E.pos.z.toFixed(2),+E.yaw.toFixed(2),E.state,+Math.max(0,E.stun).toFixed(1),+Math.max(0,E.slip).toFixed(1),E.weapon,tg==='player'?this.id:(tg?.id||tg?.name||'')];
    m.b=bots.map(b=>[+b.pos.x.toFixed(2),+b.pos.z.toFixed(2),+b.yaw.toFixed(2),b.alive?1:0,b.hidden?1:0])}
   this.send(m)},
@@ -1288,7 +1318,7 @@ function clientTick(dt){const s=NET.snap;if(!s||!s.e)return;const e=s.e,k=NET.si
   b.mesh.visible=!!a[3]&&!a[4]})}
 function onMsg(m){const r=m.id?REM.find(x=>x.id===m.id):null;switch(m.t){
  case 'start':if(!NET.started&&m.players.some(p=>p.id===NET.id)){NET.started=true;beginNet(m)}break;
- case 'p':if(!r)break;r.tp=[m.x,m.z];r.ty=m.y;r.mv=m.m;if(m.g&&r.alive){r.alive=false;r.mesh.visible=false;if(r.hidden){r.hidden.occupant=null;r.hidden=null}}if(m.e&&!NET.host)NET.snap=m;break;
+ case 'p':if(!r)break;r.st=[m.f|0,m.h|0,m.c|0,m.v|0];r.tp=[m.x,m.z];r.ty=m.y;r.mv=m.m;if(m.g&&r.alive){r.alive=false;r.mesh.visible=false;if(r.hidden){r.hidden.occupant=null;r.hidden=null}}if(m.e&&!NET.host)NET.snap=m;break;
  case 'chat':addChat(m.n,m.m);break;
  case 'rdy':RDY.set.add(m.id);rdyCheck();break;
  case 'blk':startBlackout(m.d);break;
