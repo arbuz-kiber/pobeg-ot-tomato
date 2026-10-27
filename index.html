@@ -430,7 +430,7 @@ function taskFound(o,carry){const t=TASKS[o.tk??0];if(!t)return'';P.found=(P.fou
 const FXN={key:'двери учительской',power:'электрощитку',gen:'генератору',radio:'рации',code:'кодовому замку'},FXV={key:'вставь ключ',power:'вставь предохранитель',gen:'установи деталь',radio:'вставь батарейку',code:'введи цифру'};
 const FXC={key:0x8a5a2a,power:0x4a5a6a,gen:0x5a6a2a,radio:0x2a3a4a,code:0x3a3a5a};
 function darkRoom(){const t=TASKS.find(t=>t.id==='power');return t&&t.got<t.need?t.dest:null}
-function installFx(t){if(t.got>=t.need){say(t.icon+' Уже готово');return}if(!t.carry){say(`${t.icon} Нужен <b>${t.item}</b> — найди его в нычках.`,3);beep(150,.15);return}const n=t.carry;t.carry=0;P.myDlv=(P.myDlv|0)+n;NET.send({t:'dlv',k:TASKS.indexOf(t),n});beep(1200,.25,'sine',.2,1800);say('🔧 '+taskDone(t,n),3);fxUpd(t);updHUD();if(P.notes===NN-1)egorSay('Хватит рыться в моей школе!');if(P.notes>=NN)unlockExit()}
+function installFx(t){if(t.got>=t.need){say(t.icon+' Уже готово');return}if(!t.carry){say(`${t.icon} Нужен <b>${t.item}</b> — найди его в нычках.`,3);beep(150,.15);return}const n=t.carry;t.carry=0;setHeld();P.myDlv=(P.myDlv|0)+n;NET.send({t:'dlv',k:TASKS.indexOf(t),n});beep(1200,.25,'sine',.2,1800);say('🔧 '+taskDone(t,n),3);fxUpd(t);updHUD();if(P.notes===NN-1)egorSay('Хватит рыться в моей школе!');if(P.notes>=NN)unlockExit()}
 function fxUpd(t){if(t.fx&&t.got>=t.need)t.fx.led.material=new THREE.MeshBasicMaterial({color:0x40ff60})}
 function buildFixtures(){TASKS.forEach((t,i)=>{t.fx=null;const r=rooms.find(r=>r.name===t.dest&&!r.locked);if(!r)return;const c=floorCells.filter(([x,y])=>x>r.x0&&x<r.x1&&y>r.y0&&y<r.y1);if(!c.length)return;const cy=(r.y0+r.y1)/2;c.sort((a,b)=>(a[0]-b[0])*3+Math.abs(a[1]-cy)-Math.abs(b[1]-cy));const [cx,cz]=c[0],X=wc(cx),Z=wc(cz),y0=rampY(X,Z);const mat=new THREE.MeshStandardMaterial({color:FXC[t.id]||0x444444,roughness:.5,metalness:.4,emissive:0x221100});const post=box(.12,1,.12,M.metal,X,y0+.5,Z,world);const body=box(.7,.8,.35,mat,X,y0+1.35,Z,world);body.userData={kind:'fixture',ref:t};interact.push(body);const led=box(.12,.12,.05,new THREE.MeshBasicMaterial({color:0xff3020}),X,y0+1.62,Z+.19,world);const tag=box(.3,.18,.05,M.white,X,y0+1.3,Z+.19,world);t.fx={led,goal:new THREE.Vector3(X+CS,0,Z)};fxUpd(t)})}
 function destGoal(name){const r=rooms.find(r=>r.name===name&&!r.locked);if(!r)return randomGoal();const c=floorCells.filter(([x,y])=>x>r.x0&&x<r.x1&&y>r.y0&&y<r.y1);const p=c[Math.random()*c.length|0];return p?new THREE.Vector3(wc(p[0]),0,wc(p[1])):randomGoal()}
@@ -846,6 +846,10 @@ function nearWall(x,y){for(const d of[[0,-1],[0,1],[-1,0],[1,0]])if(g[y+d[1]]?.[
 let lamps=[],lampDefs=[],POOL=[],lampT=0,garland,ghosts=[],bats=[],exitDoor;
 // ================= CHARACTERS =================
 const ITEMS={tomato:'🍅 помидор',petarda:'🧨 петарда',roll:'🧻 рулон',torch:'🔦 фонарик',coin:'🪙 монетка',lockpick:'🔑 отмычка',phone:'📱 телефон',energy:'🧃 энергетик',speaker:'📢 колонка',battery:'🔋 батарея',paper:'📜 записки'};
+const isTk=k=>typeof k==='string'&&k.startsWith('tk:');const tkOf=k=>TASKS[+k.slice(3)];
+function selKeys(){return[...Object.keys(ITEMS).filter(k=>P.inv[k]>0||k==='tomato'),...TASKS.map((t,i)=>t.carry>0?'tk:'+i:null).filter(Boolean)]}
+const itemLabel=k=>isTk(k)?tkOf(k).icon+' '+tkOf(k).item:ITEMS[k];const itemCount=k=>isTk(k)?tkOf(k).carry:P.inv[k];
+function fixSel(){if(isTk(P.sel)&&!(tkOf(P.sel)?.carry>0))P.sel='tomato'}
 const FOUND_ONLY=['coin','lockpick','phone','energy','speaker','battery'];
 const EGOR_QUOTES=['Завтра принесу помидоры. Много помидоров. Всем хватит.','Я не жиршко. Я — ВЕЛИКИЙ.','Катана уже заказана. Доставка в пятницу.','Кто назовёт меня помидором — тот сам станет кетчупом.','Бегайте, бегайте. На большой перемене я всегда догоняю.','Молоток в рюкзаке. Бензопила — в шкафу у трудовика.','Ляшко?.. Я запомнил каждого.','Мама говорит, что я просто ширококостный.','Сегодня Хеллоуин. Сегодня я не вожу. Сегодня я ОХОЧУСЬ.','Тихо… Я слышу, как ты дышишь.','Кто съел мой бутерброд — найду. Обязательно найду.','Самый высокий в классе видит всех. Даже за шкафом.','Смейтесь громче. Так вас проще найти.','Список: помидоры ✔ молоток ✔ катана … бензопила ✔'];
 const EGOR_LORE={title:'📖 Предыстория Егора',text:'Учебный год начался, вы перешли в 8 класс харьковского Лицея Профессионала.<br><br>Егор Шажко — самый высокий в классе, самый жирный в классе, и над ним стали смеяться в шутку, называли ляшко, жиршко, помидор, и так далее. Все одноклассники на большой перемене любили играть с ним в догонялки и обзывали его, чтобы он становился злее.<br><br>Каждый раз он обещал принести помидоры и закидать ими всех, и ещё принести катану, молоток и бензопилу…'};
@@ -877,7 +881,7 @@ const P={papers:[],coinsFound:0,boostT:0,phoneCd:0,pos:new THREE.Vector3(),yaw:0
 let camBlind=null,camSpot=null,camOpen=false,camPts=[],camCur=null,camCam=null,camLight=null;
 let E,bots=[],proj=[],decals=[],traps=[],teachers=[],teachT=30,botNotes=0,playing=false,time=0,msgT=0;
 const flash=new THREE.SpotLight(0xfff2d8,22,22,0.5,0.45,1.3);camera.add(flash);flash.position.set(.2,-.2,0);flash.target.position.set(0,0,-1);camera.add(flash.target);
-let held=null;function setHeld(){if(held)camera.remove(held);held=P.inv[P.sel]>0?itemMesh(P.sel):null;if(held){held.position.set(.32,-.3,-.6);camera.add(held)}}
+let held=null;function setHeld(){fixSel();if(held)camera.remove(held);held=isTk(P.sel)?itemMesh('note'):P.inv[P.sel]>0?itemMesh(P.sel):null;if(held){held.position.set(.32,-.3,-.6);camera.add(held)}}
 function reset(){
  exitOpen=false;rageOff();shellAssets();{const _r=Math.random;if(NET.seed!=null)Math.random=mulberry32(NET.seed);try{camBlind=null;buildGrid();buildWorld();fixLockedDoors();buildFixtures()}finally{Math.random=_r}}blk.on=false;blkK=0;blk.next=70+Math.random()*80;$('blk').classList.remove('on','lt');flash.intensity=0;closePanels(false);clearKeys();resetChat();
  Object.assign(P,{crouchT:false,crouch:false,ventNear:false,inVent:false,eyeH:1.6,secrets:0,ventTip:0,myDlv:0,rescues:0,_resT:-99,papers:[],coinsFound:0,boostT:0,phoneCd:0,gone:false,hp:3,stam:100,notes:0,found:0,hits:0,inv:NET.loadout(),sel:'tomato',hidden:null,doomed:false,splat:0,search:null,flash:false,yaw:-Math.PI/2,pitch:0});P.spawnF=Math.random()<.5?1:0;P.pos.set(wc(spawnCell[0]),1.6,wc(spawnCell[1]+P.spawnF*FO));
@@ -908,7 +912,7 @@ function setWeapon(w){if(E.weapon===w)return;E.weapon=w;E.hand.clear();if(w){con
 // ================= UI =================
 function say(t,d=2.5){const m=$('msg');m.innerHTML=TOUCH?touchTxt(t):t;m.style.opacity=1;msgT=d}
 function updHUD(){$('hHp').textContent='❤'.repeat(Math.max(0,P.hp))+'·'.repeat(3-Math.max(0,P.hp));$('hNotes').textContent=taskHUD();$('hBots').textContent=bots.filter(b=>b.alive).length+'/'+bots.length;
- if(TOUCH)invTouch();else $('inv').innerHTML=Object.keys(ITEMS).filter(k=>P.inv[k]>0||k===P.sel||k==='tomato').map(k=>`<div class="${k===P.sel?'sel':''}">${ITEMS[k]} ×${P.inv[k]}</div>`).join('')+(P.coinsFound?`<div style="border-color:#ffc83a;color:#ffc83a">🪙 ${P.coinsFound}</div>`:'')+TASKS.filter(t=>t.carry>0).map(t=>`<div style="border-color:#ffd27a;color:#ffd27a" title="Отнеси в «${t.dest}»">${t.icon} ${t.item} ×${t.carry} → ${t.dest}</div>`).join('')}
+ if(TOUCH)invTouch();else $('inv').innerHTML=selKeys().map(k=>`<div class="${k===P.sel?'sel':''}"${isTk(k)?' style="border-color:#ffd27a;color:#ffd27a"':''}>${itemLabel(k)} ×${itemCount(k)}${isTk(k)?' → '+tkOf(k).dest:''}</div>`).join('')+(P.coinsFound?`<div style="border-color:#ffc83a;color:#ffc83a">🪙 ${P.coinsFound}</div>`:'')}
 // ================= AUDIO =================
 let AC,sawG,sawO,heartT=0;
 function audio(){AC=new (window.AudioContext||window.webkitAudioContext)();sawO=AC.createOscillator();sawO.type='sawtooth';sawO.frequency.value=70;const f=AC.createBiquadFilter();f.frequency.value=900;sawG=AC.createGain();sawG.gain.value=0;sawO.connect(f).connect(sawG).connect(AC.destination);sawO.start()}
@@ -959,7 +963,7 @@ addEventListener('keydown',e=>{
 addEventListener('keyup',e=>{K[e.code]=false;if(e.code==='KeyE')P.search=null;if(e.code==='KeyF')stopVoice()});
 addEventListener('blur',clearKeys);
 addEventListener('wheel',()=>playing&&cycle());
-function cycle(){const ks=Object.keys(ITEMS).filter(k=>P.inv[k]>0||k==='tomato');if(!ks.length)return;P.sel=ks[(ks.indexOf(P.sel)+1)%ks.length];setHeld();updHUD()}
+function cycle(){const ks=selKeys();if(!ks.length)return;P.sel=ks[(ks.indexOf(P.sel)+1)%ks.length];setHeld();updHUD()}
 const cv=renderer.domElement;
 function locked(){return TOUCH?(playing&&!panelOpen()):document.pointerLockElement===cv}
 function lockPtr(){if(!TOUCH)cv.requestPointerLock()}
@@ -1067,15 +1071,15 @@ const startGame=()=>readyGate(startGame0);
 $('play').onclick=$('again').onclick=e=>{const b=e.currentTarget,t0=b.textContent;b.textContent='Строим школу…';if(TOUCH)document.documentElement.requestFullscreen?.().catch(()=>{});setTimeout(()=>{startGame();b.textContent=t0},40)};
 function touchTxt(t){return t.replace('[держать E]','👆 держи палец —').replace('[E]','👆').replace(/<b>E<\/b>/g,'<b>👆 тап / держи</b>').replace(/<b>R<\/b>/g,'<b>📜 в слоте</b>')}
 let _ih='';
-function invTouch(){const el=$('inv'),ks=Object.keys(ITEMS).filter(k=>P.inv[k]>0||k==='tomato'||k===P.sel);
- const chips=(P.coinsFound?`<span class="chip">🪙 ${P.coinsFound}</span>`:'')+TASKS.filter(t=>t.carry>0).map(t=>`<span class="chip">${t.icon} ${t.item} ×${t.carry} → ${t.dest}</span>`).join('');
- const sl=ks.map(k=>{const [ic,...nm]=ITEMS[k].split(' ');return `<button class="slot${k===P.sel?' sel':''}" data-k="${k}"><b>${ic}</b><em>${nm.join(' ')}</em><i>${P.inv[k]}</i></button>`}).join('');
+function invTouch(){fixSel();const el=$('inv'),ks=selKeys();if(!ks.includes(P.sel))ks.push(P.sel);
+ const chips=(P.coinsFound?`<span class="chip">🪙 ${P.coinsFound}</span>`:'');
+ const sl=ks.map(k=>{const [ic,...nm]=itemLabel(k).split(' ');return `<button class="slot${k===P.sel?' sel':''}" data-k="${k}"><b>${ic}</b><em>${nm.join(' ')}</em><i>${itemCount(k)}</i></button>`}).join('');
  const h=`<span class="chips">${chips}</span><span class="bar"><button class="nav" data-d="-1">‹</button><span class="slots">${sl}</span><button class="nav" data-d="1">›</button></span>`;
  if(h===_ih)return;_ih=h;const old=el.querySelector('.slots')?.scrollLeft||0;el.innerHTML=h;const s=el.querySelector('.slots'),b=s.querySelector('.sel');s.scrollLeft=old;if(b)s.scrollTo({left:b.offsetLeft-s.clientWidth/2+b.clientWidth/2,behavior:'smooth'})}
-function cycD(d){const ks=Object.keys(ITEMS).filter(k=>P.inv[k]>0||k==='tomato');if(!ks.length)return;const i=Math.max(0,ks.indexOf(P.sel));P.sel=ks[(i+d+ks.length)%ks.length];setHeld();updHUD()}
+function cycD(d){const ks=selKeys();if(!ks.length)return;const i=Math.max(0,ks.indexOf(P.sel));P.sel=ks[(i+d+ks.length)%ks.length];setHeld();updHUD()}
 if(TOUCH){document.body.classList.add('touch');
  const joy=$('joy'),stick=$('stick'),look=$('look');let jid=null,lid=null,lx=0,ly=0,runT=false;
- const setJoy=t=>{const r=joy.getBoundingClientRect(),m=r.width/2;let dx=t.clientX-(r.left+m),dy=t.clientY-(r.top+m);const d=Math.hypot(dx,dy);if(d>m){dx*=m/d;dy*=m/d}stick.style.transform=`translate(${dx}px,${dy}px)`;const nx=dx/m,ny=dy/m;K.KeyW=ny<-.3;K.KeyS=ny>.3;K.KeyA=nx<-.3;K.KeyD=nx>.3;K.ShiftLeft=runT||d>m*1.05};
+ const setJoy=t=>{const r=joy.getBoundingClientRect(),m=r.width/2;let dx=t.clientX-(r.left+m),dy=t.clientY-(r.top+m);const d=Math.hypot(dx,dy);if(d>m){dx*=m/d;dy*=m/d}stick.style.transform=`translate(${dx}px,${dy}px)`;const nx=dx/m,ny=dy/m;K.KeyW=ny<-.3;K.KeyS=ny>.3;K.KeyA=nx<-.3;K.KeyD=nx>.3;K.ShiftLeft=runT};
  const endJoy=()=>{jid=null;stick.style.transform='';K.KeyW=K.KeyS=K.KeyA=K.KeyD=false;K.ShiftLeft=runT};
  joy.addEventListener('touchstart',e=>{e.preventDefault();const t=e.changedTouches[0];jid=t.identifier;setJoy(t)},{passive:false});
  joy.addEventListener('touchmove',e=>{e.preventDefault();for(const t of e.changedTouches)if(t.identifier===jid)setJoy(t)},{passive:false});
@@ -1097,7 +1101,7 @@ if(TOUCH){document.body.classList.add('touch');
  const act=(a,down)=>{if(!playing)return;if(a==='mic'){if(down){K.KeyF=true;startVoice()}else{K.KeyF=false;stopVoice()}return}if(a==='use'){if(down){if(panelOpen())return;K.KeyE=true;useKey()}else{K.KeyE=false;P.search=null}return}if(!down)return;
   if(a==='throw'&&!panelOpen())throwItem();else if(a==='item')cycle();else if(a==='drop'&&!panelOpen())dropItem();else if(a==='light')toggleFlash();else if(a==='map')toggleMap();else if(a==='chat')openChat();
   else if(a==='crouch'){toggleCrouch();document.querySelector('[data-a=crouch]').classList.toggle('on',!!P.crouchT)}
-  else if(a==='run'){runT=!runT;K.ShiftLeft=runT;document.querySelector('[data-a=run]').classList.toggle('on',runT)}};
+  else if(a==='run'){runT=!runT;K.ShiftLeft=runT;document.querySelector('[data-a=run]').classList.toggle('on',runT);say(runT?'🏃 Бег включён (шумно!)':'🚶 Бег выключен',1.4);vib(8)}};
  for(const b of document.querySelectorAll('#tbtns button')){const a=b.dataset.a;b.addEventListener('touchstart',e=>{e.preventDefault();act(a,true)},{passive:false});const up=e=>{e.preventDefault();act(a,false)};b.addEventListener('touchend',up,{passive:false});b.addEventListener('touchcancel',up,{passive:false})}
 
  {const cp=$('chatPanel'),cf=$('chatForm');let ft=null;
@@ -1120,7 +1124,7 @@ function useKey(){
  const u=aimed();if(!u)return;
  if(u.kind==='locker'){const L=u.ref;if(L.occupant){say(L.occupant==='player'?'':'Тут занято! — шепчет '+L.occupant.name);return}P.hidden=L;NET.hide(lockers.indexOf(L));enterLocker(L,'player');$('locker').style.display='block';P.yaw=L.yaw;P.pitch=0;if(!P.doomed)say('Ты спрятался. <b>E</b> — выйти')}
  else if(u.kind==='stash'){const s=u.ref;if(s.searched){say('Здесь уже пусто ('+s.name+')');return}P.search={s,t:0}}
- else if(u.kind==='pickup'){const p=u.ref;if(!p.mesh.parent)return;world.remove(p.mesh);NET.pk(p);if(p.item==='note'){beep(1000,.25,'sine',.2,1600);say(taskFound(p,true),4);updHUD();deliverCheck();return}if(p.item==='paper'){addPaper(p.paper);return}P.inv[p.item]+=p.n;say('Подобрано: '+ITEMS[p.item]+' ×'+p.n);beep(900,.1,'sine');setHeld();updHUD()}
+ else if(u.kind==='pickup'){const p=u.ref;if(!p.mesh.parent)return;world.remove(p.mesh);NET.pk(p);if(p.item==='note'){beep(1000,.25,'sine',.2,1600);say(taskFound(p,true),4);P.sel='tk:'+(p.tk??0);setHeld();updHUD();deliverCheck();return}if(p.item==='paper'){addPaper(p.paper);return}P.inv[p.item]+=p.n;say('Подобрано: '+ITEMS[p.item]+' ×'+p.n);beep(900,.1,'sine');setHeld();updHUD()}
  else if(u.kind==='ldoor')openLDoor(u.ref);
  else if(u.kind==='cam')openCam()
  else if(u.kind==='fixture')installFx(u.ref);
@@ -1137,7 +1141,7 @@ let RAGE=false,sirenO=null;function rageOn(){if(RAGE)return;RAGE=true;let d=docu
 function rageOff(){RAGE=false;const d=document.getElementById('rageFx');if(d)d.style.display='none';if(sirenO){sirenO.forEach(o=>{try{o.stop()}catch(e){}});sirenO=null}}
 function unlockExit(){exitOpen=true;rageOn();exitDoor.position.y=-3;say('🔓 Все задания выполнены! Беги к ВЫХОДУ в конце коридора 1 этажа!',4);egorSay('ТЫ НЕ УЙДЁШЬ!!! 😡')}
 function finishSearch(s){if(s.searched)return;s.searched=true;if(TOUCH)try{navigator.vibrate&&navigator.vibrate([20,40,20])}catch(e){}NET.srch(s);beep(500,.1,'triangle');noise(s.pos,4);
- if(s.content==='note'){beep(1000,.25,'sine',.2,1600);say(`«${s.name}»: `+taskFound(s,true),4);updHUD();deliverCheck();}
+ if(s.content==='note'){beep(1000,.25,'sine',.2,1600);say(`«${s.name}»: `+taskFound(s,true),4);P.sel='tk:'+(s.tk??0);setHeld();updHUD();deliverCheck();}
  else if(s.content==='paper')addPaper(s.paper);
  else if(s.content==='coins'){P.coinsFound+=s.n;beep(1300,.1,'sine',.15,1800);setTimeout(()=>beep(1600,.12,'sine',.15,2000),90);say(`🪙 В «${s.name}» нашлось <b>${s.n}</b> монет! Они добавятся после раунда`,3)}
  else if(s.content){const n=s.content==='tomato'?2:1;P.inv[s.content]+=n;say(`Нашёл в «${s.name}»: ${ITEMS[s.content]} ×${n}`+(FOUND_ONLY.includes(s.content)?' <i>(в магазине не купить)</i>':''));setHeld()}
@@ -1151,7 +1155,7 @@ function phoneHint(){if(P.phoneCd>0){say('📱 Телефон обновляет
  let rel=Math.atan2(-(t.x-P.pos.x),-(t.z-P.pos.z))+(Math.random()-.5)*.5-P.yaw;rel=((rel+Math.PI*3)%(Math.PI*2))-Math.PI;
  const A=['⬆️ прямо','↖️ впереди слева','⬅️ слева','↙️ сзади слева','⬇️ сзади','↘️ сзади справа','➡️ справа','↗️ впереди справа'];const k=((Math.round(rel/(Math.PI/4))%8)+8)%8;
  const dd=t.d<8?'совсем рядом':t.d<20?'недалеко':'далеко';say(`📱 Записка: <b>${A[k]}</b> · ${dd} (~${Math.max(5,Math.round(t.d/5)*5)} м)`,4)}
-function throwItem(){if(P.hidden)return;const t=P.sel;if(t==='torch'){toggleFlash();return}
+function throwItem(){if(P.hidden)return;const t=P.sel;if(isTk(t)){say(tkOf(t).icon+' Детали не бросают — выкинь (G / 📤) или вставь по стрелкам',2.5);return}if(t==='torch'){toggleFlash();return}
  if(t==='paper'){openRead();return}
  if(t==='battery'){say(camSpot&&!camSpot.on?'🔋 Подойди к монитору в комнате камер и нажми <b>E</b>':'🔋 Батарея нужна для монитора камер');return}
  if(t==='lockpick'){const u=aimed();if(u&&u.kind==='ldoor'){openLDoor(u.ref);return}say(P.inv.lockpick?'🔑 Наведись на запертую дверь и нажми <b>E</b> (или клик / 🎯)':'Нет отмычки — её можно только найти');return}
@@ -1160,7 +1164,7 @@ function throwItem(){if(P.hidden)return;const t=P.sel;if(t==='torch'){toggleFlas
  if(P.inv[t]<=0){say('Нет предметов: '+ITEMS[t]);return}P.inv[t]--;const dir=new THREE.Vector3();camera.getWorldDirection(dir);
  const p=camera.position.clone().add(dir.clone().multiplyScalar(.4));spawnProj(t,p,dir.multiplyScalar(t==='roll'?7:t==='speaker'?9:15).add(new THREE.Vector3(0,2,0)),'player');beep(300,.08,'sine',.1,150);setHeld();updHUD()}
 function addDrop(t,x,z){const p={x:cell(x),y:cell(z),item:t,n:1};pickups.push(p);const m=itemMesh(t);m.position.set(x,.1+rampY(x,z),z);restOn(m,rampY(x,z));world.add(m);p.mesh=m;m.traverse(o=>{o.userData={kind:'pickup',ref:p};interact.push(o)});return p}
-function dropItem(){if(P.hidden)return;const t=P.sel;if(t==='paper'){say('Записки выбросить нельзя');return}if(!(P.inv[t]>0)){say('Нечего выбросить: '+ITEMS[t]);return}
+function dropItem(){if(P.hidden)return;const t=P.sel;if(isTk(t)){const tk=+t.slice(3),T=TASKS[tk];if(!(T?.carry>0))return;const dir=new THREE.Vector3();camera.getWorldDirection(dir);dir.y=0;dir.normalize();let x=camera.position.x+dir.x*1.1,z=camera.position.z+dir.z*1.1;if(solid(cell(x),cell(z))){x=camera.position.x;z=camera.position.z}T.carry--;P.found=Math.max(0,(P.found|0)-1);dropNote(x,z,tk);NET.send({t:'dropn',tk,x,z});say('Выброшено: '+T.icon+' '+T.item+' — другой игрок может подобрать');beep(500,.08,'sine',.1,300);setHeld();updHUD();return}if(t==='paper'){say('Записки выбросить нельзя');return}if(!(P.inv[t]>0)){say('Нечего выбросить: '+ITEMS[t]);return}
  const dir=new THREE.Vector3();camera.getWorldDirection(dir);dir.y=0;dir.normalize();let x=camera.position.x+dir.x*1.1,z=camera.position.z+dir.z*1.1;if(solid(cell(x),cell(z))){x=camera.position.x;z=camera.position.z}
  P.inv[t]--;addDrop(t,x,z);NET.send({t:'drop',k:t,x,z});say('Выброшено: '+ITEMS[t]+' — другой игрок может подобрать');beep(500,.08,'sine',.1,300);setHeld();updHUD()}
 function spawnProj(t,p,v,owner){const m=itemMesh(t);m.position.copy(p);scene.add(m);proj.push({t,mesh:m,v,owner,life:4,fuse:0});NET.sp(t,p,v,owner)}
@@ -1315,11 +1319,13 @@ const blk={on:false,t:0,next:80};
 let hemiL=null,blkK=0;const _bgA=new THREE.Color(0x241f2e),_bgB=new THREE.Color(0x040309),_fgA=new THREE.Color(0x2a2434),_pnA=new THREE.Color(0xfff6e0),_pnB=new THREE.Color(0x1d1a16),_hA=new THREE.Color(0xc4bcd8),_hB=new THREE.Color(0x7d8fd0),_blkRed=new THREE.Color(0xff3a22);
 
 let _gd=null,_gdT=0;
+function guideCell(t){if(t.fx)return[cell(t.fx.goal.x),cell(t.fx.goal.z)];if(!t._gc||t._gn!==t.dest){const v=destGoal(t.dest);t._gc=[cell(v.x),cell(v.z)];t._gn=t.dest}return t._gc}
 function exitGuide(dt){
- if(!exitOpen||!playing){if(_gd)_gd.visible=false;_gdT=0;return}
+ const ht=isTk(P.sel)?tkOf(P.sel):null,tg=ht&&ht.got<ht.need?guideCell(ht):null,gk=tg?tg.join():'x';
+ if(!playing||(!exitOpen&&!tg)){if(_gd)_gd.visible=false;_gdT=0;return}if(gk!==exitGuide.k){exitGuide.k=gk;_gdT=0}
  if(!_gd){_gd=new THREE.Group();const sh=new THREE.Shape();sh.moveTo(0,.34);sh.lineTo(.26,-.14);sh.lineTo(0,-.02);sh.lineTo(-.26,-.14);sh.closePath();const geo=new THREE.ShapeGeometry(sh);geo.rotateX(-Math.PI/2);const mat=new THREE.MeshBasicMaterial({color:0x3dff7a,transparent:true,opacity:.9,side:THREE.DoubleSide,depthWrite:false,fog:false});_gd.userData.mat=mat;for(let i=0;i<240;i++){const m=new THREE.Mesh(geo,mat);m.visible=false;m.renderOrder=5;_gd.add(m)}scene.add(_gd)}
- _gd.visible=true;_gdT-=dt;
- if(_gdT<=0){_gdT=.3;const sx=cell(P.pos.x),sy=cell(P.pos.z),p=bfs(sx,sy,W-2,exitY)||[],ar=_gd.children;const full=[[sx,sy],...p];
+ _gd.visible=true;_gd.userData.mat.color.setHex(tg?0xffd23a:0x3dff7a);_gdT-=dt;
+ if(_gdT<=0){_gdT=.3;const sx=cell(P.pos.x),sy=cell(P.pos.z),p=(tg?bfs(sx,sy,tg[0],tg[1]):bfs(sx,sy,W-2,exitY))||[],ar=_gd.children;const full=[[sx,sy],...p];
   for(let i=0;i<ar.length;i++){const m=ar[i];if(i>=p.length){m.visible=false;continue}
    const a=full[i+1],b=full[i+2]||[a[0]+1,a[1]],dx=b[0]-a[0],dy=b[1]-a[1];
    if(Math.abs(dx)+Math.abs(dy)!==1||g[a[1]]?.[a[0]]===4){m.visible=false;continue}
@@ -1399,7 +1405,7 @@ function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.
  pickups?.forEach(p=>p.mesh&&(p.mesh.rotation.y+=.02));updGlints(tt);
  try{FXU(dt,tt)}catch(e){}try{FXU2(dt,tt)}catch(e){}renderer.render(scene,camera);renderCam()}
 camera.position.set(0,1.6,0);camera.rotation.set(0,-Math.PI/2,0);
-if(new URLSearchParams(location.search).has('test'))window.gameTest={getState:()=>({width:W,height:H,grid:g,spawn:spawnCell,exitY,notes:P.notes,inventory:{...P.inv},botInventories:bots.map(b=>({...b.inv})),botCount:bots.length,search:P.search?P.search.t:null,stashes:stashes.map(s=>({name:s.name,x:s.pos.x,y:s.pos.y,z:s.pos.z,cx:s.cx,cy:s.cy,searched:s.searched,content:s.content})),player:{x:P.pos.x,z:P.pos.z},playing}),aimStash:(index)=>{const s=stashes[index];const c=floorCells.find(([x,y])=>Math.hypot(wc(x)-s.pos.x,wc(y)-s.pos.z)<2.2);if(!c)return false;P.pos.set(wc(c[0]),1.6,wc(c[1]));E.stun=999;const dx=s.pos.x-P.pos.x,dz=s.pos.z-P.pos.z;P.yaw=Math.atan2(-dx,-dz);P.pitch=Math.atan2(s.pos.y-1.6,Math.hypot(dx,dz));return true},setNearExit:()=>{P.pos.set(wc(W-2),1.6,wc(exitY));P.yaw=-Math.PI/2;P.pitch=0;E.stun=999},freezeBots:()=>bots.forEach(b=>b.wait=999)};
+if(new URLSearchParams(location.search).has('test'))window.gameTest={probeTaskItem:()=>{TASKS[0].carry=1;P.sel='tk:0';setHeld();updHUD();_gdT=0;exitGuide(.01);const v=_gd?_gd.children.filter(m=>m.visible).length:0,col=_gd?.userData.mat.color.getHex();const inv=$('inv').innerText;dropItem();return{v,col,inv,carry:TASKS[0].carry,sel:P.sel,drops:pickups.filter(p=>p.item==='note'&&p.tk===0&&p.seen).length}},getState:()=>({width:W,height:H,grid:g,spawn:spawnCell,exitY,notes:P.notes,inventory:{...P.inv},botInventories:bots.map(b=>({...b.inv})),botCount:bots.length,search:P.search?P.search.t:null,stashes:stashes.map(s=>({name:s.name,x:s.pos.x,y:s.pos.y,z:s.pos.z,cx:s.cx,cy:s.cy,searched:s.searched,content:s.content})),player:{x:P.pos.x,z:P.pos.z},playing}),aimStash:(index)=>{const s=stashes[index];const c=floorCells.find(([x,y])=>Math.hypot(wc(x)-s.pos.x,wc(y)-s.pos.z)<2.2);if(!c)return false;P.pos.set(wc(c[0]),1.6,wc(c[1]));E.stun=999;const dx=s.pos.x-P.pos.x,dz=s.pos.z-P.pos.z;P.yaw=Math.atan2(-dx,-dz);P.pitch=Math.atan2(s.pos.y-1.6,Math.hypot(dx,dz));return true},setNearExit:()=>{P.pos.set(wc(W-2),1.6,wc(exitY));P.yaw=-Math.PI/2;P.pitch=0;E.stun=999},freezeBots:()=>bots.forEach(b=>b.wait=999)};
 // ================= SUPABASE: АККАУНТЫ / МОНЕТЫ / МАГАЗИН / ЛОББИ / МУЛЬТИПЛЕЕР =================
 const AUTH_DOM='@egor.game',QWAIT=15,REM=[];
 function mulberry32(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -1497,7 +1503,7 @@ function onMsg(m){const r=m.id?REM.find(x=>x.id===m.id):null;switch(m.t){
  case 'pk':{const p=pickups[m.i];if(p?.mesh?.parent){world.remove(p.mesh);if(p.item==='note')gotNote('Напарник',p)}break}
  case 'ns':if(NET.host)noise(new THREE.Vector3(m.x,0,m.z),m.r);break;
  case 'ehit':if(NET.host){if(m.k==='tomato'){E.stun=2.6;if(E.state!=='doomed'&&r){E.state='investigate';E.goal=r.pos.clone();E.path=[]}}else if(m.k==='petarda')E.stun=1}break;
- case 'drop':if(ITEMS[m.k])addDrop(m.k,m.x,m.z);break;
+ case 'dropn':if(TASKS[m.tk])dropNote(m.x,m.z,m.tk);break;case 'drop':if(ITEMS[m.k])addDrop(m.k,m.x,m.z);break;
  case 'sp':spawnProj(m.k,new THREE.Vector3(...m.p),new THREE.Vector3(...m.v),m.o==='egor'?'egor':'remote');break}}
 
 // ---------- Supabase init / auth ----------
