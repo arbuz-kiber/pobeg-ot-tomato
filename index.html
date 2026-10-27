@@ -583,7 +583,7 @@ function buildShell(){
   box(CS,.9,CS,M.wall,X0+1,2.75,Z0+1,world);
   box(.12,2.3,CS,M.wood,X0+.06,1.15,Z0+1,world);box(.12,2.3,CS,M.wood,X0+CS-.06,1.15,Z0+1,world);
   const zf=dz<0?Z0:Z0+CS;
-  if(g[y][x]===6){const r=rooms.find(r=>r.locked&&r.door[0]===x&&r.door[1]===y);const lg=new THREE.Group();world.add(lg);const lf=box(CS-.24,2.25,.12,A.door,X0+1,1.125,Z0+1,lg);box(.14,.2,.18,M.metal,X0+1.55,1.05,Z0+1,lg);box(.3,.3,.14,new THREE.MeshStandardMaterial({color:0x8a1a1a}),X0+1,1.7,Z0+1,lg);const lp2=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.3),plateMat('🔒 ЗАПЕРТО'));lp2.position.set(X0+1,1.3,Z0+1+(dz<0?.07:-.07));if(dz>0)lp2.rotation.y=Math.PI;lg.add(lp2);lf.userData={kind:'ldoor',ref:r};interact.push(lf);if(r){r.doorG=lg;r.doorM=lf}}
+  if(g[y][x]===6){const r=rooms.find(r=>r.locked&&r.door[0]===x&&r.door[1]===y);const lg=new THREE.Group();world.add(lg);const lf=box(CS-.24,2.25,.12,A.door,X0+1,1.125,Z0+1,lg);box(.14,.2,.18,M.metal,X0+1.55,1.05,Z0+1,lg);box(.3,.3,.14,new THREE.MeshStandardMaterial({color:0x8a1a1a}),X0+1,1.7,Z0+1,lg);const lp2=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.3),plateMat('🔒 ЗАПЕРТО'));lp2.position.set(X0+1,1.3,Z0+1+(dz<0?.07:-.07));if(dz>0)lp2.rotation.y=Math.PI;lg.add(lp2);lf.userData={kind:'ldoor',ref:r};interact.push(lf);{const hb=box(CS,2.5,1.6,new THREE.MeshBasicMaterial({visible:false}),X0+1,1.25,Z0+1,lg);hb.userData=lf.userData;interact.push(hb)}if(r){r.doorG=lg;r.doorM=lf}}
   else for(const hx of[X0+.2,X0+CS-.2]){box(.05,2.2,.95,A.door,hx,1.1,zf+dz*.5,world);box(.07,.08,.16,M.metal,hx,1.05,zf+dz*.85,world)}
   const zc=dz<0?Z0+CS:Z0,pl=new THREE.Mesh(new THREE.PlaneGeometry(1.5,.38),plateMat(label));pl.position.set(X0+1,2.62,zc+(dz<0?.03:-.03));if(dz>0)pl.rotation.y=Math.PI;world.add(pl)}
 }
@@ -917,7 +917,7 @@ if(TOUCH){document.body.classList.add('touch');
 
 // ================= GAMEPLAY =================
 const ray=new THREE.Raycaster();ray.far=2.1;
-function aimed(){ray.setFromCamera({x:0,y:0},camera);const h=ray.intersectObjects(interact,false).find(h=>!(h.object.userData.kind==='pickup'&&!h.object.userData.ref.mesh.parent));return h?h.object.userData:null}
+function aimed(){ray.setFromCamera({x:0,y:0},camera);const h=ray.intersectObjects(interact,false).find(h=>!(h.object.userData.kind==='pickup'&&!h.object.userData.ref.mesh.parent));if(h)return h.object.userData;const f=ray.far;ray.far=3.4;const d=ray.intersectObjects(interact.filter(o=>o.userData.kind==='ldoor'),false)[0];ray.far=f;return d?d.object.userData:null}
 function noise(pos,r,src){if(NET.on&&!NET.host){NET.noiseSend(pos,r);return}if(!E||E.state==='chase'||E.state==='doomed')return;if(E.pos.distanceTo(pos)<r*E.type.hear*(RAGE?2:1)){E.state='investigate';E.goal=pos.clone().setY(0);E.path=[];E.pathT=0;if(Math.random()<.5)egorSay(['Кто там?','Я тебя слышу!','Выходи по-хорошему!'][Math.random()*3|0])}}
 function egorSay(t){if(E.say>0)return;E.say=4;say('<b style="color:#ff6a3a">Егор:</b> '+t,2)}
 function canSee(from,yaw,to,range=18,wide=false){const d=from.distanceTo(to);if(d>range)return false;const a=Math.atan2(to.x-from.x,to.z-from.z);let da=Math.abs(((a-yaw+Math.PI*3)%(Math.PI*2))-Math.PI);if(d>3&&!wide&&da>1.1)return false;return los(from,to)}
@@ -929,10 +929,11 @@ function useKey(){
  if(u.kind==='locker'){const L=u.ref;if(L.occupant){say(L.occupant==='player'?'':'Тут занято! — шепчет '+L.occupant.name);return}P.hidden=L;NET.hide(lockers.indexOf(L));enterLocker(L,'player');$('locker').style.display='block';P.yaw=L.yaw;P.pitch=0;if(!P.doomed)say('Ты спрятался. <b>E</b> — выйти')}
  else if(u.kind==='stash'){const s=u.ref;if(s.searched){say('Здесь уже пусто ('+s.name+')');return}P.search={s,t:0}}
  else if(u.kind==='pickup'){const p=u.ref;if(!p.mesh.parent)return;world.remove(p.mesh);NET.pk(p);if(p.item==='note'){beep(1000,.25,'sine',.2,1600);say(taskFound(p,true),4);updHUD();deliverCheck();return}if(p.item==='paper'){addPaper(p.paper);return}P.inv[p.item]+=p.n;say('Подобрано: '+ITEMS[p.item]+' ×'+p.n);beep(900,.1,'sine');setHeld();updHUD()}
- else if(u.kind==='ldoor'){const r=u.ref;if(!r)return;if(P.inv.lockpick<=0){say('🔒 Дверь заперта. Нужна <b>🔑 отмычка</b> — её можно только найти.');beep(150,.15);return}P.inv.lockpick--;unlockRoom(r,true);if(P.sel==='lockpick'&&!P.inv.lockpick)P.sel='tomato';setHeld();updHUD()}
+ else if(u.kind==='ldoor')openLDoor(u.ref)
  else if(u.kind==='fixture')installFx(u.ref);
  else if(u.kind==='exit'){if(exitOpen)win();else say('Выход заперт. Осталось: '+TASKS.filter(t=>t.got<t.need).map(t=>t.icon+' '+t.name+' → «'+t.dest+'»').join(', '),3)}
 }
+function openLDoor(r){if(!r){say('🔒 Эта дверь не открывается (ошибка комнаты)');return}if(!r.locked)return;if(!(P.inv.lockpick>0)){say('🔒 Дверь заперта. Нужна <b>🔑 отмычка</b> — её можно только найти.');beep(150,.15);return}P.inv.lockpick--;unlockRoom(r,true);if(P.sel==='lockpick'&&!P.inv.lockpick)P.sel='tomato';setHeld();updHUD()}
 function unlockRoom(r,mine){if(!r||!r.locked)return;r.locked=false;g[r.door[1]][r.door[0]]=1;if(r.doorG){world.remove(r.doorG);const i=interact.indexOf(r.doorM);if(i>=0)interact.splice(i,1)}
  stashes.forEach(s=>{if(s.locked===r)s.locked=null});lockers.forEach(L=>{if(L.locked===r)L.locked=null});
  {const d=layout.doors.find(d=>d[0]===r.door[0]&&d[1]===r.door[1]);if(d){const A=shellAssets(),X0=d[0]*CS,Z0=d[1]*CS,zf=d[2]<0?Z0:Z0+CS;for(const hx of[X0+.2,X0+CS-.2])box(.05,2.2,.95,A.door,hx,1.1,zf+d[2]*.5,world)}}
@@ -959,7 +960,7 @@ function phoneHint(){if(P.phoneCd>0){say('📱 Телефон обновляет
  const dd=t.d<8?'совсем рядом':t.d<20?'недалеко':'далеко';say(`📱 Записка: <b>${A[k]}</b> · ${dd} (~${Math.max(5,Math.round(t.d/5)*5)} м)`,4)}
 function throwItem(){if(P.hidden)return;const t=P.sel;if(t==='torch'){toggleFlash();return}
  if(t==='paper'){openRead();return}
- if(t==='lockpick'){say(P.inv.lockpick?'🔑 Подойди к запертой двери и нажми <b>E</b>':'Нет отмычки — её можно только найти');return}
+ if(t==='lockpick'){const u=aimed();if(u&&u.kind==='ldoor'){openLDoor(u.ref);return}say(P.inv.lockpick?'🔑 Наведись на запертую дверь и нажми <b>E</b> (или клик / 🎯)':'Нет отмычки — её можно только найти');return}
  if(t==='phone'){if(P.inv.phone<=0){say('Нет телефона — его можно только найти');return}phoneHint();return}
  if(t==='energy'){if(P.inv.energy<=0){say('Нет энергетика — его можно только найти');return}P.inv.energy--;P.stam=100;P.boostT=10;beep(400,.15,'sine',.12,900);say('🧃 Энергетик! Выносливость не тратится 10 секунд');if(!P.inv.energy)P.sel='tomato';setHeld();updHUD();return}
  if(P.inv[t]<=0){say('Нет предметов: '+ITEMS[t]);return}P.inv[t]--;const dir=new THREE.Vector3();camera.getWorldDirection(dir);
@@ -1168,7 +1169,7 @@ const NET={on:false,live:false,host:false,started:false,id:null,name:'Гость
    r.mesh.position.set(r.pos.x,rampY(r.pos.x,r.pos.z),r.pos.z);r.mesh.rotation.y=r.yaw;animChar(r,r.mesh.userData,!!r.mv)}},
  async finish(won){if(this.done)return;this.done=true;P.gone=true;if(!sb||!PROF)return;
   const c=(won?60:15)+Math.min(P.notes,NN)*8+bots.filter(b=>b.alive).length*3+(P.coinsFound||0);
-  try{const{data}=await sb.rpc('add_coins',{p_token:PROF.token,p_amount:c});if(data!=null){const got=data-PROF.coins;PROF.coins=data;try{await sb.rpc('submit_run',{p_token:PROF.token,p_time:won?time:null,p_coins:Math.max(0,Math.round(got))})}catch(e){}$('oP').innerHTML+=`<br>🪙 +${got>0?got:0} монет (всего ${data})`}}catch(e){}}
+  try{const{data}=await sb.rpc('add_coins',{p_token:PROF.token,p_amount:c});if(data!=null){const got=data-PROF.coins;PROF.coins=data;await lbSubmit(won?time:null,Math.max(0,Math.round(got)));$('oP').innerHTML+=`<br>🪙 +${got>0?got:0} монет (всего ${data})`}}catch(e){}}
 };
 function gotNote(t,o){say(t+' нашёл '+taskDesc(o||{})+' — несёт в «'+(TASKS[(o||{}).tk??0]?.dest||'?')+'»',3);beep(1000,.2,'sine',.15,1600);updHUD()}
 function clientTick(dt){const s=NET.snap;if(!s||!s.e)return;const e=s.e,k=NET.si?Math.min(1,dt*10):1;NET.si=true;
@@ -1270,10 +1271,15 @@ function invite(name){name=(name||'').trim().toLowerCase();if(!name||!NET.code)r
 const LBL_KEY='egor_lb_v1';let LBK='time';
 function lbLocalGet(){try{return JSON.parse(localStorage.getItem(LBL_KEY))||{t:[],c:0}}catch(e){return{t:[],c:0}}}
 function lbLocalAdd(t,c){const d=lbLocalGet();let nb=false;d.c=(d.c||0)+(c||0);if(t){nb=!d.t.length||t<d.t[0];d.t.push(t);d.t.sort((a,b)=>a-b);d.t=d.t.slice(0,10)}try{localStorage.setItem(LBL_KEY,JSON.stringify(d))}catch(e){}return nb}
-async function loadLB(){const k=LBK;let rows=null;if(sb){try{const{data,error}=await sb.rpc('leaderboard',{p_kind:k,p_limit:20});if(!error&&Array.isArray(data))rows=data}catch(e){}}
+let LBERR='';const LBP_KEY='egor_lb_pending';
+const lbPend=()=>{try{return JSON.parse(localStorage.getItem(LBP_KEY))||[]}catch(e){return[]}};
+const lbPendSet=a=>{try{localStorage.setItem(LBP_KEY,JSON.stringify(a.slice(-30)))}catch(e){}};
+async function lbSubmit(t,c){if(!sb||!PROF)return;try{const{error}=await sb.rpc('submit_run',{p_token:PROF.token,p_time:t,p_coins:c});if(error)throw error}catch(e){LBERR=e.message||String(e);console.warn('submit_run:',e);if(t||c)lbPendSet([...lbPend(),{t,c}])}}
+async function lbFlush(){const a=lbPend();if(!a.length||!sb||!PROF)return;lbPendSet([]);for(const r of a)await lbSubmit(r.t,r.c)}
+async function loadLB(){const k=LBK;let rows=null;LBERR='';if(sb){await lbFlush();try{const{data,error}=await sb.rpc('leaderboard',{p_kind:k,p_limit:20});if(error)throw error;if(Array.isArray(data))rows=data}catch(e){LBERR=e.message||String(e);console.warn('leaderboard:',e)}}
  const el=$('lbList');if(!el||HV!=='lb'||LBK!==k)return;const medal=['🥇','🥈','🥉'],fv=v=>k==='time'?'⏱ '+fmt(v):'🪙 '+Math.round(v),loc=lbLocalGet();
  if(rows)el.innerHTML=rows.length?rows.map((r,i)=>`<div class="it" style="${PROF&&r.username===PROF.username?'border-color:#b8ff7b;':''}"><span>${medal[i]||(i+1)+'.'} ${esc(r.username)}</span><b>${fv(r.val)}</b></div>`).join(''):'<p>Пока никого нет. Стань первым!</p>';
- else el.innerHTML='<p class="hn">Общая таблица недоступна (в Supabase не выполнен leaderboard.sql). Показаны результаты этого устройства.</p>'+(k==='time'?(loc.t.length?loc.t.map((t,i)=>`<div class="it"><span>${medal[i]||(i+1)+'.'} Побег</span><b>⏱ ${fmt(t)}</b></div>`).join(''):'<p>Ты ещё не сбегал из школы.</p>'):`<div class="it"><span>Найдено монет всего</span><b>🪙 ${loc.c||0}</b></div>`)}
+ else el.innerHTML='<p class="hn">Общая таблица недоступна (в Supabase не выполнен leaderboard.sql). Показаны результаты этого устройства.</p>'+(LBERR?'<p class="hn" style="color:#ff8a8a;word-break:break-word">Ошибка Supabase: '+esc(LBERR)+'</p>':'')+(k==='time'?(loc.t.length?loc.t.map((t,i)=>`<div class="it"><span>${medal[i]||(i+1)+'.'} Побег</span><b>⏱ ${fmt(t)}</b></div>`).join(''):'<p>Ты ещё не сбегал из школы.</p>'):`<div class="it"><span>Найдено монет всего</span><b>🪙 ${loc.c||0}</b></div>`)}
 function hub(v,note=''){const keep=$('hi')?.value||'';HV=v;['menu','over','pause'].forEach(i=>$(i).classList.add('hidden'));const h=$('hub');h.classList.remove('hidden');
  const me=PROF?`<div class="b">👤 ${esc(PROF.username)} · 🪙 ${PROF.coins}</div>`:'';let b='';
  if(v==='auth')b=`<h2>Аккаунт</h2><input id="hu" placeholder="Ник (a-z, 0-9, _)" maxlength="16" autocomplete="username"><input id="hp" type="password" placeholder="Пароль (от 6 символов)" autocomplete="current-password"><div class="row"><button data-a="login">Войти</button><button data-a="signup">Регистрация</button></div><p id="hm" class="hn">${esc(note)}</p><button class="sm" data-a="solo0">Играть офлайн (без монет)</button><button class="sm" data-a="lb">🏆 Таблица лидеров</button><button class="sm" data-a="guide">📖 Гайд: как играть</button>`;
