@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Побег от Егора 3D — Хеллоуин в лицее</title>
+<title>🔥🔥 Побег от Егора 3D — Хеллоуин в лицее</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#000;color:#f3eee2;font-family:"Trebuchet MS",Verdana,sans-serif;overflow:hidden;user-select:none}
@@ -420,7 +420,7 @@ function taskFound(o,carry){const t=TASKS[o.tk??0];if(!t)return'';P.found=(P.fou
 const FXN={key:'двери учительской',power:'электрощитку',gen:'генератору',radio:'рации',code:'кодовому замку'},FXV={key:'вставь ключ',power:'вставь предохранитель',gen:'установи деталь',radio:'вставь батарейку',code:'введи цифру'};
 const FXC={key:0x8a5a2a,power:0x4a5a6a,gen:0x5a6a2a,radio:0x2a3a4a,code:0x3a3a5a};
 function darkRoom(){const t=TASKS.find(t=>t.id==='power');return t&&t.got<t.need?t.dest:null}
-function installFx(t){if(t.got>=t.need){say(t.icon+' Уже готово');return}if(!t.carry){say(`${t.icon} Нужен <b>${t.item}</b> — найди его в нычках.`,3);beep(150,.15);return}const n=t.carry;t.carry=0;NET.send({t:'dlv',k:TASKS.indexOf(t),n});beep(1200,.25,'sine',.2,1800);say('🔧 '+taskDone(t,n),3);fxUpd(t);updHUD();if(P.notes===NN-1)egorSay('Хватит рыться в моей школе!');if(P.notes>=NN)unlockExit()}
+function installFx(t){if(t.got>=t.need){say(t.icon+' Уже готово');return}if(!t.carry){say(`${t.icon} Нужен <b>${t.item}</b> — найди его в нычках.`,3);beep(150,.15);return}const n=t.carry;t.carry=0;P.myDlv=(P.myDlv|0)+n;NET.send({t:'dlv',k:TASKS.indexOf(t),n});beep(1200,.25,'sine',.2,1800);say('🔧 '+taskDone(t,n),3);fxUpd(t);updHUD();if(P.notes===NN-1)egorSay('Хватит рыться в моей школе!');if(P.notes>=NN)unlockExit()}
 function fxUpd(t){if(t.fx&&t.got>=t.need)t.fx.led.material=new THREE.MeshBasicMaterial({color:0x40ff60})}
 function buildFixtures(){TASKS.forEach((t,i)=>{t.fx=null;const r=rooms.find(r=>r.name===t.dest&&!r.locked);if(!r)return;const c=floorCells.filter(([x,y])=>x>r.x0&&x<r.x1&&y>r.y0&&y<r.y1);if(!c.length)return;const cy=(r.y0+r.y1)/2;c.sort((a,b)=>(a[0]-b[0])*3+Math.abs(a[1]-cy)-Math.abs(b[1]-cy));const [cx,cz]=c[0],X=wc(cx),Z=wc(cz),y0=rampY(X,Z);const mat=new THREE.MeshStandardMaterial({color:FXC[t.id]||0x444444,roughness:.5,metalness:.4,emissive:0x221100});const post=box(.12,1,.12,M.metal,X,y0+.5,Z,world);const body=box(.7,.8,.35,mat,X,y0+1.35,Z,world);body.userData={kind:'fixture',ref:t};interact.push(body);const led=box(.12,.12,.05,new THREE.MeshBasicMaterial({color:0xff3020}),X,y0+1.62,Z+.19,world);const tag=box(.3,.18,.05,M.white,X,y0+1.3,Z+.19,world);t.fx={led,goal:new THREE.Vector3(X+CS,0,Z)};fxUpd(t)})}
 function destGoal(name){const r=rooms.find(r=>r.name===name&&!r.locked);if(!r)return randomGoal();const c=floorCells.filter(([x,y])=>x>r.x0&&x<r.x1&&y>r.y0&&y<r.y1);const p=c[Math.random()*c.length|0];return p?new THREE.Vector3(wc(p[0]),0,wc(p[1])):randomGoal()}
@@ -552,8 +552,8 @@ function lockerDir(L){const D=[[0,1],[0,-1],[1,0],[-1,0]];for(const[dx,dy]of D)i
 function roomAt(p){const x=cell(p.x),y=cell(p.z);for(let i=rooms.length-1;i>=0;i--){const r=rooms[i];if(x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1)return r.name}return 'Коридор'}
 // ================= RENDER =================
 const renderer=new THREE.WebGLRenderer({antialias:!TOUCH,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,TOUCH?1.25:1.75));renderer.setSize(innerWidth,innerHeight);
-renderer.shadowMap.enabled=false;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.3;document.body.prepend(renderer.domElement);
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x241f2e);scene.fog=new THREE.FogExp2(0x2a2434,0.017);
+renderer.shadowMap.enabled=false;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.45;document.body.prepend(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x241f2e);scene.fog=new THREE.FogExp2(0x332b3a,0.011);
 const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,0.05,120);scene.add(camera);
 addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()});
 if(TOUCH){let n=0,t0=performance.now(),pr=renderer.getPixelRatio();const cap=Math.min(devicePixelRatio,1.5);(function f(){n++;const t=performance.now();if(t-t0>2000){const fps=n*1000/(t-t0);n=0;t0=t;if(fps<40&&pr>.7)pr=Math.max(.7,pr-.15);else if(fps>57&&pr<cap)pr=Math.min(cap,pr+.1);if(Math.abs(pr-renderer.getPixelRatio())>.01){renderer.setPixelRatio(pr);renderer.setSize(innerWidth,innerHeight)}}requestAnimationFrame(f)})()}
@@ -589,6 +589,37 @@ function pumpkin(x,y,z,s=0.35,light){const p=new THREE.Group();const b=new THREE
  if(light){const l=new THREE.PointLight(0xff8a2a,6,9,1.6);l.position.set(0,s,s*1.5);p.add(l)}return p}
 const PAL=[['#d6cbaa','#35594a','#6b2a1e'],['#d9d0b6','#2f4f6b','#7a2a1e'],['#dccaa0','#6b3030','#3a2418'],['#cfd4c2','#4a6a55','#7a5a2a'],['#e2d6ba','#3b4a70','#5a2a1e']];
 function rePaint(){const p=PAL[Math.random()*PAL.length|0];M.wall.color.set(p[0]);M.dado.color.set(p[1]);M.trim.color.set(p[2]);M.floor.color.setHex([0x8d8676,0x7f8b87,0x93806a,0x7d8b79][Math.random()*4|0])}
+
+/* ===== BEAUTY x5: красивая школа ===== */
+M.wall.map=ctex(256,256,(x,w,h)=>{const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,'#fffaf0');g.addColorStop(1,'#f0e6d0');x.fillStyle=g;x.fillRect(0,0,w,h);grain(x,w,h,10);x.fillStyle='#0000000a';for(let i=0;i<40;i++)x.fillRect(Math.random()*w,Math.random()*h,Math.random()*40+4,1);x.fillStyle='#0001';x.fillRect(0,h-6,w,6)});
+M.wall.roughness=.8;
+M.floor.map=ctex(256,256,(x,w,h)=>{const n=4,t=w/n;for(let i=0;i<n;i++)for(let j=0;j<n;j++){const k=(i+j)%2;x.fillStyle=k?'#cfc6b6':'#efe7d8';x.fillRect(i*t,j*t,t,t);for(let q=0;q<90;q++){x.fillStyle='hsla('+(20+Math.random()*30)+',20%,'+(30+Math.random()*50)+'%,.28)';x.fillRect(i*t+Math.random()*t,j*t+Math.random()*t,2,2)}const g=x.createLinearGradient(i*t,j*t,i*t+t,j*t+t);g.addColorStop(0,'#fff3');g.addColorStop(.5,'#fff0');g.addColorStop(1,'#0002');x.fillStyle=g;x.fillRect(i*t,j*t,t,t)}x.strokeStyle='#5a4a3a';x.lineWidth=2;for(let i=0;i<=n;i++){x.beginPath();x.moveTo(i*t,0);x.lineTo(i*t,h);x.moveTo(0,i*t);x.lineTo(w,i*t);x.stroke()}x.strokeStyle='#b08a4a';x.lineWidth=3;x.strokeRect(t*.12,t*.12,w-t*.24,h-t*.24)});
+M.floor.roughness=.18;M.floor.metalness=.12;
+M.ceil.map=ctex(128,128,(x,w,h)=>{x.fillStyle='#f4f1e8';x.fillRect(0,0,w,h);grain(x,w,h,12);x.fillStyle='#0002';for(let i=0;i<8;i++)for(let j=0;j<8;j++)x.fillRect(8+i*15,8+j*15,2,2);x.strokeStyle='#8a8678';x.lineWidth=4;x.strokeRect(0,0,w,h)});
+M.ceil.color.set(0xffffff);
+T.runner=ctex(256,128,(x,w,h)=>{x.fillStyle='#7a1f2a';x.fillRect(0,0,w,h);grain(x,w,h,14);x.strokeStyle='#e0b050';x.lineWidth=5;x.strokeRect(10,10,w-20,h-20);x.lineWidth=2;x.strokeRect(20,20,w-40,h-40);x.fillStyle='#e0b05066';for(let i=0;i<4;i++){x.beginPath();x.moveTo(w/8+i*w/4,h/2-20);x.lineTo(w/8+i*w/4+16,h/2);x.lineTo(w/8+i*w/4,h/2+20);x.lineTo(w/8+i*w/4-16,h/2);x.fill()}});
+function beautify(){
+ const A=shellAssets(),segs=layout.corrSegs;
+ // ковровые дорожки
+ for(const sg of segs){const len=(sg.x1-sg.x0+1)*CS,ge=new THREE.PlaneGeometry(len,2.4),uv=ge.attributes.uv;for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)*len/4,uv.getY(i));
+  const m=new THREE.Mesh(ge,new THREE.MeshStandardMaterial({map:T.runner,roughness:.9}));m.rotation.x=-Math.PI/2;m.position.set((sg.x0*CS+(sg.x1+1)*CS)/2,.012,(sg.y+2)*CS);world.add(m)}
+ // окна с лунным светом, вазоны, скамейки
+ let n=0;const potM=new THREE.MeshStandardMaterial({color:0xb5532a,roughness:.7}),leaf=new THREE.MeshStandardMaterial({color:0x2f8a3a,roughness:.7}),leaf2=new THREE.MeshStandardMaterial({color:0x4aa84a,roughness:.7}),soil=new THREE.MeshStandardMaterial({color:0x2a1a10});
+ for(const s of segs)for(let x=s.x0+5;x<=s.x1-3;x+=5){n++;
+  for(const top of[true,false]){const wy=top?s.y-1:s.y+4,iy=top?s.y:s.y+3;if(g[wy]?.[x]!==0||g[iy]?.[x]!==1)continue;
+   const z=top?s.y*CS+.06:(s.y+4)*CS-.06,d=top?1:-1,X=wc(x);
+   if((n+(top?0:1))%2===0){const w=new THREE.Mesh(new THREE.PlaneGeometry(1.5,1.7),A.win);w.position.set(X,1.85,z+d*.02);if(!top)w.rotation.y=Math.PI;world.add(w);
+    box(1.7,.08,.1,M.trim,X,2.74,z+d*.05,world);box(1.7,.08,.16,M.white,X,.97,z+d*.08,world);box(.08,1.8,.1,M.trim,X-.8,1.85,z+d*.05,world);box(.08,1.8,.1,M.trim,X+.8,1.85,z+d*.05,world);
+    box(.4,1.9,.04,M.red,X-1.0,1.85,z+d*.09,world);box(.4,1.9,.04,M.red,X+1.0,1.85,z+d*.09,world)}
+   else{const px=X,pz=z+d*.55,pt=new THREE.Mesh(G.cyl,potM);pt.scale.set(.28,.5,.28);pt.position.set(px,.25,pz);world.add(pt);const so=new THREE.Mesh(G.cyl,soil);so.scale.set(.26,.02,.26);so.position.set(px,.51,pz);world.add(so);
+    for(let i=0;i<7;i++){const a=i*0.9,l=new THREE.Mesh(G.sph,i%2?leaf:leaf2);l.scale.set(.14,.34,.14);l.position.set(px+Math.cos(a)*.18,.85+(i%3)*.1,pz+Math.sin(a)*.18);l.rotation.set(Math.sin(a)*.5,0,-Math.cos(a)*.5);world.add(l)}}}}
+ // скамейки
+ for(let i=0;i<10;i++){const c=floorCells[Math.random()*floorCells.length|0],[dd]=nearWall(c[0],c[1]);const X=wc(c[0])+dd[0]*.7,Z=wc(c[1])+dd[1]*.7;if(!dd[0]&&!dd[1])continue;
+  const b=new THREE.Group();box(1.4,.06,.4,M.wood,0,.46,0,b);box(1.4,.35,.05,M.wood,0,.72,-.2,b);box(.06,.45,.36,M.metal,-.6,.22,0,b);box(.06,.45,.36,M.metal,.6,.22,0,b);b.position.set(X,0,Z);b.rotation.y=Math.atan2(-dd[0],-dd[1])+Math.PI;world.add(b)}
+ // плинтус-подсветка и светящиеся панели над дверями кабинетов (тёплые)
+ for(const sg of segs)for(const side of[0,3]){const z=wc(sg.y+side)+(side?.98:-.98);}
+}
+
 let SHA=null,plates={};
 function shellAssets(){if(SHA)return SHA;
  const parq=l=>ctex(128,128,(x,w,h)=>{x.fillStyle='#8f6431';x.fillRect(0,0,w,h);for(let i=0;i<8;i++)for(let j=0;j<5;j++){x.fillStyle=`hsl(${28+Math.random()*6},${42+Math.random()*10}%,${l+Math.random()*9}%)`;x.fillRect(i*16+1,j*32+(i%2)*16-16,15,31)}grain(x,w,h,10)});
@@ -654,11 +685,11 @@ function buildWorld(){
  const mm=new THREE.Matrix4(),mkW=(arr,yo)=>{const add=(w,h,yc,mat)=>{const im=new THREE.InstancedMesh(new THREE.BoxGeometry(w,h,w),mat,arr.length);arr.forEach(([x,y],i)=>{mm.makeTranslation(wc(x),yc,wc(y));im.setMatrixAt(i,mm)});im.position.y=yo;im.frustumCulled=false;world.add(im)};add(CS,WH,WH/2,M.wall);add(CS+.05,1.1,.55,M.dado);add(CS+.08,.07,1.12,M.trim);add(CS+.1,.16,.08,M.dark);add(CS+.06,.09,WH-.05,M.trim)};
  mkW(wl.filter(c=>c[1]<FO),0);mkW(wl.filter(c=>c[1]>=FO),FH);
  // ambient
- hemiL=new THREE.HemisphereLight(0xc4bcd8,0x5a4a3a,2.2);world.add(hemiL);
+ hemiL=new THREE.HemisphereLight(0xfff0dc,0x6a5844,2.7);world.add(hemiL);
  // ceiling lamps (some flicker)
  lampDefs=[];POOL=[];for(let i=0;i<7;i++){const l=new THREE.PointLight(0xfff0d0,0,18,1.3);world.add(l);POOL.push(l)}
  {const A0=shellAssets();
- for(const s of layout.corrSegs)for(let x=s.x0+2;x<=s.x1-1;x+=7){lampDefs.push({x:wc(x),y:WH-.3,z:wc(s.y+1)+1,c:0xfff0d0,i:11,r:18,flick:x%2===0});box(1.2,.06,.3,A0.panel,wc(x),WH-.03,wc(s.y+1)+1,world)}
+ for(const s of layout.corrSegs)for(let x=s.x0+2;x<=s.x1-1;x+=7){lampDefs.push({x:wc(x),y:WH-.3,z:wc(s.y+1)+1,c:0xffe6bd,i:13,r:20,flick:x%5===0});box(1.2,.06,.3,A0.panel,wc(x),WH-.03,wc(s.y+1)+1,world)}
  for(const c of layout.connectors)lampDefs.push({x:wc((c[0]+c[2])>>1)+1,y:WH-.3,z:wc((c[1]+c[3])>>1)+1,c:0xfff0d0,i:11,r:18,flick:false});
  for(const r of rooms)if(r.type)lampDefs.push({room:r.name,x:(wc(r.x0)+wc(r.x1))/2,y:WH-.4,z:(wc(r.y0)+wc(r.y1))/2,c:r.type==='wc'?0x9ad0ff:0xffb070,i:r.type==='hall'?9:8,r:17,flick:Math.random()<.3})}
  // furniture
@@ -711,7 +742,7 @@ function buildWorld(){
  for(const r of rooms.filter(r=>r.type)){
   const p=new THREE.Mesh(new THREE.PlaneGeometry(.8,1.1),new THREE.MeshStandardMaterial({map:T.poster}));p.position.set(wc(r.x0),1.6,wc(r.top?r.y0:r.y1)+(r.top?-.98:.98));if(!r.top)p.rotation.y=Math.PI;world.add(p);
  }
- ghosts=[];for(const[x,cy]of ghostSpots()){const gg=new THREE.Group();const s=new THREE.Mesh(new THREE.ConeGeometry(.35,.9,10,1,true),new THREE.MeshStandardMaterial({color:0xffffff,transparent:true,opacity:.85,side:2,emissive:0x333344}));gg.add(s);const hd=new THREE.Mesh(G.sph,s.material);hd.scale.setScalar(.22);hd.position.y=.45;gg.add(hd);box(.05,.08,.02,M.dark,-.08,.5,.2,gg);box(.05,.08,.02,M.dark,.08,.5,.2,gg);gg.position.set(wc(x),WH-.9,wc(cy+1)+1);world.add(gg);ghosts.push(gg)}
+ ghosts=[];
  bats=[];for(let i=0;i<5;i++){const b=new THREE.Mesh(new THREE.PlaneGeometry(.5,.25),new THREE.MeshBasicMaterial({map:T.bat,transparent:true,side:2,depthWrite:false}));world.add(b);{const sg1=layout.corrSegs.filter(s=>s.y<FO),sg=sg1[i%sg1.length];bats.push({m:b,p:Math.random()*6,s:.4+Math.random()*.5,x:(sg.x0+3+Math.random()*(sg.x1-sg.x0-5))*CS,z:wc(sg.y+1)+1})}}
  // markers: glow + bobbing arrow on every unsearched place and floor item
   {const mk=(sz,draw)=>{const c=document.createElement('canvas');c.width=c.height=sz;draw(c.getContext('2d'),sz);return new THREE.CanvasTexture(c)};
@@ -721,7 +752,7 @@ function buildWorld(){
    for(const p of pickups)if(p.item==='note'){const o=pickups.find(q=>q!==p&&q.item!=='note'&&q.x===p.x&&q.y===p.y);if(o)p.mesh.position.set(o.mesh.position.x,.28,o.mesh.position.z)}
    for(const s of stashes)s.glint=mkSp(new THREE.Vector3(s.pos.x,s.pos.y+.15,s.pos.z));
    for(const p of pickups)p.glint=mkSp(new THREE.Vector3(p.mesh.position.x,p.h?p.h+.25:.3,p.mesh.position.z))}
- decorExtra();shiftUpper();
+ decorExtra();try{beautify()}catch(e){console.error(e)}shiftUpper();
 }
 function shiftUpper(){for(const c of world.children){if(c.isLight||c.isInstancedMesh)continue;if((c.userData.zz!=null?c.userData.zz:c.position.z)>=FO*CS)c.position.y+=FH}}
 function updGlints(tt){const cp=camera.position,up=P.pos.z>=FO*CS;
@@ -768,7 +799,7 @@ const flash=new THREE.SpotLight(0xfff2d8,22,22,0.5,0.45,1.3);camera.add(flash);f
 let held=null;function setHeld(){if(held)camera.remove(held);held=P.inv[P.sel]>0?itemMesh(P.sel):null;if(held){held.position.set(.32,-.3,-.6);camera.add(held)}}
 function reset(){
  exitOpen=false;rageOff();shellAssets();{const _r=Math.random;if(NET.seed!=null)Math.random=mulberry32(NET.seed);try{camBlind=null;buildGrid();buildWorld();fixLockedDoors();buildFixtures()}finally{Math.random=_r}}blk.on=false;blkK=0;blk.next=70+Math.random()*80;$('blk').classList.remove('on','lt');flash.intensity=0;closePanels(false);clearKeys();resetChat();
- Object.assign(P,{papers:[],coinsFound:0,boostT:0,phoneCd:0,gone:false,hp:3,stam:100,notes:0,found:0,hits:0,inv:NET.loadout(),sel:'tomato',hidden:null,doomed:false,splat:0,search:null,flash:false,yaw:-Math.PI/2,pitch:0});P.spawnF=Math.random()<.5?1:0;P.pos.set(wc(spawnCell[0]),1.6,wc(spawnCell[1]+P.spawnF*FO));
+ Object.assign(P,{myDlv:0,rescues:0,_resT:-99,papers:[],coinsFound:0,boostT:0,phoneCd:0,gone:false,hp:3,stam:100,notes:0,found:0,hits:0,inv:NET.loadout(),sel:'tomato',hidden:null,doomed:false,splat:0,search:null,flash:false,yaw:-Math.PI/2,pitch:0});P.spawnF=Math.random()<.5?1:0;P.pos.set(wc(spawnCell[0]),1.6,wc(spawnCell[1]+P.spawnF*FO));
  for(const o of [E?.mesh,...bots.map(b=>b.mesh),...proj.map(p=>p.mesh),...decals,...traps.map(t=>t.mesh),...teachers.map(t=>t.mesh),...REM.map(r=>r.mesh)])if(o)o.parent?.remove(o);
  proj=[];decals=[];traps=[];
  const em=human(new THREE.MeshStandardMaterial({color:0x1d1d24}),new THREE.MeshStandardMaterial({color:0x2a3550}),0xd9a07a,1.12);
@@ -1069,7 +1100,7 @@ function updProj(dt){for(let i=proj.length-1;i>=0;i--){const p=proj[i];p.life-=d
   else{scene.remove(p.mesh);proj.splice(i,1);beep(90,.1)}continue}
  p.mesh.position.copy(np)}}
 function onHit(p,h){
- if(h.isE){NET.ehit(p.t);if(p.owner==='player')P.hits=(P.hits|0)+1;else if(p.owner&&typeof p.owner==='object'&&p.owner.alive!==undefined)p.owner.hits=(p.owner.hits|0)+1;if(p.t==='tomato'){E.stun=2.6;splat(E.pos);egorGrowl(E.pos,2.4);beep(200,.3,'sawtooth',.15,60);say('🍅 Прямо в Егора! Он ослеплён');egorSay('АААРГХ! Мои глаза!');if(p.owner==='player'&&E.state!=='doomed'){E.state='investigate';E.goal=P.pos.clone().setY(0)}}else if(p.t==='petarda'){E.stun=1}return}
+ if(h.isE){try{LV.rescue(p)}catch(e){}NET.ehit(p.t);if(p.owner==='player')P.hits=(P.hits|0)+1;else if(p.owner&&typeof p.owner==='object'&&p.owner.alive!==undefined)p.owner.hits=(p.owner.hits|0)+1;if(p.t==='tomato'){E.stun=2.6;splat(E.pos);egorGrowl(E.pos,2.4);beep(200,.3,'sawtooth',.15,60);say('🍅 Прямо в Егора! Он ослеплён');egorSay('АААРГХ! Мои глаза!');if(p.owner==='player'&&E.state!=='doomed'){E.state='investigate';E.goal=P.pos.clone().setY(0)}}else if(p.t==='petarda'){E.stun=1}return}
  if(h.c==='player'){if(p.t==='tomato'){P.splat=2.5;say('🍅 Егор попал в тебя помидором!');beep(150,.2,'sawtooth')}else if(p.t==='hammer'){P.hp--;P.splat=1;beep(80,.3,'square',.25);say('🔨 Молоток прилетел в голову!');updHUD();if(P.hp<=0)lose('Егор вырубил тебя молотком.')}}
  else{const b=h.c;if(NET.on&&!NET.host)return;if(p.t==='hammer')catchBot(b);else b.safeT=0}}
 function catchBot(b){if(b.carry&&b.carry.length){b.carry.forEach(k=>dropNote(b.pos.x,b.pos.z,k));say(`${b.name} уронил задание — подбери и отнеси!`,3);b.carry=[]}if(b.remote)NET.send({t:'caught',to:b.id});b.alive=false;b.mesh.visible=false;scream(b.pos.clone(),.8+Math.random()*.7);addChat(b.name,'А-А-А-А-А!!! Егор!!!');if(b.hidden){b.hidden.occupant=null;b.hidden=null}say(`💀 Егор поймал ${b.name}!`,3);beep(100,.5,'sawtooth',.2,40);updHUD()}
@@ -1293,6 +1324,39 @@ const angd=(a,b)=>((((a-b)%(Math.PI*2))+Math.PI*3)%(Math.PI*2))-Math.PI;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
 const randCode=()=>Array.from({length:5},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.random()*32|0]).join('');
 let sb=null,PROF=null,SHOP=[],HV='';
+/* ===== УРОВНИ АККАУНТА ===== */
+const LV=(()=>{
+ const need=l=>100+(l-1)*50;
+ const TITLES=[[1,'Первоклашка'],[3,'Ученик'],[6,'Хорошист'],[10,'Отличник'],[15,'Староста'],[20,'Завуч'],[30,'Директор'],[40,'Легенда лицея']];
+ const title=l=>{let t=TITLES[0][1];for(const[a,n]of TITLES)if(l>=a)t=n;return t};
+ const reward=l=>({coins:l%5===0?100+l*10:15+l*3,title:(TITLES.find(t=>t[0]===l)||[])[1]||''});
+ const key=()=>PROF?'egorLv:'+(PROF.id||PROF.username):null;
+ const load=()=>{try{const o=JSON.parse(localStorage.getItem(key())||'{}');return{xp:+o.xp||0,rounds:+o.rounds||0,pend:+o.pend||0}}catch(e){return{xp:0,rounds:0,pend:0}}};
+  const save=o=>{try{localStorage.setItem(key(),JSON.stringify(o))}catch(e){}
+  if(sb&&PROF?.token)sb.rpc('save_level',{p_token:PROF.token,p_xp:o.xp,p_rounds:o.rounds,p_pend:o.pend}).then(()=>{},()=>{})};
+ const info=xp=>{let l=1,r=xp;while(r>=need(l)){r-=need(l);l++}return{l,cur:r,nd:need(l)}};
+ const multi=()=>!!(NET.on&&NET.live&&(REM.length>0||(NET.players||[]).length>1));
+ const bar=(a,b)=>`<div style="width:100%;max-width:300px;height:10px;background:#333;border-radius:6px;overflow:hidden;margin:4px auto"><div style="height:100%;width:${Math.min(100,a/b*100)|0}%;background:linear-gradient(90deg,#ff9a2a,#ffd23a)"></div></div>`;
+ return{
+  info,title,reward,multi,
+  rescue(p){if(p.owner!=='player'||!multi()||time-(P._resT||-99)<10)return;
+   if(REM.some(r=>r.alive&&r.pos&&Math.hypot(r.pos.x-E.pos.x,r.pos.z-E.pos.z)<10)){P._resT=time;P.rescues=(P.rescues|0)+1;say('🛟 Ты спас напарника от Егора! <b>+50 XP</b>',3)}},
+  round(won){const m=multi(),myD=P.myDlv|0,rs=P.rescues|0,tT=myD*30,sv=Math.min(60,Math.floor(time/12))+(won?40:0),rv=rs*50;return{m,won,myD,rs,tT,sv,rv,coins:won&&m?40:0,xp:tT+sv+rv}},
+  async apply(r){if(!PROF)return;const el=$('oP');
+   if(!r.m){el.innerHTML+='<br><span style="color:#aab">🎖 Уровень растёт только в игре по сети с другими игроками</span>';return}
+   const o=load(),b=info(o.xp).l;o.xp+=r.xp;o.rounds++;const a=info(o.xp);
+   let coins=r.coins,lv=0,ttl=[];for(let l=b+1;l<=a.l;l++){const w=reward(l);coins+=w.coins;lv+=w.coins;if(w.title)ttl.push(w.title)}
+   coins+=o.pend;o.pend=0;
+   if(coins>0){try{const{data,error}=await sb.rpc('add_coins',{p_token:PROF.token,p_amount:coins});if(error||data==null)throw 0;PROF.coins=data}catch(e){o.pend=coins}}
+   save(o);
+   el.innerHTML+=`<div style="margin-top:10px;padding:10px 14px;border:1px solid #ff9a2a88;border-radius:10px;background:#0006;font-size:15px;line-height:1.6">🎖 <b>+${r.xp} XP</b><br><span style="color:#cfc8b6">📋 Задания: +${r.tT} (${r.myD} шт.) · 🏃 Выживание: +${r.sv} · 🛟 Спасения: +${r.rv} (${r.rs})</span>`+(r.coins?`<br>🏆 Победа: <b>+${r.coins} 🪙</b>`:'')+`<br>Уровень <b>${a.l}</b> · ${title(a.l)} (${a.cur}/${a.nd})${bar(a.cur,a.nd)}`+(a.l>b?`<br><b style="color:#ffd23a">⬆ НОВЫЙ УРОВЕНЬ ${a.l}!</b> Награда: <b>+${lv} 🪙</b>`:'')+(ttl.length?`<br>🏅 Новое звание: <b>${ttl.join(', ')}</b>`:'')+`</div>`},
+  chip(){if(!PROF)return'';const i=info(load().xp);return`<div class="b" style="margin:4px auto">🎖 Ур. ${i.l} · ${title(i.l)}${bar(i.cur,i.nd)}<small>${i.cur}/${i.nd} XP</small></div>`},
+  page(){const o=load(),i=info(o.xp);let rows='';for(let l=i.l+1;l<=i.l+10;l++){const w=reward(l);rows+=`<div class="it"><span>Ур. ${l}</span><b>+${w.coins} 🪙${w.title?' · 🏅 '+w.title:''}</b></div>`}
+   return`<h2>🎖 Уровни и награды</h2><div class="b">Ур. <b>${i.l}</b> · ${title(i.l)} · всего ${o.xp} XP · сетевых раундов: ${o.rounds}${bar(i.cur,i.nd)}${i.cur}/${i.nd} XP до следующего</div>
+   <p class="hn">XP даётся только в игре по сети с другими игроками:<br>📋 +30 за каждое доставленное задание · 🏃 до +60 за выживание (+40, если сбежал) · 🛟 +50 за спасение напарника (попал в Егора, пока он рядом с игроком) · 🏆 +40 🪙 за победу.</p>
+   <div style="display:flex;flex-direction:column;gap:6px;width:100%;max-width:420px">${rows}</div><p class="hn">Звания: ${TITLES.map(t=>'ур. '+t[0]+' — '+t[1]).join(' · ')}</p><button class="sm" data-a="back">← Назад</button>`}
+ }})();
+
 const f2=a=>[+a.x.toFixed(2),+a.y.toFixed(2),+a.z.toFixed(2)];
 
 const NET={on:false,live:false,host:false,started:false,id:null,name:'Гость',seed:null,nBots:4,players:[],ch:null,q:null,code:'',auto:0,lo:null,acc:0,snap:null,si:false,nt:0,done:false,doomAt:-9,
@@ -1319,9 +1383,10 @@ const NET={on:false,live:false,host:false,started:false,id:null,name:'Гость
    REM.push({id:p.id,name:p.name,mesh:m,pos:new THREE.Vector3(wc(spawnCell[0]),0,wc(spawnCell[1])),tp:null,yaw:0,ty:0,alive:true,hidden:null,walk:0,wait:0,mv:0,remote:true})})},
  vis(){for(const r of REM){if(r.tp){const k=.25,ox=r.pos.x,oz=r.pos.z;if(!r.init){r.pos.set(r.tp[0],0,r.tp[1]);r.init=1}r.pos.x+=(r.tp[0]-r.pos.x)*k;r.pos.z+=(r.tp[1]-r.pos.z)*k;r.yaw+=angd(r.ty+Math.PI,r.yaw)*k;r.walk+=Math.hypot(r.pos.x-ox,r.pos.z-oz)}
    r.mesh.position.set(r.pos.x,rampY(r.pos.x,r.pos.z),r.pos.z);r.mesh.rotation.y=r.yaw;animChar(r,r.mesh.userData,!!r.mv)}},
- async finish(won){if(this.done)return;this.done=true;P.gone=true;if(!sb||!PROF)return;
+ async finish(won){if(this.done)return;this.done=true;P.gone=true;const _r=LV.round(won);if(!sb||!PROF)return;
   const c=(won?60:15)+Math.min(P.notes,NN)*8+bots.filter(b=>b.alive).length*3+(P.coinsFound||0);
-  try{const{data}=await sb.rpc('add_coins',{p_token:PROF.token,p_amount:c});if(data!=null){const got=data-PROF.coins;PROF.coins=data;await lbSubmit(won?time:null,Math.max(0,Math.round(got)));$('oP').innerHTML+=`<br>🪙 +${got>0?got:0} монет (всего ${data})`}}catch(e){}}
+  try{const{data}=await sb.rpc('add_coins',{p_token:PROF.token,p_amount:c});if(data!=null){const got=data-PROF.coins;PROF.coins=data;await lbSubmit(won?time:null,Math.max(0,Math.round(got)));$('oP').innerHTML+=`<br>🪙 +${got>0?got:0} монет (всего ${data})`}}catch(e){}
+  try{await LV.apply(_r)}catch(e){}}
 };
 function gotNote(t,o){say(t+' нашёл '+taskDesc(o||{})+' — несёт в «'+(TASKS[(o||{}).tk??0]?.dest||'?')+'»',3);beep(1000,.2,'sine',.15,1600);updHUD()}
 function clientTick(dt){const s=NET.snap;if(!s||!s.e)return;const e=s.e,k=NET.si?Math.min(1,dt*10):1;NET.si=true;
@@ -1375,6 +1440,10 @@ async function initSB(){if(!SUPABASE_URL||!SUPABASE_ANON_KEY)return;
   catch(e){console.warn('auto-login retry',i,e);await new Promise(r=>setTimeout(r,700*(i+1)))}}}}
 const SBP=initSB();
 async function afterLogin(pr,show=true){tokSet(pr.token);PROF=pr;NET.id=pr.id;NET.name=pr.username;
+   try{const{data}=await sb.rpc('get_level',{p_token:pr.token});
+  if(data){const k='egorLv:'+(pr.id||pr.username),l=JSON.parse(localStorage.getItem(k)||'{}');
+   if((+l.xp||0)>data.xp)sb.rpc('save_level',{p_token:pr.token,p_xp:+l.xp,p_rounds:+l.rounds||0,p_pend:+l.pend||0});
+   else localStorage.setItem(k,JSON.stringify(data))}}catch(e){}
  const{data:sh}=await sb.from('shop_items').select('*').order('price');SHOP=sh||[];
  sb.channel('inv:'+pr.username).on('broadcast',{event:'inv'},({payload})=>{if(playing||NET.on)return;if(confirm(payload.from+' зовёт тебя в лобби. Принять?'))joinLobby(payload.code,false)}).subscribe();
  const c=new URLSearchParams(location.search).get('lobby');
@@ -1435,9 +1504,9 @@ async function loadLB(){const k=LBK;let rows=null;LBERR='';if(sb){await lbFlush(
  if(rows)el.innerHTML=rows.length?rows.map((r,i)=>`<div class="it" style="${PROF&&r.username===PROF.username?'border-color:#b8ff7b;':''}"><span>${medal[i]||(i+1)+'.'} ${esc(r.username)}</span><b>${fv(r.val)}</b></div>`).join(''):'<p>Пока никого нет. Стань первым!</p>';
  else el.innerHTML='<p class="hn">Общая таблица недоступна (в Supabase не выполнен leaderboard.sql). Показаны результаты этого устройства.</p>'+(LBERR?'<p class="hn" style="color:#ff8a8a;word-break:break-word">Ошибка Supabase: '+esc(LBERR)+'</p>':'')+(k==='time'?(loc.t.length?loc.t.map((t,i)=>`<div class="it"><span>${medal[i]||(i+1)+'.'} Побег</span><b>⏱ ${fmt(t)}</b></div>`).join(''):'<p>Ты ещё не сбегал из школы.</p>'):`<div class="it"><span>Найдено монет всего</span><b>🪙 ${loc.c||0}</b></div>`)}
 function hub(v,note=''){const keep=$('hi')?.value||'';HV=v;['menu','over','pause'].forEach(i=>$(i).classList.add('hidden'));const h=$('hub');h.classList.remove('hidden');
- const me=PROF?`<div class="b">👤 ${esc(PROF.username)} · 🪙 ${PROF.coins}</div>`:'';let b='';
+ const me=PROF?`<div class="b">👤 ${esc(PROF.username)} · 🪙 ${PROF.coins}</div>`+LV.chip():'';let b='';
  if(v==='auth')b=`<h2>Аккаунт</h2><input id="hu" placeholder="Ник (a-z, 0-9, _)" maxlength="16" autocomplete="username"><input id="hp" type="password" placeholder="Пароль (от 6 символов)" autocomplete="current-password"><div class="row"><button data-a="login">Войти</button><button data-a="signup">Регистрация</button></div><p id="hm" class="hn">${esc(note)}</p><button class="sm" data-a="solo0">Играть офлайн (без монет)</button><button class="sm" data-a="lb">🏆 Таблица лидеров</button><button class="sm" data-a="guide">📖 Гайд: как играть</button>`;
- else if(v==='main')b=`<h2>Главное меню</h2>${me}<p class="hn">${esc(note)}</p><div class="row">Ботов: <input id="bn" type="number" min="0" max="50" value="4" style="width:72px"><button class="sm" data-a="nobots">Без ботов</button></div><button data-a="solo">🎃 Один с ботами</button><button data-a="find">🔎 Найти игру (5 игроков)</button><button data-a="create">👥 Создать лобби</button><div class="row"><input id="hc" placeholder="Код лобби" maxlength="5"><button class="sm" data-a="joinc">Войти по коду</button></div><button data-a="shop">🛒 Магазин</button><button class="sm" data-a="lb">🏆 Таблица лидеров</button><button class="sm" data-a="guide">📖 Гайд: как играть</button><button class="sm" data-a="logout">Выйти из аккаунта</button>`;
+ else if(v==='main')b=`<h2>Главное меню</h2>${me}<p class="hn">${esc(note)}</p><div class="row">Ботов: <input id="bn" type="number" min="0" max="50" value="4" style="width:72px"><button class="sm" data-a="nobots">Без ботов</button></div><button data-a="solo">🎃 Один с ботами</button><button data-a="find">🔎 Найти игру (5 игроков)</button><button data-a="create">👥 Создать лобби</button><div class="row"><input id="hc" placeholder="Код лобби" maxlength="5"><button class="sm" data-a="joinc">Войти по коду</button></div><button data-a="shop">🛒 Магазин</button><button class="sm" data-a="lvl">🎖 Уровни и награды</button><button class="sm" data-a="lb">🏆 Таблица лидеров</button><button class="sm" data-a="guide">📖 Гайд: как играть</button><button class="sm" data-a="logout">Выйти из аккаунта</button>`;
  else if(v==='queue')b=`<h2>Подбор игроков</h2><p>Найдено: <b id="qn">1/5</b>. Через <b id="qs">${QWAIT}</b> с свободные места займут боты.</p><button class="sm" data-a="cancelq">Отмена</button>`;
  else if(v==='lobby'){const L=NET.players;b=`<h2>Лобби <span style="letter-spacing:4px">${esc(NET.code)}</span></h2><p class="hn">${NET.auto?'Матч найден! Старт через пару секунд…':'Отправь код или ссылку друзьям. Свободные места займут боты.'}</p><div class="pl">${L.map(p=>`<div><span style="color:${esc(p.col||'#fff')}">●</span> ${esc(p.name)}${p.h?' ★':''}</div>`).join('')}</div>${NET.host&&!NET.auto?`<div class="row">Ботов (0–50): <input id="bn" type="number" min="0" max="50" value="${LBN??Math.max(0,5-L.length)}" style="width:72px"><button class="sm" data-a="nobots">Без ботов</button></div>`:`<p>Ботов в партии: ${NET.auto?Math.max(0,5-L.length):'задаёт хост'}</p>`}${NET.auto?'':`<div class="row"><input id="hi" placeholder="Ник друга"><button class="sm" data-a="inv">Пригласить</button><button class="sm" data-a="copy">Копировать ссылку</button></div>`}${NET.host&&!NET.auto?'<button data-a="start">▶ Старт</button>':NET.auto?'':'<p>Ждём старта от хоста…</p>'}<button class="sm" data-a="leave">Выйти</button>`}
  else if(v==='shop'){const rows=SHOP.map(it=>{const skin=it.kind==='skin',own=skin&&PROF.skins.includes(it.id);
@@ -1445,6 +1514,7 @@ function hub(v,note=''){const keep=$('hi')?.value||'';HV=v;['menu','over','pause
    return `<div class="it"><span>${skin?`<i style="color:${esc(it.color||'#fff')}">●</i> `:''}${esc(it.name)}${skin?'':` (есть: ${PROF.inv[it.give]||0})`}</span><span>${own?'':'🪙 '+it.price+' '}${act}</span></div>`}).join('');
   b=`<h2>Магазин</h2>${me}<p class="hn">${esc(note)||'Вещи сами попадают в инвентарь в начале партии (до 3 каждого вида). Скин видят другие игроки.'}</p>${rows}<button data-a="back">Назад</button>`}
  else if(v==='lb')b=`<h2>🏆 Лидеры</h2><div class="row"><button class="${LBK==='time'?'':'sm'}" data-a="lbk" data-v="time">⏱ Быстрее всех</button><button class="${LBK==='coins'?'':'sm'}" data-a="lbk" data-v="coins">🪙 Монеты</button></div><div id="lbList" style="display:flex;flex-direction:column;gap:8px;align-items:center;width:100%"><p>Загрузка…</p></div><button data-a="lbback">Назад</button>`;
+ else if(v==='lvl')b=LV.page();
  else if(v==='offline')b=`<h2>Нет связи с Supabase</h2><p>Проверь SUPABASE_URL и ключ в начале файла.</p><button data-a="solo0">Играть офлайн</button>`;
  else b=`<h2>${esc(note||'Подключение…')}</h2>`;
  h.innerHTML=b;if($('hi'))$('hi').value=keep}
@@ -1457,7 +1527,7 @@ const ACT={
  async solo(){const nb=botCount(4);leaveGame();NET.nBots=nb;NET.seed=null;await getLoadout();launch()},
  find(){findGame()},create(){joinLobby(randCode(),true)},
  joinc(){const c=($('hc').value||'').trim().toUpperCase();if(c.length>=3)joinLobby(c,false)},
- shop(){hub('shop')},back(){hub('main')},
+ shop(){hub('shop')},lvl(){hub('lvl')},back(){hub('main')},
  async logout(){leaveGame();tokDel();PROF=null;NET.id=null;hub('auth')},
  cancelq(){leaveGame();hub('main')},leave(){leaveGame();hub('main')},start(){startMatch()},
  copy(){navigator.clipboard?.writeText(location.origin+location.pathname+'?lobby='+NET.code)},
@@ -1502,7 +1572,7 @@ return(dt,tt)=>{
  const on=playing&&P&&E&&E.pos;
  [nz,fl,dg,fr].forEach(e=>{if(!on)e.style.display=e===fr?'none':'';});
  if(!on){nz.style.opacity=0;fl.style.opacity=0;dg.style.opacity=0;fr.style.display='none';pts.visible=false;return}
- fr.style.display='block';pts.visible=true;
+ fr.style.display='block';pts.visible=false;
  /* Егор: красное свечение */
  if(E.mesh&&!E.mesh.userData.fxg){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:gTex,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,opacity:.6}));s.scale.set(2.2,2.2,1);s.position.y=1.7;E.mesh.add(s);E.mesh.userData.fxg=s}
  const dx=E.pos.x-P.pos.x,dz=E.pos.z-P.pos.z,d=Math.hypot(dx,dz),sees=!!E.sees;
@@ -1513,7 +1583,7 @@ return(dt,tt)=>{
  const sh=f*f*.045;camera.position.x+=(Math.random()-.5)*sh;camera.position.y+=(Math.random()-.5)*sh;
  camera.rotation.z=Math.sin(tt*8.5)*.028*f+(P.sprint?Math.sin(P.bob*.5)*.012:0);
  const tf=fov0+(P.sprint?7:0)-f*6;if(Math.abs(camera.fov-tf)>.05){camera.fov+=(tf-camera.fov)*Math.min(1,dt*6);camera.updateProjectionMatrix()}
- if(scene.fog&&!(typeof blk!=='undefined'&&blk.on))scene.fog.density=.017*(1+f*.8);
+ if(scene.fog&&!(typeof blk!=='undefined'&&blk.on))scene.fog.density=.011*(1+f*.8);
  /* виньетка и шум */
  const bx=Math.round(f*25);if(bx!==fc){fc=bx;const v=$$('vig');if(v){v.style.boxShadow='inset 0 0 '+(180-f*90|0)+'px '+(30+f*40|0)+'px rgb('+(f*110|0)+',0,0)';v.style.opacity=.5+f*.5}}
  if(f>.15&&(++nf%3==0)){const D=ni.data;for(let i=0;i<D.length;i+=4){const v=Math.random()*255;D[i]=v;D[i+1]=v*.7;D[i+2]=v*.7;D[i+3]=255}nx.putImageData(ni,0,0)}
@@ -1542,7 +1612,7 @@ const W=mk('div','fxw'),S=mk('div','fxs'),Q=mk('div','fxq');
 /* призраки */
 const c=document.createElement('canvas');c.width=64;c.height=96;const x=c.getContext('2d'),g=x.createLinearGradient(0,0,0,96);g.addColorStop(0,'rgba(220,240,255,.9)');g.addColorStop(1,'rgba(180,210,255,0)');x.fillStyle=g;x.beginPath();x.arc(32,32,26,Math.PI,0);x.lineTo(58,90);for(let i=0;i<5;i++)x.quadraticCurveTo(52-i*10,70+(i%2)*22,48-i*10-2,90);x.lineTo(6,32);x.fill();x.fillStyle='#10131c';x.beginPath();x.ellipse(23,32,5,8,0,0,7);x.ellipse(41,32,5,8,0,0,7);x.fill();x.beginPath();x.ellipse(32,50,5,8,0,0,7);x.fill();
 const tx=new THREE.CanvasTexture(c),gh=[];
-for(let i=0;i<7;i++){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,depthWrite:false,opacity:0}));s.scale.set(1.1,1.65,1);s.userData={a:Math.random()*6.28,r:6+Math.random()*8,sp:.25+Math.random()*.4,ph:Math.random()*9};scene.add(s);gh.push(s)}
+for(let i=0;i<0;i++){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,depthWrite:false,opacity:0}));s.scale.set(1.1,1.65,1);s.userData={a:Math.random()*6.28,r:6+Math.random()*8,sp:.25+Math.random()*.4,ph:Math.random()*9};scene.add(s);gh.push(s)}
 const cv=renderer.domElement;
 let f=0,pts=0,near=0,cool=0,adr=0,lt=0,lightT=30,lp=-1,seen=false,scareCd=0,qT=0,lastF='',bt=0;
 return(dt,tt)=>{
