@@ -187,6 +187,8 @@ body.touch #tbtns button[data-a=throw]{width:calc(var(--u)*1.5);height:calc(var(
 body.touch #tbtns button[data-a=use]{width:calc(var(--u)*1.2);height:calc(var(--u)*1.2);font-size:calc(var(--u)*.6);right:calc(var(--sr) + 12px + var(--u)*.15);bottom:calc(var(--sb) + 24px + var(--u)*1.5);background:radial-gradient(#9fe39f,#2f9d2f);opacity:1}
 body.touch #tbtns button[data-a=drop]{right:calc(var(--sr) + 24px + var(--u)*1.5);bottom:calc(var(--sb) + 12px)}
 body.touch #tbtns button[data-a=item]{display:none}
+body.touch #tbtns button[data-a=crouch]{right:calc(var(--sr) + 36px + var(--u)*2.3);bottom:calc(var(--sb) + 12px)}
+body.touch #tbtns button[data-a=crouch].on{background:#2f7d9dcc}
 body.touch #tbtns button[data-a=run],body.touch #tbtns button[data-a=light],body.touch #tbtns button[data-a=map],body.touch #tbtns button[data-a=chat],body.touch #tbtns button[data-a=mic]{top:calc(var(--st) + clamp(24px,4.6vmin,34px))}
 body.touch #tbtns button[data-a=run]{right:calc(var(--sr) + 8px)}
 body.touch #tbtns button[data-a=light]{right:calc(var(--sr) + 8px + var(--u)*.88)}
@@ -263,7 +265,7 @@ body.touch #mapCanvas{width:1250px;max-width:none;max-height:none;flex:none;touc
  <span class="b" id="eye">😴</span>
 </div>
 <div id="cross" class="hidden"></div><div id="prompt"></div><div id="nametag"></div><div id="prog"><i id="progI"></i></div>
-<div id="msg"></div><div id="inv" class="hidden"></div><div id="touch"><div id="joy"><i id="stick"></i></div><div id="look"></div><div id="tbtns"><button data-a="use">✋</button><button data-a="throw">🎯</button><button data-a="item">🔄</button><button data-a="drop">📤</button><button data-a="run">🏃</button><button data-a="light">🪔</button><button data-a="map">🗺</button><button data-a="mic">🎙</button><button data-a="chat">💬</button></div></div><div id="locker"></div><div id="red"></div><div id="vig"></div>
+<div id="msg"></div><div id="inv" class="hidden"></div><div id="touch"><div id="joy"><i id="stick"></i></div><div id="look"></div><div id="tbtns"><button data-a="use">✋</button><button data-a="throw">🎯</button><button data-a="item">🔄</button><button data-a="drop">📤</button><button data-a="crouch">🧎</button><button data-a="run">🏃</button><button data-a="light">🪔</button><button data-a="map">🗺</button><button data-a="mic">🎙</button><button data-a="chat">💬</button></div></div><div id="locker"></div><div id="red"></div><div id="vig"></div>
 <div class="scr" id="menu">
  <img id="mface" alt="Егор">
  <h1>ПОБЕГ ОТ ЕГОРА 3D</h1>
@@ -271,6 +273,7 @@ body.touch #mapCanvas{width:1250px;max-width:none;max-height:none;flex:none;touc
  <div class="keys">
   <span><kbd>WASD</kbd> + мышь</span><span>ходить / смотреть</span>
   <span><kbd>Shift</kbd></span><span>бег (шумно!)</span>
+  <span><kbd>C</kbd></span><span>присесть / встать · лезть в вентиляцию 🕳</span>
   <span><kbd>E</kbd></span><span>удерживать для поиска · шкаф / подобрать / выход</span>
   <span><kbd>ЛКМ</kbd></span><span>бросить предмет</span>
   <span><kbd>Q</kbd> / колесо</span><span>сменить предмет</span>
@@ -291,7 +294,7 @@ body.touch #mapCanvas{width:1250px;max-width:none;max-height:none;flex:none;touc
 <section id="guide" class="hidden"><div class="gw"><header><h2>📖 Гайд</h2><button id="guideClose" aria-label="Закрыть">×</button></header>
 <details open><summary>🎯 Цель игры</summary><div class="gb"><p>Лицей «Профессионал», ночь Хеллоуина. Ты и ещё 4 ученика заперты в школе, а по коридорам ходит <b>Егор</b> с бензопилой. Каждый раунд школа генерируется заново: другие коридоры, кабинеты, шкафы и тайники. Инвентарь в начале пуст (кроме того, что ты взял из магазина).</p>
 <ul><li>В раунде выпадают <b>3 случайных задания</b> из 5. Для каждого нужны предметы-«части», спрятанные по школе.</li><li>Найденную часть <b>отнеси к устройству</b> в нужной комнате и поставь (E / тап).</li><li>Когда выполнены <b>все</b> задания, открывается <b>выход</b> в конце коридора 1 этажа. Включается сирена, Егор приходит в ярость. Добеги до выхода и нажми E.</li><li>Поражение: Егор догнал тебя (или вырубил молотком, если закончились сердца).</li></ul></div></details>
-<details><summary>🕹 Управление</summary><div class="gb"><p><b>Компьютер:</b></p><ul><li><b>WASD</b> + мышь: ходить и смотреть. <b>Shift</b>: бег (шумно!).</li><li><b>E</b>: взаимодействие. <b>Держи E</b> над тайником, чтобы обыскать.</li><li><b>ЛКМ</b>: использовать выбранный предмет (бросить, включить и т. д.). <b>Q</b>, колесо мыши или цифры <b>1–9</b>: выбрать предмет. <b>G</b>: выбросить.</li><li><b>L</b>: фонарик. <b>R</b>: записки. <b>M</b>: карта. <b>T</b>: чат. <b>F</b> (держать): голосовое сообщение.</li></ul>
+<details><summary>🕹 Управление</summary><div class="gb"><p><b>Компьютер:</b></p><ul><li><b>WASD</b> + мышь: ходить и смотреть. <b>Shift</b>: бег (шумно!). <b>C</b>: присесть — так можно пролезть в <b>вентиляционные шахты</b> между кабинетами, куда Егор не пролезет и не заглянет. Говорят, в школе есть и <b>секретные комнаты</b>, куда ведёт только вентиляция…</li><li><b>E</b>: взаимодействие. <b>Держи E</b> над тайником, чтобы обыскать.</li><li><b>ЛКМ</b>: использовать выбранный предмет (бросить, включить и т. д.). <b>Q</b>, колесо мыши или цифры <b>1–9</b>: выбрать предмет. <b>G</b>: выбросить.</li><li><b>L</b>: фонарик. <b>R</b>: записки. <b>M</b>: карта. <b>T</b>: чат. <b>F</b> (держать): голосовое сообщение.</li></ul>
 <p><b>Телефон / планшет:</b></p><ul><li>Джойстик слева: ходьба. Оттяни его до края, чтобы бежать.</li><li><b>Води пальцем по экрану</b>, чтобы смотреть. <b>Держи палец на месте</b> (в любой точке) около 0,3 секунды: обыск, подбор, шкаф, дверь. Короткий тап делает мгновенные действия (подобрать, шкаф).</li><li>Внизу инвентарь: тап по предмету выбирает его, <b>тап по выбранному</b> или кнопка 🎯 использует. Стрелки ‹ › листают предметы, 📤 выбрасывает.</li><li>✋ взаимодействие, 🏃 включает постоянный бег, 🪔 фонарик, 🗺 карта, 💬 чат, 🎙 голос (держать).</li></ul></div></details>
 <details><summary>📋 Задания (какие бывают)</summary><div class="gb"><p>Что нужно найти, видно в сообщении при старте и в верхней панели (✅ когда готово). Найдя часть, ты получаешь подсказку, куда её нести. Устройство выглядит как серый ящик на стойке.</p>
 <ul><li>🔑 <b>Ключ от учительской</b> (1 часть): вставь в дверной замок учительской.</li><li>⚡ <b>Предохранитель</b> (1): вставь в электрощиток (кабинет директора или учительская).</li><li>🔧 <b>Генератор</b> (1–2 детали): установи в генератор (столовая или актовый зал).</li><li>📻 <b>Рация</b> (1): включи в актовом зале или библиотеке.</li><li>🧩 <b>Код</b> (2–3 части): каждая часть это цифра. Вводи их в кодовый замок (кабинет директора или библиотека).</li></ul>
@@ -430,7 +433,7 @@ function dropNote(x,z,tk){const p={x:cell(x),y:cell(z),item:'note',n:1,tk,seen:t
 function deliverCheck(){return;if(P.hidden||!TASKS.length)return;const rn=roomAt(P.pos);for(const t of TASKS){if(t.carry>0&&rn===t.dest){const n=t.carry;t.carry=0;NET.send({t:'dlv',k:TASKS.indexOf(t),n});beep(1200,.25,'sine',.2,1800);say('📦 '+taskDone(t,n),3);updHUD();if(P.notes===NN-1)egorSay('Хватит рыться в моей школе!');if(P.notes>=NN)unlockExit()}}}
 function taskDesc(o){const t=TASKS[o.tk??0];return t?t.icon+' '+t.item:'предмет'}
 function taskHUD(){return TASKS.map(t=>t.icon+(t.got>=t.need?'✅':t.got+'/'+t.need+(t.carry?'(🎒'+t.carry+'→'+t.dest+')':''))).join(' ')}
-function buildGrid(){for(let i=0;i<60;i++){buildGridOnce();if(validateMap())break}for(const r of rooms)if(r.locked)g[r.door[1]][r.door[0]]=6;floorCells=floorCells.filter(([x,y])=>!rooms.some(r=>r.locked&&((x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1)||(x===r.door[0]&&y===r.door[1]))))}
+function buildGrid(){for(let i=0;i<60;i++){buildGridOnce();if(validateMap())break}for(const r of rooms)if(r.locked)g[r.door[1]][r.door[0]]=r.secret?0:6;floorCells=floorCells.filter(([x,y])=>!rooms.some(r=>r.locked&&((x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1)||(x===r.door[0]&&y===r.door[1]))))}
 function buildGridOnce(){
  layout=newSchool();g=layout.grid;exitY=layout.exitY;spawnCell=layout.spawn;layout.doorSet=new Set(layout.doors.map(d=>d[1]*W+d[0]));
  rooms=[...layout.corrSegs.map(s=>({x0:s.x0,y0:s.y,x1:s.x1,y1:s.y+3,name:'Коридор '+(s.y>=FO?2:1)+' поверху'})),...layout.connectors.map(([x0,y0,x1,y1])=>({x0,y0,x1,y1,name:'Коридор '+(y0>=FO?2:1)+' поверху'})),...layout.stairRooms.map(([x0,y0,x1,y1])=>({x0,y0,x1,y1,name:'Сходи ('+(y0>=FO?2:1)+' поверх)'}))];lockers=[];stashes=[];pickups=[];furn=[];
@@ -482,6 +485,7 @@ function buildGridOnce(){
    furn=furn.filter(f=>f.t==='board'||!inR(f.x,f.y));lockers=lockers.filter(L=>!inR(L.x,L.y));stashes=stashes.filter(st=>!inR(st.cx,st.cy));
    for(let y=r.y0;y<=r.y1;y++)for(let x=r.x0;x<=r.x1;x++)if(g[y][x]===2||g[y][x]===3)g[y][x]=1;
    const fc=[];for(let y=r.y0+1;y<r.y1;y++)for(let x=r.x0+1;x<r.x1;x++)if(g[y][x]===1)fc.push([x,y]);r.loot=shuf(fc).slice(0,rnd(2,3))}}
+ placeSecrets();
  // notes: spread over both floors, max one per room; items are rare
  rollTasks();NFL=rnd(1,2);{const sh=shuf([...stashes]),used={},fc=[0,0],pk=[];
   for(const s of sh){if(pk.length>=NN-NFL)break;if(s.locked)continue;const rn=roomAt({x:wc(s.cx),z:wc(s.cy)}),fl=s.cy>=FO?1:0;if(used[rn]||fc[fl]>=NN/2+1)continue;used[rn]=1;fc[fl]++;pk.push(s)}
@@ -494,9 +498,10 @@ function buildGridOnce(){
   // Egor's quote notes anywhere
   {const fr=shuf(stashes.filter(s=>!s.content&&!s.locked)),q=shuf([...EGOR_QUOTES]);let nq=Math.random()<.7?1:0;if(Math.random()<.4)nq++;if(Math.random()<.15)nq++;fr.slice(0,nq).forEach((s,i)=>{s.content='paper';s.paper={title:'📝 Записка Егора',text:'«'+q[i]+'»'}})}
   // locked rooms loot: coins + items, rare backstory; guaranteed lockpick outside
-  const LR=rooms.filter(r=>r.locked);if(LR.length){const fr0=stashes.filter(s=>!s.content&&!s.locked),fr1=fr0.filter(s=>!inNR(s)),pl=fr1.length?fr1:fr0;const lp=pl[Math.random()*pl.length|0];if(lp)lp.content='lockpick';}
+  const LR=rooms.filter(r=>r.locked);if(LR.some(r=>!r.secret)){const fr0=stashes.filter(s=>!s.content&&!s.locked),fr1=fr0.filter(s=>!inNR(s)),pl=fr1.length?fr1:fr0;const lp=pl[Math.random()*pl.length|0];if(lp)lp.content='lockpick';}
   for(const r of LR){const ins=shuf(stashes.filter(s=>s.locked===r));ins.forEach((s,i)=>{if(i===0||Math.random()<.22){s.content='coins';s.n=rnd(8,25)}else if(i===1||Math.random()<.5){s.content=['coin','energy','phone','speaker','lockpick','torch','petarda','tomato'][Math.random()*8|0]}});
    if(Math.random()<.25){const s=ins.find(s=>!s.content)||ins[ins.length-1];if(s){s.content='paper';s.paper=EGOR_LORE}}}
+  secretLoot();
  }
  // few floor items, tucked into room corners
  for(const r of rooms)if(r.locked&&r.loot)for(const[x,y]of r.loot)pickups.push({x,y,item:['coin','energy','phone','speaker','torch','petarda','tomato','roll'][Math.random()*8|0],n:1});
@@ -520,6 +525,7 @@ function buildGridOnce(){
   const cand=shuf(furn.filter(f=>top[f.t]&&!inL(f.x,f.y)&&!(camSpot&&f.x===camSpot.x&&f.y===camSpot.y)&&!stashes.some(s=>s.cx===f.x&&s.cy===f.y)&&!pickups.some(p=>p.x===f.x&&p.y===f.y)&&[[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy])=>g[f.y+dy]?.[f.x+dx]===1)&&rooms.some(r=>r.type&&f.x>=r.x0&&f.x<=r.x1&&f.y>=r.y0&&f.y<=r.y1)));
   const pool=['tomato','tomato','roll','petarda','coin','energy','phone','torch','speaker'];let n=rnd(4,7);
   for(const f of cand){if(n--<=0)break;let it=pool[Math.random()*pool.length|0];if(it==='torch'&&pickups.some(p=>p.item==='torch'))it='tomato';pickups.push({x:f.x,y:f.y,item:it,n:1,h:top[f.t]})}}
+ placeVents();
 }
 function validateMap(){ // nothing may be blocked: every floor cell, locker door and stash must be reachable
  const seen=new Uint8Array(W*H),q=[spawnCell[1]*W+spawnCell[0]];seen[q[0]]=1;
@@ -537,8 +543,9 @@ function table(x,y,stash){g[y][x]=2;furn.push({t:'table',x,y});if(stash)stashes.
 function shelf(x,y,stash,big){g[y][x]=2;furn.push({t:big?'fridge':'shelf',x,y});if(stash)stashes.push(mkStash(stash,x,y,1.2))}
 function bin(x,y,name,h=0,kind='bin'){const s=mkStash(name,x,y,h||0.4);s.kind=kind;if(h>1)s.kind='wall';stashes.push(s)}
 function locker(x,y,stall){g[y][x]=3;lockers.push({x,y,stall,occupant:null,open:0,checkedAt:-99})}
-const solid=(i,j)=>{if(i<0||j<0||i>=W||j>=H)return true;const v=g[j][i];return v===0||v===2||v===3||v===6||(v===9&&!exitOpen)};
-const blocksSight=(i,j)=>{if(i<0||j<0||i>=W||j>=H)return true;const v=g[j][i];return v===0||v===3||v===6||(v===9&&!exitOpen)};
+let VENT_OK=false,vents=[];
+const solid=(i,j)=>{if(i<0||j<0||i>=W||j>=H)return true;const v=g[j][i];return v===0||v===2||v===3||v===6||(v===7&&!VENT_OK)||(v===9&&!exitOpen)};
+const blocksSight=(i,j)=>{if(i<0||j<0||i>=W||j>=H)return true;const v=g[j][i];return v===0||v===3||v===6||v===7||(v===9&&!exitOpen)};
 const cell=v=>Math.floor(v/CS),wc=i=>i*CS+CS/2;
 function hitAt(x,z,r){return solid(cell(x-r),cell(z-r))||solid(cell(x+r),cell(z-r))||solid(cell(x-r),cell(z+r))||solid(cell(x+r),cell(z+r))}
 function move(p,dx,dz,r){if(!hitAt(p.x+dx,p.z,r))p.x+=dx;if(!hitAt(p.x,p.z+dz,r))p.z+=dz}
@@ -550,6 +557,72 @@ function bfs(sx,sy,tx,ty){if(sx===tx&&sy===ty)return[];const prev=new Int32Array
  const ti=ty*W+tx;if(prev[ti]<0)return null;const p=[];let c=ti;while(c!==sy*W+sx){p.push([c%W,(c/W)|0]);c=prev[c]}return p.reverse()}
 function lockerDir(L){const D=[[0,1],[0,-1],[1,0],[-1,0]];for(const[dx,dy]of D)if(g[L.y+dy]?.[L.x+dx]===1&&g[L.y-dy]?.[L.x-dx]===0)return[dx,dy];for(const[dx,dy]of D)if(g[L.y+dy]?.[L.x+dx]===1)return[dx,dy];return[0,1]}
 function roomAt(p){const x=cell(p.x),y=cell(p.z);for(let i=rooms.length-1;i>=0;i--){const r=rooms[i];if(x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1)return r.name}return 'Коридор'}
+
+// ================= VENTS & SECRET ROOMS =================
+const SECRET_THEMES=[
+ {id:'egor',name:'Тайная комната Егора',board:'ЕГОР БЫЛ ЗДЕСЬ',wall:'ОН ВСЕГДА СМОТРИТ',col:0xff2a1a,st:['алтарь из тыкв','коробка с фотографиями','старый рюкзак Егора'],loot:['petarda','petarda','tomato','energy'],paper:null},
+ {id:'lab',name:'Заброшенная лаборатория',board:'НЕ ВХОДИТЬ! ОПЫТЫ',wall:'ОБРАЗЕЦ №7 СБЕЖАЛ',col:0x40ff70,st:['колба с зелёной жижей','ржавый сейф лаборанта'],loot:['energy','energy','battery','torch'],paper:{title:'🧪 Журнал лаборанта',text:'31 октября 1999.<br><br>Опыт с «энергетиком» прошёл неудачно. Подопытный ученик бегает быстрее, но перестал спать и всё время повторяет: «Хочу на перемену».<br><br>Вход в лабораторию заложил кирпичом. Пусть думают, что её никогда не было. Через вентиляцию сюда пролезет разве что ребёнок…'}},
+ {id:'guard',name:'Каморка сторожа',board:'СТОРОЖ. НЕ БЕСПОКОИТЬ',wall:'КЛЮЧИ НЕ БРАТЬ!!!',col:0xffb040,st:['сундук сторожа','связка ключей на гвозде'],loot:['lockpick','lockpick','phone','speaker','torch'],paper:{title:'🔦 Дневник сторожа',text:'Ночная смена, опять.<br><br>Мальчишка с бензопилой снова бродит по второму этажу. Директор говорит — показалось.<br><br>Я спрятал запасные отмычки здесь. Если ты это читаешь — бери и беги. Шкафы его не остановят, а вот в вентиляцию он не влезает: широкий слишком.'}},
+ {id:'arch',name:'Архив 1987 года',board:'АРХИВ — СЕКРЕТНО',wall:'ЛИЧНОЕ ДЕЛО №13 ИЗЪЯТО',col:0x9ab8ff,st:['папка «Личные дела»','коробка с киноплёнками','шкатулка завуча'],loot:['coin','coin','phone','roll'],paper:{title:'🗂 Личное дело №13',text:'Ученик: Е. (фамилия зачёркнута).<br>Класс: 8-Б.<br><br>Замечания: «Не сдал работу по труду. Обещал вернуться и закончить её».<br><br>Отметка внизу красными чернилами: <b>«ВЕРНУЛСЯ»</b>.'}},
+ {id:'zero',name:'Кабинет №0',board:'???',wall:'ТЫ НЕ ДОЛЖЕН БЫЛ ЭТО НАЙТИ',col:0xc060ff,rare:true,st:['пустая парта','ящик без дна'],loot:['energy','lockpick','speaker'],paper:{title:'❔ Записка без подписи',text:'Этого кабинета нет на плане школы.<br><br>Здесь всегда тихо. Даже Егор сюда не заходит.<br><br>Посиди немного. Отдохни. А потом — найди выход.'}}];
+function placeSecrets(){
+ let ns=Math.random()<.2?1:0;if(ns&&Math.random()<.12)ns++;if(!ns)return;
+ const pool=SECRET_THEMES.filter(t=>!t.rare||Math.random()<.25);
+ for(const r of shuf(rooms.filter(r=>r.type==='class'&&!r.locked))){if(ns<=0||!pool.length)break;
+  const inR=(x,y)=>x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1;
+  let best=null;
+  for(const nb of rooms){if(nb===r||!nb.type||nb.locked||nb.secret)continue;if(nb.y0>r.y1||nb.y1<r.y0)continue;
+   let wx=null,ox;if(nb.x0===r.x1+2){wx=r.x1+1;ox=1}else if(nb.x1===r.x0-2){wx=r.x0-1;ox=-1}if(wx==null)continue;
+   for(let y=Math.max(r.y0,nb.y0)+1;y<Math.min(r.y1,nb.y1);y++){const a=g[y][wx-ox],b=g[y][wx+ox];if(g[y][wx]===0&&(a===1||a===2||a===3)&&b===1){best={x:wx,y};break}}if(best)break}
+  if(!best)continue;
+  const d=layout.doors.find(d=>d[3]===r.name);if(!d)continue;
+  const th=pool.splice(Math.random()*pool.length|0,1)[0];
+  r.locked=true;r.secret=th;r.door=[d[0],d[1]];r.vent=[best.x,best.y];
+  furn=furn.filter(f=>f.t==='board'||!inR(f.x,f.y));lockers=lockers.filter(L=>!inR(L.x,L.y));stashes=stashes.filter(st=>!inR(st.cx,st.cy));
+  for(let y=r.y0;y<=r.y1;y++)for(let x=r.x0;x<=r.x1;x++)if(g[y][x]===2||g[y][x]===3)g[y][x]=1;
+  const bd=furn.find(f=>f.t==='board'&&inR(f.x,f.y));if(bd)bd.text=th.board;
+  r.name=th.name;
+  const fc=[];for(let y=r.y0+1;y<r.y1;y++)for(let x=r.x0+1;x<r.x1;x++)if(g[y][x]===1&&Math.abs(x-best.x)>1)fc.push([x,y]);
+  const sp=shuf(fc);th.st.forEach((nm,i)=>{const c=sp[i];if(!c)return;bin(c[0],c[1],nm,.5);const st=stashes[stashes.length-1];st.locked=r;st.secretBox=true});
+  r.loot=sp.slice(th.st.length,th.st.length+rnd(2,3));ns--}}
+function secretLoot(){for(const r of rooms){if(!r.secret)continue;const th=r.secret,ins=stashes.filter(s=>s.locked===r);
+ ins.forEach((s,i)=>{if(i===0){s.content='coins';s.n=rnd(25,60)}else s.content=th.loot[Math.random()*th.loot.length|0]});
+ const p=ins[ins.length-1];if(p&&ins.length>1){p.content='paper';p.paper=th.paper||EGOR_LORE}}}
+function placeVents(){vents=[];const dset=new Set(layout.doors.map(d=>d[1]*W+d[0]));
+ for(const r of rooms)if(r.secret&&r.vent){g[r.vent[1]][r.vent[0]]=7;vents.push({x:r.vent[0],y:r.vent[1],ax:1,secret:r})}
+ const typed=(x,y)=>rooms.find(r=>r.type&&x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1),cand=[];
+ for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){if(g[y][x]!==0)continue;
+  for(const[dx,dy]of[[1,0],[0,1]]){const ax=x+dx,ay=y+dy,bx=x-dx,by=y-dy;if(g[ay][ax]!==1||g[by][bx]!==1)continue;if((ay>=FO)!==(by>=FO))continue;
+   if(dset.has(ay*W+ax)||dset.has(by*W+bx))continue;
+   const na=roomAt({x:wc(ax),z:wc(ay)}),nb=roomAt({x:wc(bx),z:wc(by)});if(na===nb||na.startsWith('Сходи')||nb.startsWith('Сходи'))continue;
+   const ra=typed(ax,ay),rb=typed(bx,by);if(!ra&&!rb)continue;if(ra?.locked||rb?.locked)continue;
+   cand.push({x,y,ax:dx,pr:(ra&&rb?2:1)+Math.random()})}}
+ cand.sort((a,b)=>b.pr-a.pr);let n=(Math.random()<.15?5:rnd(3,4))-vents.length;
+ for(const c of cand){if(n<=0)break;if(vents.some(v=>Math.abs(v.x-c.x)+Math.abs(v.y-c.y)<8))continue;g[c.y][c.x]=7;vents.push(c);n--}}
+function buildVents(){const VH=1.05,OW=.95,sw=(CS-OW)/2,mg=new THREE.MeshStandardMaterial({color:0x8a949c,metalness:.7,roughness:.35}),dk=new THREE.MeshStandardMaterial({color:0x101214,roughness:.95});
+ for(const v of vents){const gr=new THREE.Group();gr.position.set(wc(v.x),0,wc(v.y));if(!v.ax)gr.rotation.y=Math.PI/2;world.add(gr);
+  box(CS,WH-VH,CS,M.wall,0,VH+(WH-VH)/2,0,gr);for(const sd of[-1,1])box(CS,VH,sw,M.wall,0,VH/2,sd*(OW/2+sw/2),gr);
+  box(CS,.04,OW,dk,0,VH-.02,0,gr);box(CS,.03,OW,mg,0,.015,0,gr);for(const sd of[-1,1])box(CS,VH,.03,mg,0,VH/2,sd*OW/2,gr);
+  for(const ex of[-1,1]){const X=ex*(CS/2+.02);box(.05,.09,OW+.18,mg,X,VH+.03,0,gr);for(const sd of[-1,1])box(.05,VH,.09,mg,X,VH/2,sd*(OW/2+.05),gr);box(.04,.06,OW,mg,X,.03,0,gr)}
+  // removed grille leaning on the wall
+  const gl=new THREE.Group();gl.position.set(CS/2+.12,0,OW/2+.65);gl.rotation.set(0,Math.PI/2,-.18);gr.add(gl);
+  for(let i=0;i<6;i++)box(.8,.05,.03,mg,0,.12+i*.15,0,gl);for(const sd of[-1,1])box(.05,.9,.04,mg,sd*.4,.47,0,gl)}
+ for(const r of rooms){if(!r.secret)continue;const th=r.secret,cx=(wc(r.x0)+wc(r.x1))/2,cz=(wc(r.y0)+wc(r.y1))/2,gr=new THREE.Group();gr.position.set(cx,0,cz);world.add(gr);
+  const l=new THREE.PointLight(th.col,9,16,1.4);l.position.set(0,2.2,0);gr.add(l);
+  const cm=new THREE.MeshStandardMaterial({color:0xf0e6c8,emissive:th.col,emissiveIntensity:.6}),fl=new THREE.MeshBasicMaterial({color:0xffd27a});
+  for(let i=0;i<8;i++){const a=i/8*Math.PI*2,c=new THREE.Mesh(G.cyl,cm);c.scale.set(.05,.22,.05);c.position.set(Math.cos(a)*1.3,.11,Math.sin(a)*1.3);gr.add(c);const f=new THREE.Mesh(G.sph,fl);f.scale.set(.03,.06,.03);f.position.set(c.position.x,.26,c.position.z);gr.add(f)}
+  if(th.id==='egor'){for(const[a,b]of[[-1.6,-1.6],[1.6,-1.6],[-1.6,1.6],[1.6,1.6]])pumpkin(cx+a,0,cz+b,.32,false);box(.9,.06,.25,M.metal,cx,.05,cz,world)}
+  else{box(1.6,.06,1,M.wood,cx,.75,cz,world);box(.08,.72,.08,M.metal,cx,.36,cz,world);pumpkin(cx,.78,cz,.15)}
+  // graffiti on the back wall
+  {const tx=ctex(1024,160,(c,w,h)=>{c.clearRect(0,0,w,h);c.font='bold 92px Georgia,serif';c.textAlign='center';c.textBaseline='middle';c.shadowColor='#000';c.shadowBlur=12;c.fillStyle='#'+th.col.toString(16).padStart(6,'0');c.fillText(th.wall,w/2,h/2)});
+   const d=r.top?1:-1,bz=wc(r.top?r.y1:r.y0)+d*.97,p=new THREE.Mesh(new THREE.PlaneGeometry(5,.8),new THREE.MeshBasicMaterial({map:tx,transparent:true,depthWrite:false}));p.position.set(cx,1.9,bz);if(d>0)p.rotation.y=Math.PI;world.add(p)}
+  for(const s of stashes)if(s.locked===r){const c=box(.9,.45,.55,M.wood,s.pos.x,.225,s.pos.z,world);box(.94,.08,.6,M.dark,s.pos.x,.47,s.pos.z,world);box(.12,.12,.04,M.metal,s.pos.x,.4,s.pos.z+.29,world)}}}
+function toggleCrouch(){P.crouchT=!P.crouchT;if(!P.crouchT&&P.ventNear){say('🕳 Тут не встать — слишком низко');return}say(P.crouchT?'🧎 Ты присел (C — встать)':'🚶 Ты встал',1.2);beep(P.crouchT?300:420,.05,'sine',.06)}
+function ventTick(){const cx=cell(P.pos.x),cy=cell(P.pos.z),r=.3,cs=[[cell(P.pos.x-r),cell(P.pos.z-r)],[cell(P.pos.x+r),cell(P.pos.z-r)],[cell(P.pos.x-r),cell(P.pos.z+r)],[cell(P.pos.x+r),cell(P.pos.z+r)]];
+ P.ventNear=!P.hidden&&cs.some(([x,y])=>g[y]?.[x]===7);const iv=!P.hidden&&g[cy]?.[cx]===7;
+ if(iv&&!P.inVent){if(!P.ventTip){P.ventTip=1;say('🕳 Ты в вентиляции. Егор не пролезет и не увидит тебя здесь.',3)}beep(180,.12,'triangle',.08,140);if(E&&E.state==='chase'&&E.target?.who==='player')egorSay(['Залез в вентиляцию, крыса?!','Вылезай оттуда!','Я подожду…'][Math.random()*3|0])}
+ P.inVent=iv;
+ for(const rm of rooms)if(rm.secret&&!rm.found&&cx>=rm.x0&&cx<=rm.x1&&cy>=rm.y0&&cy<=rm.y1){rm.found=true;P.secrets=(P.secrets|0)+1;say('🗝 <b>СЕКРЕТНАЯ КОМНАТА!</b> «'+rm.name+'» — об этом месте мало кто знает. Обыщи сундуки!',5);beep(520,.25,'sine',.18,1040);setTimeout(()=>beep(780,.3,'sine',.16,1560),220);try{addChat('🗝','Кто-то нашёл секретную комнату…')}catch(e){}}}
 // ================= RENDER =================
 const renderer=new THREE.WebGLRenderer({antialias:!TOUCH,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,TOUCH?1.25:1.75));renderer.setSize(innerWidth,innerHeight);
 renderer.shadowMap.enabled=false;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.45;document.body.prepend(renderer.domElement);
@@ -709,6 +782,7 @@ function buildWorld(){
    if(roomAt({x:X,z:Z}).includes('хімії'))for(let i=0;i<3;i++){const flask=new THREE.Mesh(G.sph,i%2?M.stem:M.tomato);flask.scale.set(.085,.12,.085);flask.position.set(X-.4+i*.25,.95,Z-.25);world.add(flask);box(.035,.11,.035,M.white,flask.position.x,1.08,Z-.25,world);}
   }
  }
+ buildVents();
  buildShell();
  // lockers
  for(const L of lockers){const[dx,dy]=lockerDir(L);L.dir=[dx,dy];const yaw=Math.atan2(dx,dy);const grp=new THREE.Group();grp.position.set(wc(L.x)-dx*.45,0,wc(L.y)-dy*.45);grp.rotation.y=yaw;world.add(grp);
@@ -799,7 +873,7 @@ const flash=new THREE.SpotLight(0xfff2d8,22,22,0.5,0.45,1.3);camera.add(flash);f
 let held=null;function setHeld(){if(held)camera.remove(held);held=P.inv[P.sel]>0?itemMesh(P.sel):null;if(held){held.position.set(.32,-.3,-.6);camera.add(held)}}
 function reset(){
  exitOpen=false;rageOff();shellAssets();{const _r=Math.random;if(NET.seed!=null)Math.random=mulberry32(NET.seed);try{camBlind=null;buildGrid();buildWorld();fixLockedDoors();buildFixtures()}finally{Math.random=_r}}blk.on=false;blkK=0;blk.next=70+Math.random()*80;$('blk').classList.remove('on','lt');flash.intensity=0;closePanels(false);clearKeys();resetChat();
- Object.assign(P,{myDlv:0,rescues:0,_resT:-99,papers:[],coinsFound:0,boostT:0,phoneCd:0,gone:false,hp:3,stam:100,notes:0,found:0,hits:0,inv:NET.loadout(),sel:'tomato',hidden:null,doomed:false,splat:0,search:null,flash:false,yaw:-Math.PI/2,pitch:0});P.spawnF=Math.random()<.5?1:0;P.pos.set(wc(spawnCell[0]),1.6,wc(spawnCell[1]+P.spawnF*FO));
+ Object.assign(P,{crouchT:false,crouch:false,ventNear:false,inVent:false,eyeH:1.6,secrets:0,ventTip:0,myDlv:0,rescues:0,_resT:-99,papers:[],coinsFound:0,boostT:0,phoneCd:0,gone:false,hp:3,stam:100,notes:0,found:0,hits:0,inv:NET.loadout(),sel:'tomato',hidden:null,doomed:false,splat:0,search:null,flash:false,yaw:-Math.PI/2,pitch:0});P.spawnF=Math.random()<.5?1:0;P.pos.set(wc(spawnCell[0]),1.6,wc(spawnCell[1]+P.spawnF*FO));
  for(const o of [E?.mesh,...bots.map(b=>b.mesh),...proj.map(p=>p.mesh),...decals,...traps.map(t=>t.mesh),...teachers.map(t=>t.mesh),...REM.map(r=>r.mesh)])if(o)o.parent?.remove(o);
  proj=[];decals=[];traps=[];
  const em=human(new THREE.MeshStandardMaterial({color:0x1d1d24}),new THREE.MeshStandardMaterial({color:0x2a3550}),0xd9a07a,1.12);
@@ -872,7 +946,7 @@ addEventListener('keydown',e=>{
  if(e.code==='KeyR'&&readOpen){closePanels();return}
  if(panelOpen()||!locked())return;
  K[e.code]=true;
- if(e.code==='KeyE')useKey();if(e.code==='KeyQ')cycle();if(e.code==='KeyF')startVoice();if(e.code==='KeyL')toggleFlash();if(e.code==='KeyR')openRead();if(e.code==='KeyG')dropItem();
+ if(e.code==='KeyC'){toggleCrouch();const cb=document.querySelector('[data-a=crouch]');if(cb)cb.classList.toggle('on',!!P.crouchT)}if(e.code==='KeyE')useKey();if(e.code==='KeyQ')cycle();if(e.code==='KeyF')startVoice();if(e.code==='KeyL')toggleFlash();if(e.code==='KeyR')openRead();if(e.code==='KeyG')dropItem();
  if(e.code.startsWith('Digit')){const k=Object.keys(ITEMS)[+e.code.slice(5)-1];if(k){P.sel=k;setHeld();updHUD()}}
 });
 addEventListener('keyup',e=>{K[e.code]=false;if(e.code==='KeyE')P.search=null;if(e.code==='KeyF')stopVoice()});
@@ -945,15 +1019,16 @@ function drawMap(){const c=$('mapCanvas'),G=mapG(),u=G.u;if(c.width!==G.w||c.hei
  {const bg=ctx.createLinearGradient(0,0,0,c.height);bg.addColorStop(0,'#1a0f24');bg.addColorStop(1,'#0a0710');ctx.fillStyle=bg;ctx.fillRect(0,0,c.width,c.height);
  for(let f=0;f<2;f++){const fx=G.ox+f*(W+2)*u;ctx.save();ctx.shadowColor='#b44cff55';ctx.shadowBlur=24;ctx.fillStyle='#241a2e';ctx.beginPath();ctx.roundRect(fx-8,G.oy-8,W*u+16,FO*u+16,14);ctx.fill();ctx.restore();ctx.strokeStyle='#ff9a2a55';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(fx-8,G.oy-8,W*u+16,FO*u+16,14);ctx.stroke()}
  const T=Date.now()/1000;
- for(let y=0;y<H;y++)for(let x=0;x<W;x++){const v=g[y][x],[a1,b1]=mapPt(x,y,G);
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++){const v=rooms.some(r=>r.secret&&!r.found&&x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1)?0:g[y][x],[a1,b1]=mapPt(x,y,G);
+  if(v===7){ctx.fillStyle='#0d1318';ctx.fillRect(a1,b1,u,u);ctx.fillStyle='#7fd8ff';for(let i=1;i<4;i++)ctx.fillRect(a1+i*u/4-1,b1+u*.25,2,u*.5);continue}
   if(v===6){ctx.fillStyle='#5a1010';ctx.fillRect(a1,b1,u,u);ctx.fillStyle='#ff4a3a';ctx.fillRect(a1+1,b1+u*.3,u-2,u*.4);continue}
-  if(layout.doorSet.has(y*W+x)){ctx.fillStyle='#4a3520';ctx.fillRect(a1,b1,u,u);ctx.fillStyle='#ffc857';ctx.fillRect(a1+1,b1+u*.3,u-2,u*.4);continue}
+  if(v!==0&&layout.doorSet.has(y*W+x)){ctx.fillStyle='#4a3520';ctx.fillRect(a1,b1,u,u);ctx.fillStyle='#ffc857';ctx.fillRect(a1+1,b1+u*.3,u-2,u*.4);continue}
   if(v===0){ctx.fillStyle='#0d1318';ctx.fillRect(a1,b1,u,u);ctx.fillStyle='#2b3a44';ctx.fillRect(a1+1,b1+1,u-2,u-2);ctx.fillStyle='#3d5160';ctx.fillRect(a1+1,b1+1,u-2,2);continue}
   ctx.fillStyle=color('floor');ctx.fillRect(a1,b1,u,u);ctx.fillStyle='#ffffff0a';ctx.fillRect(a1,b1,u,1);
   if(v===3){ctx.fillStyle='#5aa0c8';ctx.beginPath();ctx.roundRect(a1+2,b1+2,u-4,u-4,3);ctx.fill();ctx.fillStyle='#9fd6f0';ctx.fillRect(a1+u/2-1,b1+4,2,u-8)}
   else if(v===2){ctx.fillStyle='#8a6d44';ctx.beginPath();ctx.roundRect(a1+2,b1+2,u-4,u-4,2);ctx.fill();ctx.fillStyle='#b99563';ctx.fillRect(a1+3,b1+3,u-6,2)}
   else if(v===9||v===4||v===5){const gl=.5+.5*Math.sin(T*3);ctx.save();ctx.shadowColor='#ffca69';ctx.shadowBlur=8+8*gl;ctx.fillStyle='#ffca69';ctx.fillRect(a1+1,b1+1,u-2,u-2);ctx.restore()}}
- for(const r of rooms.filter(r=>r.type)){const[ra,rb]=mapPt(r.x0,r.y0,G),hue=(r.x0*37+r.y0*17+r.type.length*41)%360;ctx.fillStyle=`hsla(${hue},70%,60%,.10)`;ctx.fillRect(ra,rb,(r.x1-r.x0+1)*u,(r.y1-r.y0+1)*u)}
+ for(const r of rooms.filter(r=>r.type&&!(r.secret&&!r.found))){const[ra,rb]=mapPt(r.x0,r.y0,G),hue=(r.x0*37+r.y0*17+r.type.length*41)%360;ctx.fillStyle=`hsla(${hue},70%,60%,.10)`;ctx.fillRect(ra,rb,(r.x1-r.x0+1)*u,(r.y1-r.y0+1)*u)}
  }
  for(const s of stashes){if(!s.seen&&!s.searched)continue;const[a1,b1]=mapPt(s.cx+.5,s.cy+.5,G);ctx.beginPath();ctx.arc(a1,b1,s.searched?2.5:4.5,0,7);ctx.fillStyle=s.searched?'#8a8f94':'#ffd23a';ctx.fill();if(!s.searched){ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.stroke()}}
   for(const p of pickups){if(!p.seen||!p.mesh?.parent)continue;const[a1,b1]=mapPt(p.x+.5,p.y+.5,G);ctx.fillStyle=p.item==='note'?'#fff2a8':'#ff9a2a';ctx.fillRect(a1-3.5,b1-3.5,7,7);ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.strokeRect(a1-3.5,b1-3.5,7,7)}
@@ -1014,6 +1089,7 @@ if(TOUCH){document.body.classList.add('touch');
  $('play').addEventListener('click',()=>{try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}setTimeout(()=>{if(innerHeight>innerWidth)say('📱 Лучше играть в горизонтальном режиме',4)},2500)});
  const act=(a,down)=>{if(!playing)return;if(a==='mic'){if(down){K.KeyF=true;startVoice()}else{K.KeyF=false;stopVoice()}return}if(a==='use'){if(down){if(panelOpen())return;K.KeyE=true;useKey()}else{K.KeyE=false;P.search=null}return}if(!down)return;
   if(a==='throw'&&!panelOpen())throwItem();else if(a==='item')cycle();else if(a==='drop'&&!panelOpen())dropItem();else if(a==='light')toggleFlash();else if(a==='map')toggleMap();else if(a==='chat')openChat();
+  else if(a==='crouch'){toggleCrouch();document.querySelector('[data-a=crouch]').classList.toggle('on',!!P.crouchT)}
   else if(a==='run'){runT=!runT;K.ShiftLeft=runT;document.querySelector('[data-a=run]').classList.toggle('on',runT)}};
  for(const b of document.querySelectorAll('#tbtns button')){const a=b.dataset.a;b.addEventListener('touchstart',e=>{e.preventDefault();act(a,true)},{passive:false});const up=e=>{e.preventDefault();act(a,false)};b.addEventListener('touchend',up,{passive:false});b.addEventListener('touchcancel',up,{passive:false})}
 
@@ -1130,7 +1206,7 @@ function updEgor(dt){
  for(let i=traps.length-1;i>=0;i--)if(E.pos.distanceTo(traps[i].pos.clone().setY(0))<.6){E.slip=2.2;scene.remove(traps[i].mesh);traps.splice(i,1);say('🧻 Егор поскользнулся на рулоне!');beep(400,.4,'sine',.15,80);return}
  const boost=Math.min(P.notes*.12+Math.min(time/150,1)*.25,.85);const SM=E.type.sp*(RAGE?2:1);
  // perception
- const cands=[];const ph=P.pos.clone().setY(0);if(!P.hidden&&!P.gone)cands.push({who:'player',pos:ph,range:(P.flash?26:16)});bots.forEach(b=>b.alive&&!b.hidden&&cands.push({who:b,pos:b.pos,range:18}));REM.forEach(r=>r.alive&&!r.hidden&&cands.push({who:r,pos:r.pos,range:18}));
+ const cands=[];const ph=P.pos.clone().setY(0);if(!P.hidden&&!P.gone&&!P.inVent)cands.push({who:'player',pos:ph,range:(P.flash?26:16)*(P.crouch?.7:1)});bots.forEach(b=>b.alive&&!b.hidden&&cands.push({who:b,pos:b.pos,range:18}));REM.forEach(r=>r.alive&&!r.hidden&&cands.push({who:r,pos:r.pos,range:18}));
  let best=null,bd=99;for(const c of cands){if(E.type.see?canSee(E.pos,E.yaw,c.pos,c.range):E.pos.distanceTo(c.pos)<1.8){const d=E.pos.distanceTo(c.pos);if(d<bd){bd=d;best=c}}}
  E.sees=!!best&&best.who==='player';
  if(E.state==='doomed'){if(!E.checkQ.length||!E.checkQ[0].occupant){E.state='patrol';P.doomed=false}}
@@ -1249,7 +1325,7 @@ function startBlackout(d){if(blk.on)return;blk.on=true;blk.t=d;$('blk').classLis
 function endBlackout(){blk.on=false;$('blk').classList.remove('on','lt');beep(900,.12,'square',.12);say('💡 Свет вернулся.',3)}
 function blkTick(dt){if(blk.on){blk.t-=dt;$('blk').classList.toggle('lt',!!P.flash&&P.inv.torch>0);if(blk.t<=0)endBlackout();return}
  if(NET.on&&!NET.host)return;blk.next-=dt;if(blk.next<=0){const d=20+Math.random()*20;blk.next=90+Math.random()*120;NET.send({t:'blk',d});startBlackout(d)}}
-function fixLockedDoors(){for(const r of rooms){if(!r.locked||!r.door)continue;const[x,y]=r.door;g[y][x]=6;if(r.doorG&&r.doorG.parent)continue;const d=layout.doors.find(d=>d[0]===x&&d[1]===y);if(!d)continue;
+function fixLockedDoors(){for(const r of rooms){if(!r.locked||!r.door||r.secret)continue;const[x,y]=r.door;g[y][x]=6;if(r.doorG&&r.doorG.parent)continue;const d=layout.doors.find(d=>d[0]===x&&d[1]===y);if(!d)continue;
  const A=shellAssets(),dz=d[2],X0=x*CS,Z0=y*CS,lg=new THREE.Group();if(Z0+1>=FO*CS)lg.position.y=FH;world.add(lg);const lf=box(CS-.24,2.25,.12,A.door,X0+1,1.125,Z0+1,lg);box(.3,.3,.14,new THREE.MeshStandardMaterial({color:0x8a1a1a}),X0+1,1.7,Z0+1,lg);
  const lp=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.3),plateMat('🔒 ЗАПЕРТО'));lp.position.set(X0+1,1.3,Z0+1+(dz<0?.07:-.07));if(dz>0)lp.rotation.y=Math.PI;lg.add(lp);
  lf.userData={kind:'ldoor',ref:r};interact.push(lf);const hb=box(CS,2.5,1.6,new THREE.MeshBasicMaterial({visible:false}),X0+1,1.25,Z0+1,lg);hb.userData=lf.userData;interact.push(hb);r.doorG=lg;r.doorM=lf}}
@@ -1281,10 +1357,10 @@ function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.
   P.moving=false;
   if(P.hidden){camera.position.copy(P.hidden.hidePos);camera.position.y+=rampY(P.hidden.hidePos.x,P.hidden.hidePos.z);}
   else{let fx=0,fz=0;if(K.KeyW||K.ArrowUp)fz-=1;if(K.KeyS||K.ArrowDown)fz+=1;if(K.KeyA||K.ArrowLeft)fx-=1;if(K.KeyD||K.ArrowRight)fx+=1;if(camOpen&&(fx||fz))closeCam();
-   const sprint=(K.ShiftLeft||K.ShiftRight)&&P.stam>5&&(fx||fz);P.sprint=!!sprint;let sp=sprint?5.8:3.2;if(P.splat>0)sp*=.6;if(P.search)sp=0;
-   if(fx||fz){const l=Math.hypot(fx,fz);fx/=l;fz/=l;const s=Math.sin(P.yaw),c=Math.cos(P.yaw);move(P.pos,(fx*c+fz*s)*sp*dt,(-fx*s+fz*c)*sp*dt,.3);P.moving=sp>0;P.bob+=dt*sp*2.2}
-   P.boostT=Math.max(0,P.boostT-dt);P.phoneCd=Math.max(0,P.phoneCd-dt);P.stam=Math.max(0,Math.min(100,P.stam+(sprint?(P.boostT>0?0:-24):13)*dt));P.noiseT-=dt;if(P.moving&&P.noiseT<=0){P.noiseT=.4;noise(P.pos.clone().setY(0),sprint?13:3.5)}
-   camera.position.set(P.pos.x,1.6+(P.moving?Math.sin(P.bob)*.05:0)+rampY(P.pos.x,P.pos.z),P.pos.z);
+   P.crouch=!!P.crouchT||P.ventNear;const sprint=!P.crouch&&(K.ShiftLeft||K.ShiftRight)&&P.stam>5&&(fx||fz);P.sprint=!!sprint;let sp=sprint?5.8:P.crouch?1.8:3.2;if(P.splat>0)sp*=.6;if(P.search)sp=0;
+   if(fx||fz){const l=Math.hypot(fx,fz);fx/=l;fz/=l;const s=Math.sin(P.yaw),c=Math.cos(P.yaw);VENT_OK=P.crouch;move(P.pos,(fx*c+fz*s)*sp*dt,(-fx*s+fz*c)*sp*dt,.3);VENT_OK=false;P.moving=sp>0;P.bob+=dt*sp*2.2}
+   P.boostT=Math.max(0,P.boostT-dt);P.phoneCd=Math.max(0,P.phoneCd-dt);P.stam=Math.max(0,Math.min(100,P.stam+(sprint?(P.boostT>0?-9:-24):13)*dt));P.noiseT-=dt;if(P.moving&&P.noiseT<=0){P.noiseT=.4;noise(P.pos.clone().setY(0),sprint?13:P.crouch?1.2:3.5)}
+   ventTick();P.eyeH=(P.eyeH??1.6)+((P.crouch?.72:1.6)-(P.eyeH??1.6))*Math.min(1,dt*10);camera.position.set(P.pos.x,P.eyeH+(P.moving?Math.sin(P.bob)*(P.crouch?.025:.05):0)+rampY(P.pos.x,P.pos.z),P.pos.z);
    for(let i=traps.length-1;i>=0;i--);}
   camera.rotation.set(P.pitch,P.yaw,0,'YXZ');
   if(P.splat>0)P.splat-=dt;$('red').style.opacity=P.splat>0?Math.min(1,P.splat):0;
@@ -1299,7 +1375,7 @@ function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.
   if(exitOpen&&!P.hidden&&P.pos.x>wc(W-2)+.6&&Math.abs(cell(P.pos.z)-exitY)<2)win();
   NET.sim(dt);updProj(dt);egorAudio(dt);setListener();updTeachers(dt);if(time>botChatAt){botChatAt=time+18+Math.random()*15;const b=bots.find(b=>b.alive&&!b.hidden&&b.state==='flee')||bots.filter(b=>b.alive)[Math.random()*bots.filter(b=>b.alive).length|0];if(b)addChat(b.name,b.state==='flee'?'Егор рядом! Я убегаю!':b.inv.tomato?'Нашёл помидор. Держимся вместе.':'Ищу вещи в кабинетах.')}if(recorder?.state==='recording'&&time%1<dt)noise(P.pos,9);
   // HUD
-  if(camSpot&&!camSpot.seen&&Math.hypot(P.pos.x-wc(camSpot.x),P.pos.z-wc(camSpot.y))<10)camSpot.seen=true;$('hSt').style.width=P.stam+'%';$('hTime').textContent=fmt(time);$('hRoom').textContent=roomAt(P.pos);
+  if(camSpot&&!camSpot.seen&&Math.hypot(P.pos.x-wc(camSpot.x),P.pos.z-wc(camSpot.y))<10)camSpot.seen=true;$('hSt').style.width=P.stam+'%';$('hTime').textContent=fmt(time);$('hRoom').textContent=P.inVent?'🕳 Вентиляция':roomAt(P.pos);
   {const el=$('eye'),t=E.type.ic+' '+E.type.name;if(el.textContent!==t)el.textContent=t;if(el.dataset.s!==E.type.id){if(el.dataset.s)beep(320,.12,'square',.06);el.dataset.s=E.type.id;el.className='b et-'+E.type.id}}  if(msgT>0){msgT-=dt;if(msgT<=0)$('msg').style.opacity=0}
   // audio
   const ed=E.pos.distanceTo(P.pos.clone().setY(0));sawG.gain.value=E.weapon==='saw'&&E.stun<=0&&E.state!=='patrol'?Math.max(0,.09*(1-ed/16)):0;sawO.frequency.value=70+Math.sin(tt*30)*8+(E.state==='chase'?30:0);
