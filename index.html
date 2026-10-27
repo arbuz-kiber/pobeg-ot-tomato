@@ -231,8 +231,17 @@ body.touch #mapCanvas{width:1250px;max-width:none;max-height:none;flex:none;touc
 #guide details[open] summary{border-bottom:1px solid #ff9a2a33}
 #guide .gb{padding:8px 0 12px;line-height:1.55;font-size:15px}
 #guide ul{margin:6px 0 6px 20px}#guide li{margin:5px 0}#guide b{color:#ffe2a8}#guide p{margin:6px 0}
-#guideClose{font-size:22px;padding:6px 16px;border-radius:12px}
-</style></head><body>
+#guideClose{font-size:22px;padding:6px 16px;border-radius:12px} #blk{position:fixed;inset:0;background:#000;z-index:1;pointer-events:none;opacity:0;transition:opacity .3s}#blk.on{opacity:1}
+#blk.lt{background:radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 0,rgba(0,0,0,.04) 9%,rgba(0,0,0,.94) 27%,#000 38%)}
+#hud,#cross,#inv,#prompt,#nametag{z-index:2}#over,#menu,#pause{z-index:6}
+#guide .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px;margin:8px 0}
+#guide .gal figure{background:#0004;border:1px solid #fff2;border-radius:12px;padding:8px;text-align:center;font-size:12.5px;line-height:1.35}
+#guide .gal img{width:100px;height:100px;object-fit:contain;display:block;margin:0 auto 4px}
+#guide .gal img.w{width:100%;height:auto;max-height:70px}
+#guide .gal .em{font-size:54px;line-height:100px}
+#gReady{position:sticky;bottom:0;background:#14101cf2;padding:12px;border-top:1px solid #fff3;display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:14px}
+#gReady.hidden{display:none}#gReady span{font-size:14px}#gBtn{padding:12px 26px;font-size:18px;border-radius:12px} 
+</style></head><body><div id="blk"></div>
 <div id="hud" class="hidden">
  <span class="b" id="hRoom">Коридор</span>
  <span class="b">❤️ <span id="hHp"></span></span>
@@ -285,9 +294,17 @@ body.touch #mapCanvas{width:1250px;max-width:none;max-height:none;flex:none;touc
 <details><summary>🏫 Школа: этажи, запертые двери, учителя, карта</summary><div class="gb"><ul><li><b>Два этажа</b>, их соединяют лестницы (на карте жёлтые). Выход всегда на 1 этаже. Ты, Егор и ученики появляетесь на <b>случайном этаже</b> — на 1-м или на 2-м.</li><li><b>📹 Комната камер</b> (есть в каждой школе): на столе монитор без питания. Найди <b>🔋 батарею</b> (тайник или пол; для побега она не нужна), подойди к монитору и нажми <b>E</b>, затем ещё раз <b>E</b> — увидишь Егора, если он в коридоре. Пока смотришь, ты уязвим.</li><li><b>Предметы лежат и на столах, партах и полках.</b></li><li><b>Запертые кабинеты:</b> иногда 1–3 класса закрыты красной дверью с табличкой 🔒. Внутри только монеты, находки и редкие записки, <b>ничего обязательного для прохождения там нет</b>. Нужна отмычка: хотя бы одна всегда лежит в обычных тайниках. После вскрытия дверь открыта для всех, включая ботов, других игроков и Егора.</li><li><b>Учителя</b> иногда обходят школу. Если они увидят, что ты бежишь, то закричат «Не бегать!», и Егор услышит.</li><li><b>Шум:</b> ходьба тихая, бег громкий (радиус ~13 м против ~3,5 м), поиск и взрывы шумят, у многих бросков есть звук. Идти шагом рядом с Егором безопаснее, чем бежать.</li><li><b>Карта (M / 🗺):</b> названия комнат, шкафы, обыскано/нет, найденные записки, ученики, учителя и твой взгляд. Тап или наведение показывает координаты. На телефоне кнопка 🔍 меняет масштаб.</li></ul></div></details>
 <details><summary>🧑‍🎓 Боты и мультиплеер</summary><div class="gb"><ul><li>Ученики (боты) работают сами: обыскивают тайники, носят части заданий, прячутся и кидают помидоры в Егора. Их число видно вверху (🧑‍🎓 4/4). Пойманный бот выбывает и роняет то, что нёс.</li><li><b>Онлайн:</b> «Найти игру» (до 5 игроков), «Создать лобби» (код для друзей) или «Войти по коду». Карта у всех одинаковая, свободные места занимают боты.</li><li><b>Чат:</b> текстовый (T / 💬) и голосовой (держи F / 🎙), слышат все.</li><li>Задания общие: сколько частей отнесли все вместе, столько и засчитано.</li></ul></div></details>
 <details><summary>🪙 Монеты и магазин</summary><div class="gb"><p>Найденные в раунде монеты 🪙 засчитываются после раунда (если ты в аккаунте). В магазине покупаются скины и расходники (помидоры, петарды, рулоны), которые ты берёшь в раунд с собой (до 3 штук). Офлайн-игра без аккаунта монет не даёт. В меню есть 🏆 таблица лидеров: топ по заработанным монетам и по самому быстрому побегу.</p></div></details>
+<details><summary>🖼 Предметы: как выглядят в игре</summary><div class="gb"><p>Картинки нарисованы из настоящих моделей игры. Предметы лежат в тайниках, на столах, партах, полках и на полу.</p><div class="gal" id="gGalI"></div></div></details>
+<details><summary>🖼 Объекты школы: таблички, двери, Егор</summary><div class="gb"><p>Так выглядят основные вещи, на которые стоит смотреть:</p><div class="gal" id="gGalO"></div>
+<ul><li><b>Синяя табличка</b> над дверью — номер и предмет кабинета. Задания указывают на комнаты по названию.</li><li><b>Красная табличка 🔒 ЗАПЕРТО</b> — закрытая дверь, нужна 🔑 отмычка.</li><li><b>Табличка «(тут камера)»</b> висит над дверью кабинета с монитором камер.</li><li><b>Зелёные указатели</b> стоят у лестниц: «↑ 2 ПОВЕРХ» и «↓ 1 ПОВЕРХ».</li></ul></div></details>
+<details><summary>⚡ Отключение света</summary><div class="gb"><ul><li>В случайный момент раунда свет <b>выключается по всей школе на 20–40 секунд</b>: полная темнота, ничего не видно.</li><li>Спасает <b>🔦 фонарик</b> (его можно только найти): включи его, и вокруг центра экрана появится световое пятно.</li><li>В темноте не бегай и не шуми: Егор слышит так же хорошо. Хороший момент стоять в шкафу или идти с фонариком вдоль стены.</li><li>Пока света нет, <b>монитор камер не работает</b>.</li><li>В сетевой игре отключение света одновременно у всех игроков. Когда время выйдет, свет вернётся сам.</li></ul></div></details>
+<details><summary>📹 Камеры: как следить за Егором</summary><div class="gb"><ul><li>Комнату с камерами можно узнать по табличке <b>«(тут камера)»</b> над дверью. На столе стоит монитор: нужна 🔋 батарея (тайник или пол).</li><li>Вставь батарею (<b>E</b>), затем снова <b>E</b>: откроется экран. Камеры стоят и в коридорах, и в кабинетах, а картинка сама переключается на ту камеру, которая видит Егора, и <b>поворачивается вслед за ним</b>.</li><li>Над экраном написано, на каком этаже и в какой комнате Егор сейчас.</li><li>Есть редкие <b>слепые зоны</b> (несколько комнат без обзора) и короткие помехи: там Егора не видно, надпись «сигнал потерян».</li><li>Пока смотришь на монитор, ты уязвим. Любое движение закрывает экран.</li></ul></div></details>
+<details><summary>🔒 Запертые комнаты</summary><div class="gb"><ul><li>Дверь закрыта красной створкой и табличкой 🔒. Пройти нельзя, пока кто-то не вскроет её отмычкой (подойди, наведись на дверь, <b>E</b>).</li><li>После вскрытия створка исчезает, комната открыта для всех: игроков, ботов, Егора.</li><li>Внутри монеты и находки, ничего обязательного для побега нет. Одна отмычка всегда лежит в обычных тайниках.</li></ul></div></details>
+<details><summary>🤖 Боты и лобби</summary><div class="gb"><ul><li>В режиме «Один с ботами» и в лобби (у хоста) можно задать <b>число ботов от 0 до 50</b>. Кнопка «Без ботов» ставит 0.</li><li>Боты ищут задания, прячутся в шкафах и погибают от Егора. Чем их больше, тем легче Егору отвлечься на других.</li><li>Ты, Егор и ученики в начале раунда появляетесь на <b>случайном этаже</b>.</li></ul></div></details>
+<details open><summary>✅ Готовность перед раундом</summary><div class="gb"><ul><li>Перед каждым раундом открывается этот гайд. Нажми <b>«✅ Готово»</b> внизу.</li><li>В сетевой игре раунд начинается, когда <b>готовы все люди</b>. Внизу видно, кого ещё ждём.</li></ul></div></details>
 <details><summary>💡 Советы</summary><div class="gb"><ul><li>Ходи шагом, бегай только когда нужно. Следи за полоской ⚡.</li><li>Сначала осмотри ближайшие комнаты: части заданий разбросаны по обоим этажам, не больше одной в комнате.</li><li>Всегда держи один помидор про запас. Петарду и колонку используй, чтобы увести Егора от нужной комнаты.</li><li>Прячься, когда Егор не видит тебя. Не лезь в шкаф у него на глазах.</li><li>Выполняй задания вместе с ботами: смотри на карту, кто куда несёт.</li><li>Перед последним заданием заранее продумай путь к выходу: после него Егор в ярости.</li></ul></div></details>
-</div></section>
-<script>(function(){var g=document.getElementById('guide'),o=document.getElementById('guideBtn');if(o)o.onclick=function(){g.classList.remove('hidden');g.scrollTop=0};document.getElementById('guideClose').onclick=function(){g.classList.add('hidden')};addEventListener('keydown',function(e){if(e.code==='Escape')g.classList.add('hidden')})})()</script>
+<div id="gReady" class="hidden"><span id="gSt"></span><button id="gBtn">✅ Готово</button></div></div></section>
+<script>(function(){var g=document.getElementById('guide'),o=document.getElementById('guideBtn');if(o)o.onclick=function(){g.classList.remove('hidden');g.scrollTop=0};document.getElementById('guideClose').onclick=function(){g.classList.add('hidden')};addEventListener('keydown',function(e){if(e.code==='Escape'&&!g.dataset.ready)g.classList.add('hidden')})})()</script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -673,7 +690,7 @@ function buildWorld(){
   const pl=new THREE.Mesh(new THREE.PlaneGeometry(1,.25),plateMat('📹 КАМЕРЫ'));pl.position.set(0,1.0,.05);gr.add(pl);
   cs.sc=sc;gr.position.set(wc(cs.x),cs.h,wc(cs.y));gr.rotation.y=Math.atan2(cs.dx,cs.dy);world.add(gr);
   const hb=box(1.1,1,1.1,new THREE.MeshBasicMaterial({visible:false}),wc(cs.x),cs.h+.5,wc(cs.y),world);hb.userData={kind:'cam'};interact.push(hb)}
- camPts=[];for(const sg of layout.corrSegs){const f=sg.y>=FO?1:0;for(let x=sg.x0+3;x<=sg.x1-2;x+=9)camPts.push({x:wc(x),z:(sg.y+2)*CS,y:(f?FH:0)+WH-.3,f})}
+ camPts=[];for(const sg of layout.corrSegs){const f=sg.y>=FO?1:0;for(let x=sg.x0+3;x<=sg.x1-2;x+=9)camPts.push({x:wc(x),z:(sg.y+2)*CS,y:(f?FH:0)+WH-.3,f})}for(const r of rooms)if(r.type&&!r.locked){const f=r.y0>=FO?1:0;camPts.push({x:wc((r.x0+r.x1)>>1),z:wc((r.y0+r.y1)>>1),y:(f?FH:0)+WH-.3,f})}
  // decor: garland, webs, pumpkins, posters, ghosts, bats
  const gn=60,gim=new THREE.InstancedMesh(new THREE.SphereGeometry(.06,8,6),new THREE.MeshBasicMaterial(),layout.corrSegs.length*2*gn);let k=0;
  for(const s of layout.corrSegs)for(const side of [0,3])for(let i=0;i<gn;i++){const xa0=s.x0*CS+1.5,xb0=(s.x1+1)*CS-1.5,x=xa0+i*(xb0-xa0)/(gn-1),zz=wc(s.y+side);mm.makeTranslation(x,WH-.25-Math.abs(Math.sin(i*.7))*.25+(s.y>=FO?FH:0),zz);gim.setMatrixAt(k,mm);gim.setColorAt(k++,new THREE.Color(i%2?0xff7a10:0x9a3aff))}world.add(gim);garland=gim;
@@ -733,12 +750,12 @@ function human(shirt,pants,skin,tall=1){const gr=new THREE.Group();const s=tall;
 let faceTex=null;{const im=new Image();im.onload=()=>{faceTex=ctex(256,256,(x,w,h)=>{x.beginPath();x.arc(128,128,124,0,7);x.clip();x.drawImage(im,0,0,w,h)});if(E&&E.faceM){E.faceM.material.map=faceTex;E.faceM.material.needsUpdate=true}};im.src=FACE_SRC}
 // ================= STATE =================
 const P={papers:[],coinsFound:0,boostT:0,phoneCd:0,pos:new THREE.Vector3(),yaw:0,pitch:0,hp:3,stam:100,notes:0,inv:emptyInventory(),sel:'tomato',hidden:null,doomed:false,splat:0,search:null,flash:false,bob:0,noiseT:0};
-let camSpot=null,camOpen=false,camPts=[],camCur=null,camCam=null,camLight=null;
+let camBlind=null,camSpot=null,camOpen=false,camPts=[],camCur=null,camCam=null,camLight=null;
 let E,bots=[],proj=[],decals=[],traps=[],teachers=[],teachT=30,botNotes=0,playing=false,time=0,msgT=0;
 const flash=new THREE.SpotLight(0xfff2d8,22,22,0.5,0.45,1.3);camera.add(flash);flash.position.set(.2,-.2,0);flash.target.position.set(0,0,-1);camera.add(flash.target);
 let held=null;function setHeld(){if(held)camera.remove(held);held=P.inv[P.sel]>0?itemMesh(P.sel):null;if(held){held.position.set(.32,-.3,-.6);camera.add(held)}}
 function reset(){
- exitOpen=false;rageOff();shellAssets();{const _r=Math.random;if(NET.seed!=null)Math.random=mulberry32(NET.seed);try{buildGrid();buildWorld();buildFixtures()}finally{Math.random=_r}}flash.intensity=0;closePanels(false);clearKeys();resetChat();
+ exitOpen=false;rageOff();shellAssets();{const _r=Math.random;if(NET.seed!=null)Math.random=mulberry32(NET.seed);try{camBlind=null;buildGrid();buildWorld();fixLockedDoors();buildFixtures()}finally{Math.random=_r}}blk.on=false;blk.next=70+Math.random()*80;$('blk').classList.remove('on','lt');flash.intensity=0;closePanels(false);clearKeys();resetChat();
  Object.assign(P,{papers:[],coinsFound:0,boostT:0,phoneCd:0,gone:false,hp:3,stam:100,notes:0,inv:NET.loadout(),sel:'tomato',hidden:null,doomed:false,splat:0,search:null,flash:false,yaw:-Math.PI/2,pitch:0});P.spawnF=Math.random()<.5?1:0;P.pos.set(wc(spawnCell[0]),1.6,wc(spawnCell[1]+P.spawnF*FO));
  for(const o of [E?.mesh,...bots.map(b=>b.mesh),...proj.map(p=>p.mesh),...decals,...traps.map(t=>t.mesh),...teachers.map(t=>t.mesh),...REM.map(r=>r.mesh)])if(o)o.parent?.remove(o);
  proj=[];decals=[];traps=[];
@@ -759,8 +776,8 @@ function reset(){
   const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c2),transparent:true}));sp.scale.set(1.1,.28,1);sp.position.set(0,2.62,0);em.add(sp);em.scale.setScalar(1.15)}
  E={type:EGOR_TYPES[NET.seed!=null?Math.abs(NET.seed|0)%4:Math.random()*4|0],mesh:em,faceM:fm,hand,pos:farGoal(),yaw:0,state:'patrol',goal:null,path:[],pathT:0,target:null,stun:0,slip:0,throwCd:4,checkQ:[],checking:null,checkT:0,last:null,lastVel:new THREE.Vector3(),known:null,walk:0,stepAt:0,voiceT:8+Math.random()*8,lastState:'patrol',weapon:'',sees:false,say:0};
  setWeapon('saw');
- bots=[];const botF0=Math.random()*2|0;const names=['Назар','Оксана','Богдан','Соломія'].slice(0,NET.nBots);
- names.forEach((name,i)=>{const m=human(new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL(i/4,.5,.38)}),M.dark,0xe8b896);const p=floorGoal((i+botF0)%2);bots.push({name,mesh:m,pos:p,yaw:0,alive:true,hidden:null,state:'wander',goal:null,path:[],pathT:i*.07,wait:0,inv:emptyInventory(),cd:3,walk:0,safeT:0,loot:null,lootT:0});});
+ bots=[];const botF0=Math.random()*2|0;const NM=['Назар','Оксана','Богдан','Соломія','Дмитро','Марія','Ярослав','Юлія','Тимур','Аліна','Максим','Вероніка','Іван','Софія','Артем','Дарина','Кирило','Злата','Олег','Мілана'];const names=Array.from({length:NET.nBots},(_,i)=>NM[i%NM.length]+(i>=NM.length?' '+(Math.floor(i/NM.length)+1):''));
+ names.forEach((name,i)=>{const m=human(new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL((i*.618034)%1,.5,.38)}),M.dark,0xe8b896);const p=floorGoal((i+botF0)%2);bots.push({name,mesh:m,pos:p,yaw:0,alive:true,hidden:null,state:'wander',goal:null,path:[],pathT:i*.07,wait:0,inv:emptyInventory(),cd:3,walk:0,safeT:0,loot:null,lootT:0});});
  NET.spawnRemotes();setHeld();updHUD();time=0;botNotes=0;setTimeout(()=>say('👹 Егор этой ночью: <b>'+E.type.name+'</b>'+(E.type.msg?' — '+E.type.msg:''),4),600);teachers=[];teachT=25+Math.random()*25;
 }
 function setWeapon(w){if(E.weapon===w)return;E.weapon=w;E.hand.clear();if(w){const m=itemMesh(w);m.rotation.x=Math.PI/2;if(w==='saw')m.scale.setScalar(1.3);E.hand.add(m)}}
@@ -828,10 +845,12 @@ function closeCam(){if(!camOpen)return;camOpen=false;$('camPanel').classList.add
 function openCam(){if(!camSpot||camOpen)return;if(!camSpot.on){if(!(P.inv.battery>0)){say('📹 Монитор не работает. Нужна <b>🔋 батарея</b> — её можно только найти (для побега не нужна).');beep(150,.15);return}P.inv.battery--;camSpot.on=true;if(camSpot.sc){camSpot.sc.emissiveIntensity=.9;camSpot.sc.color.set(0x0a2a14)}if(P.sel==='battery'&&!P.inv.battery)P.sel='tomato';setHeld();updHUD();beep(1200,.1,'square',.12);say('🔋 Батарея вставлена. Камеры работают! Нажми <b>E</b> ещё раз',3);return}closePanels(false);camOpen=true;camCur=null;$('camPanel').classList.remove('hidden');beep(900,.08,'square',.1);say('📹 Камеры школы. Пока смотришь — ты уязвим. [E] — выйти',3)}
 const camT=new THREE.Vector3(),camLk=new THREE.Vector3();
 function renderCam(){if(!camOpen||!E)return;if(!camCam){camCam=new THREE.PerspectiveCamera(68,16/9,.1,70);camLight=new THREE.PointLight(0xaaffcc,1.3,16);scene.add(camLight)}
- const fl=E.pos.z>=FO*CS?1:0,ok=p=>p.f===fl&&Math.hypot(p.x-E.pos.x,p.z-E.pos.z)<28&&los({x:p.x,z:p.z},E.pos);let best=null,bd=1e9;
+ const fl=E.pos.z>=FO*CS?1:0,ok=p=>p.f===fl&&Math.hypot(p.x-E.pos.x,p.z-E.pos.z)<40&&los({x:p.x,z:p.z},E.pos);let best=null,bd=1e9;
  if(camCur&&ok(camCur))best=camCur;else for(const p of camPts)if(ok(p)){const d=Math.hypot(p.x-E.pos.x,p.z-E.pos.z);if(d<bd){bd=d;best=p}}
- camCur=best;const scr=$('camScreen');scr.classList.toggle('nosig',!best);camLight.visible=!!best;if(!best){$('camName').textContent='КАМ —';return}
- $('camName').textContent='КАМ '+(camPts.indexOf(best)+1)+' · '+(best.f?'2':'1')+' этаж';
+ if(!camBlind){const cn=shuf(rooms.filter(r=>r.type&&!r.locked&&r.name!==camSpot?.room)).slice(0,3).map(r=>r.name);camBlind=new Set(cn)}
+ const eRoom=roomAt({x:E.pos.x,z:E.pos.z});if(best&&(blk.on||camBlind.has(eRoom)||(time%53)<1.6))best=null;
+ camCur=best;const scr=$('camScreen');scr.classList.toggle('nosig',!best);camLight.visible=!!best;if(!best){$('camName').textContent=blk.on?'КАМ — нет питания':'КАМ — сигнал потерян (слепая зона)';return}
+ $('camName').textContent='КАМ '+(camPts.indexOf(best)+1)+' · '+(best.f?'2':'1')+' этаж · Егор: '+eRoom;
  camLk.lerp(camT.set(E.pos.x,(fl?FH:0)+1.5,E.pos.z),.25);camCam.position.set(best.x,best.y,best.z);camCam.lookAt(camLk);camLight.position.set(best.x,best.y-.3,best.z);
  const r=scr.getBoundingClientRect(),w=r.width,h=r.height,vy=innerHeight-r.bottom;camCam.aspect=w/h;camCam.updateProjectionMatrix();
  renderer.setScissorTest(true);renderer.setViewport(r.left,vy,w,h);renderer.setScissor(r.left,vy,w,h);renderer.render(scene,camCam);renderer.setScissorTest(false);renderer.setViewport(0,0,innerWidth,innerHeight)}
@@ -918,7 +937,8 @@ addEventListener('mousedown',e=>{if(TOUCH||!playing||panelOpen()||e.target.close
 addEventListener('mousemove',e=>{if(TOUCH||!playing||!locked()||P.hidden&&P.doomed&&false)return;P.yaw-=e.movementX*.0022;P.pitch=Math.max(-1.4,Math.min(1.4,P.pitch-e.movementY*.0022))});
 document.addEventListener('pointerlockchange',()=>{if(!locked())clearKeys();$('pause').classList.toggle('hidden',!playing||panelOpen()||locked())});
 $('pause').onclick=()=>lockPtr();
-const startGame=()=>{closeCam();if(!AC)audio();AC.resume();reset();$('locker').style.display='none';P.hidden=null;renderer.compile(scene,camera);$('menu').classList.add('hidden');$('over').classList.add('hidden');['hud','cross','inv'].forEach(i=>$(i).classList.remove('hidden'));playing=true;lockPtr();say('Задания раунда:<br>'+TASKS.map(t=>t.icon+' '+t.name+(t.need>1?` (${t.need})`:'')).join('<br>'),6);setTimeout(()=>{if(playing&&!locked()&&!panelOpen())$('pause').classList.remove('hidden')},600)};
+const startGame0=()=>{closeCam();if(!AC)audio();AC.resume();reset();$('locker').style.display='none';P.hidden=null;renderer.compile(scene,camera);$('menu').classList.add('hidden');$('over').classList.add('hidden');['hud','cross','inv'].forEach(i=>$(i).classList.remove('hidden'));playing=true;lockPtr();say('Задания раунда:<br>'+TASKS.map(t=>t.icon+' '+t.name+(t.need>1?` (${t.need})`:'')).join('<br>'),6);setTimeout(()=>{if(playing&&!locked()&&!panelOpen())$('pause').classList.remove('hidden')},600)};
+const startGame=()=>readyGate(startGame0);
 $('play').onclick=$('again').onclick=e=>{const b=e.currentTarget,t0=b.textContent;b.textContent='Строим школу…';if(TOUCH)document.documentElement.requestFullscreen?.().catch(()=>{});setTimeout(()=>{startGame();b.textContent=t0},40)};
 function touchTxt(t){return t.replace('[держать E]','👆 держи палец —').replace('[E]','👆').replace(/<b>E<\/b>/g,'<b>👆 тап / держи</b>').replace(/<b>R<\/b>/g,'<b>📜 в слоте</b>')}
 let _ih='';
@@ -1139,10 +1159,47 @@ function aimName(){const dir=new THREE.Vector3();camera.getWorldDirection(dir);c
  if(E)test('ЕГОР',E.pos,true,[.6,1.3,2]);
  return best}
 function animChar(c,ud,moving){const s=Math.sin(c.walk*3.2)*.6*(moving?1:0);ud.legL.rotation.x=s;ud.legR.rotation.x=-s;ud.armL.rotation.x=-s*.8;ud.armR.rotation.x=s*.8}
+
+// ===== guide gallery, ready gate, blackout =====
+let GD=false;
+function camPlateMap(){return ctex(256,52,(x,w,h)=>{x.fillStyle='#6b1d1d';x.fillRect(0,0,w,h);x.strokeStyle='#ffd27a';x.lineWidth=4;x.strokeRect(2,2,w-4,h-4);x.fillStyle='#ffe9b0';x.textAlign='center';x.font='bold 28px Trebuchet MS';x.fillText('(тут камера)',w/2,h/2+10)})}
+function fillGuide(){if(GD)return;const it=$('gGalI'),ob=$('gGalO');if(!it||!ob)return;GD=true;
+ let R=null,S,C;try{R=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});R.setSize(112,112);R.setPixelRatio(1);S=new THREE.Scene();S.add(new THREE.HemisphereLight(0xffffff,0x777777,2.6));const dl=new THREE.DirectionalLight(0xffffff,2.2);dl.position.set(2,3,4);S.add(dl);C=new THREE.PerspectiveCamera(35,1,.01,60)}catch(e){R=null}
+ const snap=o=>{if(!R)return'';try{const w=new THREE.Group();w.add(o);S.add(w);const b=new THREE.Box3().setFromObject(o),c=b.getCenter(new THREE.Vector3()),s=b.getSize(new THREE.Vector3()),m=Math.max(s.x,s.y,s.z)||1;o.position.sub(c);w.rotation.set(.3,-.7,0);C.position.set(0,0,m*2.7);C.lookAt(0,0,0);R.render(S,C);const u=R.domElement.toDataURL();S.remove(w);return u}catch(e){return''}};
+ const D={tomato:'бросок оглушает Егора',petarda:'взрыв отвлекает Егора',roll:'Егор поскользнётся',torch:'свет в темноте и дальний обзор',coin:'брось — Егор идёт на звук',lockpick:'вскрывает запертую комнату',phone:'показывает ближайшую записку или часть задания',energy:'выносливость на 10 с',speaker:'громко орёт, Егор идёт к ней',battery:'питание для монитора камер',paper:'записки и история Егора'};
+ const fig=(img,em,n,d)=>`<figure>${img?`<img src="${img}" alt="">`:`<div class="em">${em}</div>`}<b>${n}</b><br>${d}</figure>`;
+ it.innerHTML=Object.keys(ITEMS).map(k=>{let u='';try{u=snap(itemMesh(k))}catch(e){}const nm=ITEMS[k];return fig(u,nm.split(' ')[0],nm,D[k]||'')}).join('');
+ const cv=(label,fn)=>{try{return fn().toDataURL()}catch(e){return''}};
+ const pl=l=>{try{return plateMat(l).map.image.toDataURL()}catch(e){return''}};
+ const sg=()=>{const c=document.createElement('canvas');c.width=256;c.height=96;const x=c.getContext('2d');x.fillStyle='#1d4a2a';x.fillRect(0,0,256,96);x.strokeStyle='#eaffea';x.lineWidth=4;x.strokeRect(3,3,250,90);x.fillStyle='#eaffea';x.font='bold 32px sans-serif';x.textAlign='center';x.fillText('↑ 2 ПОВЕРХ',128,62);return c};
+ let stu='';try{stu=snap(human(new THREE.MeshStandardMaterial({color:0x4a82d6}),M.dark,0xe8b896))}catch(e){}
+ const eg=$('mface')?.getAttribute('src')||'';
+ const w=(u)=>u?`<img class="w" src="${u}" alt="">`:'';
+ ob.innerHTML=[`<figure>${w(pl('Кабінет 208 · математики'))}<b>Табличка кабинета</b><br>название комнаты над дверью</figure>`,`<figure>${w(pl('🔒 ЗАПЕРТО'))}<b>Запертая дверь</b><br>нужна отмычка</figure>`,`<figure>${w(cv('c',camPlateMap().image?()=>camPlateMap().image:null))}<b>Комната камер</b><br>здесь монитор</figure>`,`<figure>${w(cv('s',sg))}<b>Лестница</b><br>между этажами</figure>`,fig(stu,'🧑‍🎓','Ученик','ты и боты'),fig(eg,'🪚','Егор','гоняется с бензопилой')].join('');
+ if(R){R.dispose();R.forceContextLoss?.()}}
+new MutationObserver(()=>{if(!$('guide').classList.contains('hidden'))fillGuide()}).observe($('guide'),{attributes:true,attributeFilter:['class']});
+const RDY={set:new Set(),cb:null,me:false};
+function rdyCheck(){if(!RDY.cb)return;const L=NET.on?NET.players:[],miss=L.filter(p=>!RDY.set.has(p.id));const st=$('gSt');
+ if(st)st.textContent=!RDY.me?('Прочитай гайд и нажми «Готово»'+(NET.on?'. Готовы: '+L.filter(p=>RDY.set.has(p.id)).length+'/'+L.length:'')):('Ждём: '+(miss.map(p=>p.name).join(', ')||'…'));
+ if(RDY.me&&!miss.length){const cb=RDY.cb;RDY.cb=null;RDY.set=new Set();RDY.me=false;const g=$('guide');g.classList.add('hidden');delete g.dataset.ready;$('gReady').classList.add('hidden');$('guideClose').style.display='';cb()}}
+function readyGate(cb){const g=$('guide');RDY.cb=cb;RDY.me=false;g.dataset.ready='1';g.classList.remove('hidden');g.scrollTop=0;$('guideClose').style.display='none';$('gReady').classList.remove('hidden');$('gBtn').disabled=false;$('gBtn').textContent='✅ Готово';rdyCheck()}
+$('gBtn').onclick=()=>{if(!RDY.cb||RDY.me)return;RDY.me=true;RDY.set.add(NET.id);$('gBtn').disabled=true;$('gBtn').textContent='Готов ✔';if(NET.on)NET.send({t:'rdy',id:NET.id});rdyCheck()};
+setInterval(rdyCheck,1000);
+const blk={on:false,t:0,next:80};
+function startBlackout(d){if(blk.on)return;blk.on=true;blk.t=d;$('blk').classList.add('on');beep(160,.5,'sawtooth',.2);say('⚡ <b>Свет отключили!</b> Тьма на '+Math.round(d)+' с. Найди и включи 🔦 фонарик.',5)}
+function endBlackout(){blk.on=false;$('blk').classList.remove('on','lt');beep(900,.12,'square',.12);say('💡 Свет вернулся.',3)}
+function blkTick(dt){if(blk.on){blk.t-=dt;$('blk').classList.toggle('lt',!!P.flash&&P.inv.torch>0);if(blk.t<=0)endBlackout();return}
+ if(NET.on&&!NET.host)return;blk.next-=dt;if(blk.next<=0){const d=20+Math.random()*20;blk.next=90+Math.random()*120;NET.send({t:'blk',d});startBlackout(d)}}
+function fixLockedDoors(){for(const r of rooms){if(!r.locked||!r.door)continue;const[x,y]=r.door;g[y][x]=6;if(r.doorG&&r.doorG.parent)continue;const d=layout.doors.find(d=>d[0]===x&&d[1]===y);if(!d)continue;
+ const A=shellAssets(),dz=d[2],X0=x*CS,Z0=y*CS,lg=new THREE.Group();world.add(lg);const lf=box(CS-.24,2.25,.12,A.door,X0+1,1.125,Z0+1,lg);box(.3,.3,.14,new THREE.MeshStandardMaterial({color:0x8a1a1a}),X0+1,1.7,Z0+1,lg);
+ const lp=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.3),plateMat('🔒 ЗАПЕРТО'));lp.position.set(X0+1,1.3,Z0+1+(dz<0?.07:-.07));if(dz>0)lp.rotation.y=Math.PI;lg.add(lp);
+ lf.userData={kind:'ldoor',ref:r};interact.push(lf);const hb=box(CS,2.5,1.6,new THREE.MeshBasicMaterial({visible:false}),X0+1,1.25,Z0+1,lg);hb.userData=lf.userData;interact.push(hb);r.doorG=lg;r.doorM=lf}}
+function botCount(d){const e=$('bn'),v=e?parseInt(e.value,10):NaN;return Number.isFinite(v)?Math.max(0,Math.min(50,v)):d}
+let LBN=null;addEventListener('input',e=>{if(e.target&&e.target.id==='bn')LBN=e.target.value});
 // ================= LOOP =================
 const clock=new THREE.Clock();
 function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.05);const tt=performance.now()/1000;
- if(playing&&(NET.on||(locked()&&!panelOpen()))){time+=dt;deliverCheck();
+ if(playing&&(NET.on||(locked()&&!panelOpen()))){time+=dt;deliverCheck();blkTick(dt);
   // player
   P.moving=false;
   if(P.hidden){camera.position.copy(P.hidden.hidePos);camera.position.y+=rampY(P.hidden.hidePos.x,P.hidden.hidePos.z);}
@@ -1233,6 +1290,8 @@ function onMsg(m){const r=m.id?REM.find(x=>x.id===m.id):null;switch(m.t){
  case 'start':if(!NET.started&&m.players.some(p=>p.id===NET.id)){NET.started=true;beginNet(m)}break;
  case 'p':if(!r)break;r.tp=[m.x,m.z];r.ty=m.y;r.mv=m.m;if(m.g&&r.alive){r.alive=false;r.mesh.visible=false;if(r.hidden){r.hidden.occupant=null;r.hidden=null}}if(m.e&&!NET.host)NET.snap=m;break;
  case 'chat':addChat(m.n,m.m);break;
+ case 'rdy':RDY.set.add(m.id);rdyCheck();break;
+ case 'blk':startBlackout(m.d);break;
  case 'vc':if(m.id!==NET.id)playVoice(m);break;
  case 'hide':if(!r)break;if(r.hidden){r.hidden.occupant=null;r.hidden=null}
   if(m.i>=0&&lockers[m.i]){const L=lockers[m.i];r.hidden=L;L.occupant=r;r.mesh.visible=false;if(NET.host){const seen=E.stun<=0&&canSee(E.pos,E.yaw,r.pos,22);noise(r.pos,5);if(seen){E.known=L;E.checkQ=[L];E.state='doomed';NET.send({t:'doom',to:r.id})}}}else r.mesh.visible=r.alive;break;
@@ -1284,7 +1343,7 @@ function launch(){$('hub').classList.add('hidden');if(TOUCH)document.documentEle
 
 // ---------- lobby / matchmaking ----------
 function leaveGame(){clearInterval(NET.qt);clearTimeout(NET.at);if(sb){if(NET.q)sb.removeChannel(NET.q);if(NET.ch)sb.removeChannel(NET.ch)}
- NET.q=NET.ch=null;NET.on=NET.live=NET.started=NET.host=false;NET.seed=null;NET.players=[];NET.snap=null;NET.si=false;NET.auto=0;REM.forEach(r=>r.mesh.parent?.remove(r.mesh));REM.length=0}
+ LBN=null;NET.q=NET.ch=null;NET.on=NET.live=NET.started=NET.host=false;NET.seed=null;NET.players=[];NET.snap=null;NET.si=false;NET.auto=0;REM.forEach(r=>r.mesh.parent?.remove(r.mesh));REM.length=0}
 const myColor=()=>SHOP.find(s=>s.id===PROF?.skin)?.color||'#4a82d6';
 const lobbyList=()=>Object.values(NET.ch.presenceState()).map(a=>a[0]).sort((a,b)=>a.t-b.t||(a.id<b.id?-1:1));
 function joinLobby(code,asHost,auto=0){leaveGame();NET.code=code;NET.host=asHost;NET.auto=auto;
@@ -1300,9 +1359,9 @@ function onSync(){if(!NET.ch)return;const L=lobbyList();NET.players=L;
 function onLeave(ev){for(const p of ev.leftPresences||[]){if(NET.ch&&NET.ch.presenceState()[p.id])continue;const r=REM.find(x=>x.id===p.id);
  if(r&&NET.started&&r.alive){r.alive=false;r.mesh.visible=false;if(r.hidden){r.hidden.occupant=null;r.hidden=null}addChat('Школа',r.name+' вышел из игры')}}}
 function startMatch(){if(NET.started||!NET.ch)return;NET.started=true;clearTimeout(NET.at);
- const L=lobbyList().slice(0,5),msg={t:'start',seed:Math.random()*2147483647|0,players:L.map(p=>({id:p.id,name:p.name,col:p.col}))};
+ const L=lobbyList().slice(0,5),msg={t:'start',nb:botCount(Math.max(0,5-L.length)),seed:Math.random()*2147483647|0,players:L.map(p=>({id:p.id,name:p.name,col:p.col}))};
  NET.ch.send({type:'broadcast',event:'g',payload:msg});beginNet(msg)}
-async function beginNet(m){NET.players=m.players;NET.seed=m.seed;NET.nBots=Math.max(0,5-m.players.length);NET.on=true;NET.done=false;NET.acc=0;NET.snap=null;NET.si=false;
+async function beginNet(m){NET.players=m.players;NET.seed=m.seed;NET.nBots=m.nb!=null?Math.max(0,Math.min(50,m.nb|0)):Math.max(0,5-m.players.length);NET.on=true;NET.done=false;NET.acc=0;NET.snap=null;NET.si=false;
  await getLoadout();launch();NET.live=true}
 function findGame(){leaveGame();hub('queue');let fired=false;const q=sb.channel('queue',{config:{presence:{key:NET.id}}});NET.q=q;
  const check=()=>{if(fired||NET.q!==q)return;const list=Object.values(q.presenceState()).map(a=>a[0]).sort((a,b)=>a.t-b.t||(a.id<b.id?-1:1));
@@ -1332,9 +1391,9 @@ async function loadLB(){const k=LBK;let rows=null;LBERR='';if(sb){await lbFlush(
 function hub(v,note=''){const keep=$('hi')?.value||'';HV=v;['menu','over','pause'].forEach(i=>$(i).classList.add('hidden'));const h=$('hub');h.classList.remove('hidden');
  const me=PROF?`<div class="b">👤 ${esc(PROF.username)} · 🪙 ${PROF.coins}</div>`:'';let b='';
  if(v==='auth')b=`<h2>Аккаунт</h2><input id="hu" placeholder="Ник (a-z, 0-9, _)" maxlength="16" autocomplete="username"><input id="hp" type="password" placeholder="Пароль (от 6 символов)" autocomplete="current-password"><div class="row"><button data-a="login">Войти</button><button data-a="signup">Регистрация</button></div><p id="hm" class="hn">${esc(note)}</p><button class="sm" data-a="solo0">Играть офлайн (без монет)</button><button class="sm" data-a="lb">🏆 Таблица лидеров</button><button class="sm" data-a="guide">📖 Гайд: как играть</button>`;
- else if(v==='main')b=`<h2>Главное меню</h2>${me}<p class="hn">${esc(note)}</p><button data-a="solo">🎃 Один с ботами</button><button data-a="find">🔎 Найти игру (5 игроков)</button><button data-a="create">👥 Создать лобби</button><div class="row"><input id="hc" placeholder="Код лобби" maxlength="5"><button class="sm" data-a="joinc">Войти по коду</button></div><button data-a="shop">🛒 Магазин</button><button class="sm" data-a="lb">🏆 Таблица лидеров</button><button class="sm" data-a="guide">📖 Гайд: как играть</button><button class="sm" data-a="logout">Выйти из аккаунта</button>`;
+ else if(v==='main')b=`<h2>Главное меню</h2>${me}<p class="hn">${esc(note)}</p><div class="row">Ботов: <input id="bn" type="number" min="0" max="50" value="4" style="width:72px"><button class="sm" data-a="nobots">Без ботов</button></div><button data-a="solo">🎃 Один с ботами</button><button data-a="find">🔎 Найти игру (5 игроков)</button><button data-a="create">👥 Создать лобби</button><div class="row"><input id="hc" placeholder="Код лобби" maxlength="5"><button class="sm" data-a="joinc">Войти по коду</button></div><button data-a="shop">🛒 Магазин</button><button class="sm" data-a="lb">🏆 Таблица лидеров</button><button class="sm" data-a="guide">📖 Гайд: как играть</button><button class="sm" data-a="logout">Выйти из аккаунта</button>`;
  else if(v==='queue')b=`<h2>Подбор игроков</h2><p>Найдено: <b id="qn">1/5</b>. Через <b id="qs">${QWAIT}</b> с свободные места займут боты.</p><button class="sm" data-a="cancelq">Отмена</button>`;
- else if(v==='lobby'){const L=NET.players;b=`<h2>Лобби <span style="letter-spacing:4px">${esc(NET.code)}</span></h2><p class="hn">${NET.auto?'Матч найден! Старт через пару секунд…':'Отправь код или ссылку друзьям. Свободные места займут боты.'}</p><div class="pl">${L.map(p=>`<div><span style="color:${esc(p.col||'#fff')}">●</span> ${esc(p.name)}${p.h?' ★':''}</div>`).join('')}</div><p>Ботов в партии: ${Math.max(0,5-L.length)}</p>${NET.auto?'':`<div class="row"><input id="hi" placeholder="Ник друга"><button class="sm" data-a="inv">Пригласить</button><button class="sm" data-a="copy">Копировать ссылку</button></div>`}${NET.host&&!NET.auto?'<button data-a="start">▶ Старт</button>':NET.auto?'':'<p>Ждём старта от хоста…</p>'}<button class="sm" data-a="leave">Выйти</button>`}
+ else if(v==='lobby'){const L=NET.players;b=`<h2>Лобби <span style="letter-spacing:4px">${esc(NET.code)}</span></h2><p class="hn">${NET.auto?'Матч найден! Старт через пару секунд…':'Отправь код или ссылку друзьям. Свободные места займут боты.'}</p><div class="pl">${L.map(p=>`<div><span style="color:${esc(p.col||'#fff')}">●</span> ${esc(p.name)}${p.h?' ★':''}</div>`).join('')}</div>${NET.host&&!NET.auto?`<div class="row">Ботов (0–50): <input id="bn" type="number" min="0" max="50" value="${LBN??Math.max(0,5-L.length)}" style="width:72px"><button class="sm" data-a="nobots">Без ботов</button></div>`:`<p>Ботов в партии: ${NET.auto?Math.max(0,5-L.length):'задаёт хост'}</p>`}${NET.auto?'':`<div class="row"><input id="hi" placeholder="Ник друга"><button class="sm" data-a="inv">Пригласить</button><button class="sm" data-a="copy">Копировать ссылку</button></div>`}${NET.host&&!NET.auto?'<button data-a="start">▶ Старт</button>':NET.auto?'':'<p>Ждём старта от хоста…</p>'}<button class="sm" data-a="leave">Выйти</button>`}
  else if(v==='shop'){const rows=SHOP.map(it=>{const skin=it.kind==='skin',own=skin&&PROF.skins.includes(it.id);
    const act=skin?(own?(PROF.skin===it.id?'✔ надето':`<button class="sm" data-a="equip" data-v="${esc(it.id)}">Надеть</button>`):`<button class="sm" data-a="buy" data-v="${esc(it.id)}">Купить</button>`):`<button class="sm" data-a="buy" data-v="${esc(it.id)}">Купить</button>`;
    return `<div class="it"><span>${skin?`<i style="color:${esc(it.color||'#fff')}">●</i> `:''}${esc(it.name)}${skin?'':` (есть: ${PROF.inv[it.give]||0})`}</span><span>${own?'':'🪙 '+it.price+' '}${act}</span></div>`}).join('');
@@ -1345,10 +1404,11 @@ function hub(v,note=''){const keep=$('hi')?.value||'';HV=v;['menu','over','pause
  h.innerHTML=b;if($('hi'))$('hi').value=keep}
 const ACT={
  lb(){LBK='time';hub('lb');loadLB()},lbk(v){LBK=v;hub('lb');loadLB()},lbback(){if(PROF)hub('main');else if(sb)hub('auth');else{$('hub').classList.add('hidden');$('menu').classList.remove('hidden')}},
- guide(){document.getElementById('guide').classList.remove('hidden');document.getElementById('guide').scrollTop=0},
+ nobots(){const e=$('bn');if(e){e.value=0;LBN='0'}},
+ guide(){fillGuide();document.getElementById('guide').classList.remove('hidden');document.getElementById('guide').scrollTop=0},
  login(){auth(false)},signup(){auth(true)},
- solo0(){leaveGame();NET.nBots=4;NET.seed=null;NET.lo=null;launch()},
- async solo(){leaveGame();NET.nBots=4;NET.seed=null;await getLoadout();launch()},
+ solo0(){leaveGame();NET.nBots=botCount(4);NET.seed=null;NET.lo=null;launch()},
+ async solo(){const nb=botCount(4);leaveGame();NET.nBots=nb;NET.seed=null;await getLoadout();launch()},
  find(){findGame()},create(){joinLobby(randCode(),true)},
  joinc(){const c=($('hc').value||'').trim().toUpperCase();if(c.length>=3)joinLobby(c,false)},
  shop(){hub('shop')},back(){hub('main')},
