@@ -297,6 +297,7 @@ body.touch #mapPanel header,body.touch #mapLegend{color:#f3eee2}
   <span><kbd>C</kbd></span><span>присесть / встать · лезть в вентиляцию 🕳</span>
   <span><kbd>E</kbd></span><span>удерживать для поиска · шкаф / подобрать / выход</span>
   <span><kbd>ЛКМ</kbd></span><span>бросить предмет</span>
+  <span>🎮 <kbd>Геймпад</kbd></span><span>стики — ходить/смотреть · A (✕) взять/искать · B (○) присесть · RT / X (□) бросить · Y (△) фонарик · LB/RB предмет · LT бег · D-pad↑ выбросить · Select карта · R3 записки · Start пауза</span>
   <span><kbd>Q</kbd> / колесо</span><span>сменить предмет</span>
   <span><kbd>L</kbd></span><span>найденный фонарик</span><span><kbd>R</kbd></span><span>читать записки</span><span><kbd>M</kbd></span><span>план школы и координаты</span><span><kbd>T</kbd></span><span>локальный чат</span><span><kbd>F</kbd> удерживать</span><span>записать голосовое сообщение</span>
  </div>
@@ -309,7 +310,7 @@ body.touch #mapPanel header,body.touch #mapLegend{color:#f3eee2}
 <div class="scr hidden" id="over"><h1 id="oT">ПОЙМАН!</h1><p id="oP"></p><button id="again">Ещё раз</button></div>
 <div class="scr hidden" id="hub"></div>
 <div id="speak"></div>
-<div class="scr hidden" id="pause" style="background:#000a"><h1>ПАУЗА</h1><p>Кликни, чтобы продолжить</p></div>
+<div class="scr hidden" id="pause" style="background:#000a"><h1>ПАУЗА</h1><p>Кликни, чтобы продолжить<br>🎮 или нажми Start / A на геймпаде</p></div>
 
 <section id="chatPanel" class="hidden"><header><span>Локальный чат · 4 бота</span><span id="micStatus"></span></header><div id="chatLog" aria-live="polite"></div><form id="chatForm" class="hidden"><input id="chatInput" maxlength="240" placeholder="Сообщение…" aria-label="Сообщение"><button type="submit" title="Отправить" aria-label="Отправить">➤</button></form></section>
 <section id="camPanel" class="hidden"><div id="camScreen"><div id="camHud"><b>● REC</b> <span id="camName">КАМ</span></div><div id="camNo">📡 НЕТ СИГНАЛА<br><small>Егор не попал ни на одну камеру</small></div></div><p id="camHint">[E] или движение — выйти</p></section><section id="readPanel" class="hidden"><header><h2>📜 Записки</h2><button id="readClose" aria-label="Закрыть">×</button></header><div id="readList"></div></section><section id="mapPanel" class="hidden"><header><h2>План лицея</h2><span id="coords"></span><button id="mapClose" aria-label="Закрыть карту" title="Закрыть карту">×</button></header><canvas id="mapCanvas" width="1500" height="470"></canvas><div id="mapLegend">▲ Вы · ● Ученики (с именами) · ▣ Шкафы · ■ Мебель · ◆ Выход/лестница · ▮ Двери · ■ жёлтое — учителя · 🖱 наведи мышь на карту — увидишь координаты</div></section>
@@ -1138,7 +1139,7 @@ addEventListener('blur',clearKeys);
 addEventListener('wheel',()=>playing&&cycle());
 function cycle(){const ks=selKeys();if(!ks.length)return;P.sel=ks[(ks.indexOf(P.sel)+1)%ks.length];setHeld();updHUD()}
 const cv=renderer.domElement;
-function locked(){return TOUCH?(playing&&!panelOpen()):document.pointerLockElement===cv}
+function locked(){return TOUCH?(playing&&!panelOpen()):(document.pointerLockElement===cv||!!(GP&&GP.active&&playing))}
 function lockPtr(){if(!TOUCH)cv.requestPointerLock()}
 let chatOpen=false,mapOpen=false,recorder=null,micStream=null,voicePending=false,voiceUrls=[],chatCount=0,botChatAt=0;
 let readOpen=false;const panelOpen=()=>chatOpen||mapOpen||readOpen;
@@ -1244,6 +1245,56 @@ addEventListener('mousedown',e=>{if(TOUCH||!playing||panelOpen()||e.target.close
 addEventListener('mousemove',e=>{if(TOUCH||!playing||!locked()||P.hidden&&P.doomed&&false)return;P.yaw-=e.movementX*.0022;P.pitch=Math.max(-1.4,Math.min(1.4,P.pitch-e.movementY*.0022))});
 document.addEventListener('pointerlockchange',()=>{if(!locked())clearKeys();$('pause').classList.toggle('hidden',!playing||panelOpen()||locked())});
 $('pause').onclick=()=>lockPtr();
+
+// ---------- Gamepad (PS5 DualSense / Xbox / any standard pad) ----------
+var GP={active:false,mx:0,mz:0,prev:[],run:false,mic:false,hp:null,name:''};
+(function(){
+ const DZ=.2,LOOK=2.8;
+ const stick=(x,y)=>{const m=Math.hypot(x,y);if(m<DZ)return[0,0];const k=Math.min(1,(m-DZ)/(1-DZ))/m;return[x*k,y*k]};
+ const pad=()=>{try{for(const p of navigator.getGamepads?navigator.getGamepads():[])if(p&&p.connected)return p}catch(e){}return null};
+ const syncPause=()=>$('pause').classList.toggle('hidden',!playing||panelOpen()||locked());
+ const rumble=(p,s,w,d)=>{try{const a=p.vibrationActuator;a&&a.playEffect&&a.playEffect('dual-rumble',{duration:d,strongMagnitude:s,weakMagnitude:w})}catch(e){}};
+ const cycleBack=()=>{const ks=selKeys();if(!ks.length)return;P.sel=ks[(ks.indexOf(P.sel)-1+ks.length)%ks.length];setHeld();updHUD()};
+ const idle=()=>{GP.mx=GP.mz=0;if(GP.run){GP.run=false;K.ShiftLeft=false}if(GP.mic){GP.mic=false;K.KeyF=false;try{stopVoice()}catch(e){}}};
+ addEventListener('gamepadconnected',e=>{GP.name=e.gamepad.id;try{if(playing)say('🎮 Геймпад подключён: стики — ходить/смотреть, A — взять/искать, B — присесть, RT/X — бросить, Y — фонарик, LB/RB — предмет, Start — пауза',6)}catch(_){}});
+ addEventListener('gamepaddisconnected',()=>{idle();GP.prev=[]});
+ addEventListener('keydown',e=>{if(e.code==='Escape')GP.active=false});
+ addEventListener('mousedown',()=>{GP.active=false});
+ GP.tick=function(dt){
+  const p=pad();if(!p){if(GP.mx||GP.mz||GP.run||GP.mic)idle();return}
+  const cur=[];for(let i=0;i<18;i++)cur[i]=!!(p.buttons[i]&&(p.buttons[i].pressed||p.buttons[i].value>.5));
+  const prev=GP.prev,dn=i=>cur[i]&&!prev[i],upE=i=>!cur[i]&&prev[i];
+  GP.prev=cur;
+  if(!playing){idle();return}
+  if(TOUCH){idle();return}
+  const ax=p.axes||[],[lx,ly]=stick(ax[0]||0,ax[1]||0),[rx,ry]=stick(ax[2]||0,ax[3]||0);
+  // rumble when hurt
+  if(GP.hp!=null&&P.hp<GP.hp)rumble(p,1,.8,320);GP.hp=P.hp;
+  // panels (map / notes / chat): B or Start closes
+  if(panelOpen()){idle();if(dn(1)||dn(9)||(dn(8)||dn(17))&&mapOpen||dn(11)&&readOpen){GP.active=true;closePanels()}return}
+  // paused: Start or A resumes
+  if(!locked()){idle();if(dn(9)||dn(0)){GP.active=true;clearKeys();syncPause()}return}
+  // live
+  if(cur.some(Boolean)||lx||ly||rx||ry)GP.active=true;
+  if(dn(9)){GP.active=false;idle();clearKeys();try{document.exitPointerLock()}catch(e){}syncPause();return}
+  GP.mx=lx;GP.mz=ly;
+  if(rx||ry){const k=LOOK*dt;P.yaw-=rx*(1+Math.abs(rx)*.9)*k;P.pitch=Math.max(-1.4,Math.min(1.4,P.pitch-ry*(1+Math.abs(ry)*.9)*k))}
+  // sprint: LT / L3 (hold)
+  const run=cur[6]||cur[10];if(run!==GP.run){GP.run=run;K.ShiftLeft=run}
+  // use / search (hold A)
+  if(dn(0)){K.KeyE=true;useKey()}if(upE(0)){K.KeyE=false;P.search=null}
+  if(dn(1)){toggleCrouch();const cb=document.querySelector('[data-a=crouch]');if(cb)cb.classList.toggle('on',!!P.crouchT)}
+  if(dn(2)||dn(7))throwItem();
+  if(dn(3))toggleFlash();
+  if(dn(4)||dn(14))cycleBack();
+  if(dn(5)||dn(15))cycle();
+  if(dn(12))dropItem();
+  if(dn(8)||dn(17))toggleMap();
+  if(dn(11))openRead();
+  // voice chat: hold D-pad down
+  if(dn(13)){GP.mic=true;K.KeyF=true;startVoice()}if(upE(13)&&GP.mic){GP.mic=false;K.KeyF=false;stopVoice()}
+ };
+})();
 const startGame0=()=>{closeCam();if(!AC)audio();AC.resume();reset();$('locker').style.display='none';P.hidden=null;renderer.compile(scene,camera);$('menu').classList.add('hidden');$('over').classList.add('hidden');['hud','cross','inv'].forEach(i=>$(i).classList.remove('hidden'));playing=true;lockPtr();say('Задания раунда:<br>'+TASKS.map(t=>t.icon+' '+t.name+(t.need>1?` (${t.need})`:'')).join('<br>'),6);setTimeout(()=>{if(playing&&!locked()&&!panelOpen())$('pause').classList.remove('hidden')},600)};
 const startGame=()=>readyGate(startGame0);
 $('play').onclick=$('again').onclick=e=>{const b=e.currentTarget,t0=b.textContent;b.textContent='Строим школу…';if(TOUCH)document.documentElement.requestFullscreen?.().catch(()=>{});setTimeout(()=>{startGame();b.textContent=t0},40)};
@@ -1542,14 +1593,14 @@ addEventListener('keyup',e=>{if(e.code==='Tab'){e.preventDefault();sbShow(false)
 addEventListener('blur',()=>sbShow(false));
 // ================= LOOP =================
 const clock=new THREE.Clock();
-function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.05);try{ADD.tick(dt)}catch(e){}blkLight(dt);exitGuide(dt);const tt=performance.now()/1000;
+function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.05);try{GP.tick(dt)}catch(e){}try{ADD.tick(dt)}catch(e){}blkLight(dt);exitGuide(dt);const tt=performance.now()/1000;
  if(playing&&(NET.on||(locked()&&!panelOpen()))){time+=dt;deliverCheck();blkTick(dt);
   // player
   P.moving=false;
   if(P.hidden){camera.position.copy(P.hidden.hidePos);camera.position.y+=rampY(P.hidden.hidePos.x,P.hidden.hidePos.z);}
-  else{let fx=0,fz=0;if(K.KeyW||K.ArrowUp)fz-=1;if(K.KeyS||K.ArrowDown)fz+=1;if(K.KeyA||K.ArrowLeft)fx-=1;if(K.KeyD||K.ArrowRight)fx+=1;if(camOpen&&(fx||fz))closeCam();
+  else{let fx=0,fz=0;if(K.KeyW||K.ArrowUp)fz-=1;if(K.KeyS||K.ArrowDown)fz+=1;if(K.KeyA||K.ArrowLeft)fx-=1;if(K.KeyD||K.ArrowRight)fx+=1;if(GP.mx||GP.mz){fx+=GP.mx;fz+=GP.mz}if(camOpen&&(fx||fz))closeCam();
    P.crouch=!!P.crouchT||P.ventNear;if(P.stam<=.5&&!P.tired){P.tired=true;try{say('😮‍💨 Выдохся! Отдышись, чтобы снова бежать',2.2)}catch(e){}}if(P.tired&&P.stam>=30)P.tired=false;const sprint=!P.crouch&&!P.tired&&(K.ShiftLeft||K.ShiftRight)&&P.stam>.5&&(fx||fz);P.sprint=!!sprint;let sp=sprint?5.8:P.crouch?1.8:3.2;if(P.splat>0)sp*=.6;if(P.search)sp=0;
-   if(fx||fz){const l=Math.hypot(fx,fz);fx/=l;fz/=l;const s=Math.sin(P.yaw),c=Math.cos(P.yaw);VENT_OK=P.crouch;move(P.pos,(fx*c+fz*s)*sp*dt,(-fx*s+fz*c)*sp*dt,.3);VENT_OK=false;P.moving=sp>0;P.bob+=dt*sp*2.2}
+   if(fx||fz){const l=Math.hypot(fx,fz);if(l>1){fx/=l;fz/=l}const s=Math.sin(P.yaw),c=Math.cos(P.yaw);VENT_OK=P.crouch;move(P.pos,(fx*c+fz*s)*sp*dt,(-fx*s+fz*c)*sp*dt,.3);VENT_OK=false;P.moving=sp>0;P.bob+=dt*sp*2.2}
    P.boostT=Math.max(0,P.boostT-dt);P.phoneCd=Math.max(0,P.phoneCd-dt);P.stam=Math.max(0,Math.min(100,P.stam+(sprint?-24:P.tired?8:13)*dt));P.noiseT-=dt;if(P.moving&&P.noiseT<=0){P.noiseT=.4;noise(P.pos.clone().setY(0),sprint?13:P.crouch?1.2:3.5)}
    ventTick();P.eyeH=(P.eyeH??1.6)+((P.crouch?.72:1.6)-(P.eyeH??1.6))*Math.min(1,dt*10);camera.position.set(P.pos.x,P.eyeH+(P.moving?Math.sin(P.bob)*(P.crouch?.025:.05):0)+rampY(P.pos.x,P.pos.z),P.pos.z);
    for(let i=traps.length-1;i>=0;i--);}
