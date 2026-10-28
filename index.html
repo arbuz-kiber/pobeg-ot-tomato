@@ -331,6 +331,7 @@ body.touch #mapPanel #coords{min-width:0}
 <details><summary>🔒 Запертые комнаты</summary><div class="gb"><ul><li>Дверь закрыта красной створкой и табличкой 🔒. Пройти нельзя, пока кто-то не вскроет её отмычкой (подойди, наведись на дверь, <b>E</b>).</li><li>После вскрытия створка исчезает, комната открыта для всех: игроков, ботов, Егора.</li><li>Внутри монеты и находки, ничего обязательного для побега нет. Одна отмычка всегда лежит в обычных тайниках.</li></ul></div></details>
 <details><summary>🤖 Боты и лобби</summary><div class="gb"><ul><li>В режиме «Один с ботами» и в лобби (у хоста) можно задать <b>число ботов от 0 до 50</b>. Кнопка «Без ботов» ставит 0.</li><li>Боты ищут задания, прячутся в шкафах и погибают от Егора. Чем их больше, тем легче Егору отвлечься на других.</li><li>Ты, Егор и ученики в начале раунда появляетесь на <b>случайном этаже</b>.</li></ul></div></details>
 <details open><summary>✅ Готовность перед раундом</summary><div class="gb"><ul><li>Перед каждым раундом открывается этот гайд. Нажми <b>«✅ Готово»</b> внизу.</li><li>В сетевой игре раунд начинается, когда <b>готовы все люди</b>. Внизу видно, кого ещё ждём.</li></ul></div></details>
+<details><summary>👣 Умный Егор: кабинеты и следы</summary><div class="gb"><ul><li>Егор теперь сам заходит <b>проверять кабинеты</b> (кроме запертых): чаще те, что ближе к месту, где он тебя видел. Внутри он осматривается ~2,5 с.</li><li>Он оставляет <b>следы</b>: тёмные в обычном режиме, красные в погоне. Они исчезают за ~30 секунд, так что по свежим следам видно, куда он пошёл.</li></ul></div></details>
 <details><summary>💡 Советы</summary><div class="gb"><ul><li>Ходи шагом, бегай только когда нужно. Следи за полоской ⚡.</li><li>Сначала осмотри ближайшие комнаты: части заданий разбросаны по обоим этажам, не больше одной в комнате.</li><li>Всегда держи один помидор про запас. Петарду и колонку используй, чтобы увести Егора от нужной комнаты.</li><li>Прячься, когда Егор не видит тебя. Не лезь в шкаф у него на глазах.</li><li>Выполняй задания вместе с ботами: смотри на карту, кто куда несёт.</li><li>Перед последним заданием заранее продумай путь к выходу: после него Егор в ярости.</li></ul></div></details>
 <div id="gReady" class="hidden"><span id="gSt"></span><button id="gBtn">✅ Готово</button></div></div></section>
 <script>(function(){var g=document.getElementById('guide'),o=document.getElementById('guideBtn');if(o)o.onclick=function(){g.classList.remove('hidden');g.scrollTop=0};document.getElementById('guideClose').onclick=function(){g.classList.add('hidden')};addEventListener('keydown',function(e){if(e.code==='Escape'&&!g.dataset.ready)g.classList.add('hidden')})})()</script>
@@ -1251,8 +1252,8 @@ function updEgor(dt){
   if(E.checking!==L){const f=new THREE.Vector3(wc(L.front[0]),0,wc(L.front[1]));const d=goTo(E,f,E.state==='doomed'?3.9+boost:3+boost,dt);if(d<.5){E.checking=L;E.checkT=0;E.yaw=L.yaw+Math.PI}}
   else{E.checkT+=dt;L.open=Math.min(1,E.checkT*2);if(E.checkT>.6&&L.occupant){const o=L.occupant;if(o==='player')lose(P.doomed?'Егор видел, как ты прятался. Шкаф стал ловушкой 🪚':'Егор проверил шкаф… и нашёл тебя 🪚');else{catchBot(o)}}
    if(E.checkT>1.2){L.open=0;L.checkedAt=time;E.checking=null;E.checkQ.shift();if(!E.checkQ.length)E.state='patrol'}}}
- else{setWeapon('hammer');if(!E.goal||goTo(E,E.goal,speed,dt)<1){// patrol: prefer rooms with unsearched note stashes / where the player was last
-   if(Math.random()<E.type.par){const L=lockers[Math.random()*lockers.length|0];if(!L.locked&&time-L.checkedAt>E.type.cd){E.checkQ=[L];E.state='search';return}}
+ else{setWeapon('hammer');if(E.look>0){E.look-=dt;E.yaw+=dt*1.7;return}if(!E.goal||goTo(E,E.goal,speed,dt)<1){if(E.roomCk){const rc=E.roomCk;E.roomCk=null;if(Math.hypot(E.pos.x-wc((rc.x0+rc.x1)>>1),E.pos.z-wc((rc.y0+rc.y1)>>1))<4){rc.chkAt=time;E.look=2.6;egorSay(['Так… кто тут прячется?','Проверю кабинет…','Здесь кто-то был?'][Math.random()*3|0]);return}}// patrol: prefer rooms with unsearched note stashes / where the player was last
+   if(Math.random()<.45){const cs=rooms.filter(r=>r.type&&!r.locked&&r.door&&time-(r.chkAt??-999)>50);if(cs.length){const ref=E.last||P.pos,sc=r=>Math.hypot(wc((r.x0+r.x1)>>1)-ref.x,wc((r.y0+r.y1)>>1)-ref.z)+Math.random()*30;cs.sort((a,b)=>sc(a)-sc(b));const r=cs[0];let gx=wc((r.x0+r.x1)>>1),gz=wc((r.y0+r.y1)>>1);if(solid(cell(gx),cell(gz))){gx=wc(r.door[0]);gz=wc(r.door[1])}E.goal=new THREE.Vector3(gx,0,gz);E.path=null;E.roomCk=r;return}}if(Math.random()<E.type.par){const L=lockers[Math.random()*lockers.length|0];if(!L.locked&&time-L.checkedAt>E.type.cd){E.checkQ=[L];E.state='search';return}}
    E.goal=Math.random()<.4&&E.last?E.last.clone().add(new THREE.Vector3((Math.random()-.5)*8,0,(Math.random()-.5)*8)):randomGoal();const c=[cell(E.goal.x),cell(E.goal.z)];if(solid(c[0],c[1]))E.goal=randomGoal();E.path=null}}
 }
 function updBots(dt){for(const b of bots){if(!b.alive)continue;b.cd-=dt;
@@ -1871,6 +1872,27 @@ return(dt,tt)=>{
  const q=(f*20|0)+'|'+(P.boostT>0?1:0);if(q!==lastF){lastF=q;cv.style.filter='contrast('+(1.05+f*.25)+') saturate('+(1.1-f*.5+(P.boostT>0?.3:0))+')'}
 }})();
 
+/* ===== v9.2: следы Егора, исчезающие со временем ===== */
+(()=>{try{
+const MAX=70,LIFE=30,pool=[];let last=null,side=1,told=false,lastE=null;
+const tex=(()=>{const k=document.createElement('canvas');k.width=64;k.height=128;const x=k.getContext('2d');x.fillStyle='#fff';
+ x.beginPath();x.ellipse(32,44,20,34,0,0,7);x.fill();x.beginPath();x.ellipse(32,102,16,18,0,0,7);x.fill();
+ x.globalCompositeOperation='destination-out';for(let i=0;i<5;i++)x.fillRect(14,24+i*14,36,3);return new THREE.CanvasTexture(k)})();
+const geo=new THREE.PlaneGeometry(.3,.6);
+function clear(){for(const p of pool){p.m.visible=false;p.life=0}last=null;told=false}
+function put(x,z,a,st){let p=pool.find(q=>q.life<=0);if(!p){if(pool.length<MAX){const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2}));m.rotation.order='YXZ';m.rotation.x=-Math.PI/2;scene.add(m);p={m,life:0};pool.push(p)}else p=pool.reduce((u,v)=>v.life<u.life?v:u)}
+ p.life=LIFE;p.m.visible=true;p.m.rotation.y=a+Math.PI;side=-side;
+ p.m.position.set(x+Math.cos(a)*.14*side,rampY(x,z)+.03,z-Math.sin(a)*.14*side);p.m.material.color.set(st==='chase'?0xff3a20:0x6a1a10)}
+const clk=new THREE.Clock();
+(function f(){requestAnimationFrame(f);try{const dt=Math.min(clk.getDelta(),.05);
+ if(E!==lastE){lastE=E;clear()}
+ for(const p of pool)if(p.life>0){p.life-=dt;p.m.material.opacity=Math.max(0,Math.min(.75,p.life/6*.75));if(p.life<=0)p.m.visible=false}
+ if(!E||!playing||E.stun>0||E.slip>0)return;
+ const x=E.pos.x,z=E.pos.z;if(!last){last=[x,z];return}
+ const dx=x-last[0],dz=z-last[1],d=Math.hypot(dx,dz);if(d>5){last=[x,z];return}
+ if(d>.6){put(x,z,Math.atan2(dx,dz),E.state);last=[x,z];if(!told){told=true;say('👣 Егор оставляет следы — они исчезают через ~30 секунд',3.5)}}
+}catch(e){}})();
+}catch(e){console.warn('prints off',e)}})();
 </script>
 <canvas id="fx"></canvas>
 <script>
