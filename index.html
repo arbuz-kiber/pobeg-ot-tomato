@@ -925,6 +925,11 @@ function updHUD(){$('hHp').textContent='❤'.repeat(Math.max(0,P.hp))+'·'.repea
 // ================= AUDIO =================
 let AC,sawG,sawO,heartT=0;
 function audio(){AC=new (window.AudioContext||window.webkitAudioContext)();sawO=AC.createOscillator();sawO.type='sawtooth';sawO.frequency.value=70;const f=AC.createBiquadFilter();f.frequency.value=900;sawG=AC.createGain();sawG.gain.value=0;sawO.connect(f).connect(sawG).connect(AC.destination);sawO.start()}
+function schoolBell(){if(!AC)return;try{const t=AC.currentTime,dur=2.8,out=AC.createGain(),lp=AC.createBiquadFilter(),hm=AC.createGain();
+ lp.type='lowpass';lp.frequency.value=4800;out.gain.setValueAtTime(.0001,t);out.gain.exponentialRampToValueAtTime(.55,t+.03);out.gain.setValueAtTime(.55,t+dur-.1);out.gain.exponentialRampToValueAtTime(.0005,t+dur+.7);
+ hm.gain.value=0;for(let i=0;i<Math.floor(dur*19);i++){const tt=t+i/19;hm.gain.setValueAtTime(1,tt);hm.gain.exponentialRampToValueAtTime(.3,tt+.045)}
+ [[1180,.5],[1180*2.4,.32],[1180*3.7,.2],[1180*5.1,.1],[590,.25]].forEach(([f,v],i)=>{const o=AC.createOscillator(),g=AC.createGain();o.type=i===0?'triangle':'sine';o.frequency.value=f+(i?i*3:0);g.gain.value=v;o.connect(g).connect(hm);o.start(t);o.stop(t+dur+.8)});
+ hm.connect(lp).connect(out).connect(AC.destination)}catch(e){}}
 function beep(f,d=.15,type='square',v=.15,slide=0){if(!AC)return;const o=AC.createOscillator(),gn=AC.createGain();o.type=type;o.frequency.value=f;if(slide)o.frequency.exponentialRampToValueAtTime(slide,AC.currentTime+d);gn.gain.setValueAtTime(v,AC.currentTime);gn.gain.exponentialRampToValueAtTime(.001,AC.currentTime+d);o.connect(gn).connect(AC.destination);o.start();o.stop(AC.currentTime+d)}
 function boom(){if(!AC)return;const b=AC.createBuffer(1,AC.sampleRate*.5,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);const s=AC.createBufferSource();s.buffer=b;const gn=AC.createGain();gn.gain.value=.6;s.connect(gn).connect(AC.destination);s.start()}
 // ---- 3D sound: Egor's steps/voice, screams
@@ -1433,12 +1438,23 @@ const ES=[
  {id:'zombie',name:'Зомби',price:250,ic:'🧟',d:'Зелёная кожа, лохмотья и пятна крови'},
  {id:'robot',name:'Робот',price:350,ic:'🤖',d:'Стальной корпус, антенна и неоновое сердце'},
  {id:'king',name:'Король',price:500,ic:'👑',d:'Золотая корона, пурпурная мантия и горностай'}];
+const ES_PRICE=Object.fromEntries(ES.map(k=>[k.id,k.price]));
 const ESG={
  key:()=>PROF?'egorSk:'+(PROF.id||PROF.username):null,
- load(){try{const o=JSON.parse(localStorage.getItem(this.key())||'{}');return{own:Array.isArray(o.own)?o.own:[],cur:o.cur||'classic',spent:+o.spent||0}}catch(e){return{own:[],cur:'classic',spent:0}}},
- spent(){return PROF?this.load().spent|0:0},bal(){return PROF?Math.max(0,PROF.coins-this.spent()):0},
+ load(){try{const o=JSON.parse(localStorage.getItem(this.key())||'{}');return{own:Array.isArray(o.own)?o.own:[],cur:o.cur||'classic',srv:!!o.srv}}catch(e){return{own:[],cur:'classic',srv:false}}},
  save(o){try{localStorage.setItem(this.key(),JSON.stringify(o))}catch(e){}},
- cur(){if(!PROF)return'classic';const o=this.load();return o.cur==='classic'||o.own.includes(o.cur)?o.cur:'classic'}
+ spent(){return PROF?this.load().own.reduce((a,id)=>a+(ES_PRICE[id]||0),0):0},
+ bal(){return PROF?Math.max(0,PROF.coins-this.spent()):0},
+ cur(){if(!PROF)return'classic';const o=this.load();return o.cur==='classic'||o.own.includes(o.cur)?o.cur:'classic'},
+ /* подтянуть скины аккаунта с сервера (функции из egor_skins.sql); при первом входе с этого устройства переносит локальные покупки */
+ async sync(){if(!sb||!PROF)return false;
+  try{let{data,error}=await sb.rpc('egor_skins_get',{p_token:PROF.token});if(error||!data)throw error||0;
+   const o=this.load();
+   if(!o.srv){const miss=o.own.filter(id=>id!=='classic'&&!(data.own||[]).includes(id));
+    for(const id of miss){try{await sb.rpc('egor_skin_buy',{p_token:PROF.token,p_id:id})}catch(e){}}
+    if(miss.length||o.cur!==data.cur){if(o.cur!=='classic'){try{await sb.rpc('egor_skin_equip',{p_token:PROF.token,p_id:o.cur})}catch(e){}}const r=await sb.rpc('egor_skins_get',{p_token:PROF.token});if(r.data)data=r.data}}
+   this.save({own:data.own||[],cur:data.cur||'classic',srv:true});return true}
+  catch(e){return false}}
 };
 function cleaverMesh(){const g=new THREE.Group(),steel=new THREE.MeshStandardMaterial({color:0xc9ced6,metalness:.85,roughness:.25});
  box(.03,.34,.2,steel,0,.2,0,g);box(.035,.04,.2,new THREE.MeshStandardMaterial({color:0x8a0f0f}),0,.05,0,g);
@@ -1642,7 +1658,7 @@ async function initSB(){if(!SUPABASE_URL||!SUPABASE_ANON_KEY)return;
    break}
   catch(e){console.warn('auto-login retry',i,e);await new Promise(r=>setTimeout(r,700*(i+1)))}}}}
 const SBP=initSB();
-async function afterLogin(pr,show=true){tokSet(pr.token);PROF=pr;NET.id=pr.id;NET.name=pr.username;
+async function afterLogin(pr,show=true){tokSet(pr.token);PROF=pr;try{ESG.sync()}catch(e){}NET.id=pr.id;NET.name=pr.username;
    try{const{data}=await sb.rpc('get_level',{p_token:pr.token});
   if(data){const k='egorLv:'+(pr.id||pr.username),l=JSON.parse(localStorage.getItem(k)||'{}');
    if((+l.xp||0)>data.xp)sb.rpc('save_level',{p_token:pr.token,p_xp:+l.xp,p_rounds:+l.rounds||0,p_pend:+l.pend||0});
@@ -1656,7 +1672,7 @@ async function auth(up){const u=($('hu').value||'').trim().toLowerCase(),p=$('hp
  const{data,error}=await sb.rpc(up?'register':'login',{p_name:u,p_pass:p});
  if(error){const t=error.message;return m(/name_taken/.test(t)?'Этот ник занят':/bad_login/.test(t)?'Неверный ник или пароль':/short_pass/.test(t)?'Пароль: минимум 6 символов':/bad_name/.test(t)?'Ник: 3–16 символов, a-z, 0-9 и _':t)}
  await afterLogin(data,true)}
-async function getLoadout(){NET.lo=null;if(!sb||!PROF)return;try{const{data}=await sb.rpc('take_loadout',{p_token:PROF.token});NET.lo=data;const{data:pr}=await sb.rpc('me',{p_token:PROF.token});if(pr)setProf(pr)}catch(e){}}
+async function getLoadout(){NET.lo=null;if(!sb||!PROF)return;try{await ESG.sync();const{data}=await sb.rpc('take_loadout',{p_token:PROF.token});NET.lo=data;const{data:pr}=await sb.rpc('me',{p_token:PROF.token});if(pr)setProf(pr)}catch(e){}}
 function launch(){$('hub').classList.add('hidden');if(TOUCH)document.documentElement.requestFullscreen?.().catch(()=>{});startGame()}
 
 // ---------- lobby / matchmaking ----------
@@ -1735,11 +1751,15 @@ const ACT={
  async solo(){const nb=botCount(4);leaveGame();NET.nBots=nb;NET.seed=null;await getLoadout();launch()},
  find(){findGame()},create(){joinLobby(randCode(),true)},
  joinc(){const c=($('hc').value||'').trim().toUpperCase();if(c.length>=3)joinLobby(c,false)},
- shop(){hub('shop')},shoptab(v){SHOPTAB=v==='egor'?'egor':'main';hub('shop')},esequip(id){const o=ESG.load();if(id==='classic'||o.own.includes(id)){o.cur=id;ESG.save(o);hub('shop','Скин надет — он появится в следующем раунде')}},
+ shop(){hub('shop');ESG.sync().then(ok=>{if(ok&&HV==='shop')hub('shop')})},shoptab(v){SHOPTAB=v==='egor'?'egor':'main';hub('shop')},
+ async esequip(id){if(!PROF)return;const o=ESG.load();if(!(id==='classic'||o.own.includes(id)))return;o.cur=id;let srv=true;
+  try{const{error}=await sb.rpc('egor_skin_equip',{p_token:PROF.token,p_id:id});if(error)throw error}catch(e){srv=false}
+  o.srv=srv&&o.srv;ESG.save(o);hub('shop','Скин надет'+(srv?' и сохранён в аккаунте':' (только на этом устройстве)')+' — он появится в следующем раунде')},
  async esbuy(id){const k=ES.find(s=>s.id===id);if(!k||!PROF)return;const o=ESG.load();if(o.own.includes(id)){hub('shop','Уже куплено');return}if(ESG.bal()<k.price){hub('shop','Не хватает монет');return}
-  let ok=false;try{const{data,error}=await sb.rpc('add_coins',{p_token:PROF.token,p_amount:-k.price});if(!error&&data!=null&&data<=PROF.coins-k.price+.5){PROF.coins=data;ok=true}}catch(e){}
-  if(!ok)o.spent=(o.spent|0)+k.price;
-  o.own.push(id);o.cur=id;ESG.save(o);hub('shop','Куплено и надето: '+k.name+'! Увидишь его в следующем раунде')},
+  try{const{data,error}=await sb.rpc('egor_skin_buy',{p_token:PROF.token,p_id:id});
+   if(error){const m=error.message||'';if(/not_enough/.test(m)){hub('shop','Не хватает монет');return}if(/already/.test(m)){await ESG.sync();hub('shop','Уже куплено');return}throw error}
+   ESG.save({own:data.own||[],cur:data.cur||'classic',srv:true});hub('shop','Куплено и надето: '+k.name+'! Сохранено в аккаунте. Увидишь скин в следующем раунде')}
+  catch(e){o.own.push(id);o.cur=id;o.srv=false;ESG.save(o);hub('shop','Куплено и надето: '+k.name+'. Пока сохранено только на этом устройстве (на сервере не выполнен egor_skins.sql)')}},
  lvl(){hub('lvl')},back(){hub('main')},
  async logout(){leaveGame();tokDel();PROF=null;NET.id=null;hub('auth')},
  cancelq(){leaveGame();hub('main')},leave(){leaveGame();hub('main')},start(){startMatch()},
@@ -1812,7 +1832,7 @@ return(dt,tt)=>{
  pg.attributes.position.needsUpdate=true;pts.material.color.setHex(f>.5?0xff4a2a:0xffa040);
  /* случайные жуткие события */
  evT-=dt;if(evT<=0){evT=22+Math.random()*30;flk=.7;if(typeof AC!=='undefined'&&AC){beep(70,.7,'sawtooth',.22,26);setTimeout(()=>beep(190,.12,'square',.2,60),420)}
-  try{say(['💀 Где-то хлопнула дверь…','👁 Кажется, за тобой кто-то наблюдает…','🕯 Свет мигнул…','🔔 Далёкий звонок в пустом коридоре…'][Math.random()*4|0])}catch(e){}}
+  try{const _m=['💀 Где-то хлопнула дверь…','👁 Кажется, за тобой кто-то наблюдает…','🕯 Свет мигнул…','🔔 Далёкий звонок в пустом коридоре…'][Math.random()*4|0];say(_m);if(_m.includes('звонок'))schoolBell()}catch(e){}}
  if(flk>0){flk-=dt;fl.style.display='';fl.style.opacity=Math.random()<.45?.85:0}else fl.style.opacity=0;
 }})();
 
