@@ -468,6 +468,11 @@ body.touch #stick{background:radial-gradient(#ffd08a,#ff6a00)!important;box-shad
 #hub .mcard #lcForm{display:flex;gap:8px;margin:0}
 #hub .mcard #lcForm input{flex:1;min-width:0;padding:10px 14px}
 #hub .mcard #lcForm button{flex:none;width:46px;padding:0;min-height:42px;font-size:16px}
+body.touch #hud .b,body.touch #speak,body.touch #prompt,body.touch #nametag,body.touch #msg,body.touch #inv>div,body.touch #chatPanel,body.touch #tbtns button{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body.touch #hud .b,body.touch #speak{background:rgba(6,6,14,.86)}
+body.touch #tbtns button{background:rgba(20,14,42,.8)!important}
+body.touch #pause{backdrop-filter:none;-webkit-backdrop-filter:none}
+canvas{image-rendering:auto}
 </style></head><body><div id="blk"></div>
 <div id="hud" class="hidden">
  <span class="b" id="hRoom">Коридор</span>
@@ -863,13 +868,18 @@ function ventTick(){const cx=cell(P.pos.x),cy=cell(P.pos.z),r=.3,cs=[[cell(P.pos
  P.inVent=iv;
  for(const rm of rooms)if(rm.secret&&!rm.found&&cx>=rm.x0&&cx<=rm.x1&&cy>=rm.y0&&cy<=rm.y1){rm.found=true;P.secrets=(P.secrets|0)+1;try{ACH.u('detective')}catch(e){}say('🗝 <b>СЕКРЕТНАЯ КОМНАТА!</b> «'+rm.name+'» — об этом месте мало кто знает. Обыщи сундуки!',5);beep(520,.25,'sine',.18,1040);setTimeout(()=>beep(780,.3,'sine',.16,1560),220);try{addChat('🗝','Кто-то нашёл секретную комнату…')}catch(e){}}}
 // ================= RENDER =================
-const renderer=new THREE.WebGLRenderer({antialias:!TOUCH,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,TOUCH?1.25:1.75));renderer.setSize(innerWidth,innerHeight);
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});const ANISO=Math.min(8,renderer.capabilities.getMaxAnisotropy?renderer.capabilities.getMaxAnisotropy():4);renderer.setPixelRatio(Math.min(devicePixelRatio||1,TOUCH?1.75:1.75));renderer.setSize(innerWidth,innerHeight);
 renderer.shadowMap.enabled=false;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.45;document.body.prepend(renderer.domElement);
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x241f2e);scene.fog=new THREE.FogExp2(0x332b3a,0.011);
 const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,0.05,120);scene.add(camera);
-addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()});
-if(TOUCH){let n=0,t0=performance.now(),pr=renderer.getPixelRatio();const cap=Math.min(devicePixelRatio,1.5);(function f(){n++;const t=performance.now();if(t-t0>2000){const fps=n*1000/(t-t0);n=0;t0=t;if(fps<40&&pr>.7)pr=Math.max(.7,pr-.15);else if(fps>57&&pr<cap)pr=Math.min(cap,pr+.1);if(Math.abs(pr-renderer.getPixelRatio())>.01){renderer.setPixelRatio(pr);renderer.setSize(innerWidth,innerHeight)}}requestAnimationFrame(f)})()}
-function ctex(w,h,draw,rx=1,ry=1){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rx,ry);t.anisotropy=4;return t}
+{const rsz=()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()};addEventListener('resize',rsz);addEventListener('orientationchange',()=>setTimeout(rsz,250))}
+if(TOUCH){let n=0,t0=performance.now(),last=t0,pr=renderer.getPixelRatio(),bad=0;const cap=Math.min(devicePixelRatio||1,2),floor=Math.min(.9,cap);
+ requestAnimationFrame(function f(){const t=performance.now();if(t-last>400||document.hidden||!playing){n=0;t0=t;bad=0}else n++;last=t;
+  if(t-t0>2000){const fps=n*1000/(t-t0);n=0;t0=t;
+   if(fps<36){if(++bad>=2&&pr>floor){pr=Math.max(floor,pr-.1);bad=0}}else{bad=0;if(fps>56&&pr<cap)pr=Math.min(cap,pr+.1)}
+   if(Math.abs(pr-renderer.getPixelRatio())>.01){renderer.setPixelRatio(pr);renderer.setSize(innerWidth,innerHeight)}}
+  requestAnimationFrame(f)})}
+function ctex(w,h,draw,rx=1,ry=1){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rx,ry);t.anisotropy=ANISO;return t}
 function grain(x,w,h,a){const d=x.getImageData(0,0,w,h);for(let i=0;i<d.data.length;i+=4){const n=(Math.random()-.5)*a;d.data[i]+=n;d.data[i+1]+=n;d.data[i+2]+=n}x.putImageData(d,0,0)}
 const T={
  wall:ctex(256,256,(x,w,h)=>{x.fillStyle='#cfc2a2';x.fillRect(0,0,w,h);x.fillStyle='#35594a';x.fillRect(0,h*.55,w,h*.45);x.fillStyle='#6b2a1e';x.fillRect(0,h*.53,w,8);grain(x,w,h,22);x.fillStyle='#0002';for(let i=0;i<6;i++)x.fillRect(Math.random()*w,h*.56,2,Math.random()*60)}),
@@ -1131,7 +1141,7 @@ function drawFace(x,S,ch){x.fillStyle=ch.skin;x.fillRect(0,0,S,S);const e=ch.fac
  else{dots();x.beginPath();x.arc(S/2,S*.6,S*.16,Math.PI*.15,Math.PI*.85);x.stroke();cheeks()}}
 function faceCanvas(ch,S,img){const c=document.createElement('canvas');c.width=c.height=S;const x=c.getContext('2d');x.save();x.beginPath();x.arc(S/2,S/2,S/2-1,0,7);x.clip();
  if(img&&ch.usePh)x.drawImage(cropSq(img,ch,S),0,0);else drawFace(x,S,ch);x.restore();return c}
-const canvasTex=c=>{const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t};
+const canvasTex=c=>{const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=ANISO;return t};
 const CG={hemi:new THREE.SphereGeometry(1,20,12,0,Math.PI*2,0,Math.PI/2),sph:new THREE.SphereGeometry(1,16,12),cyl:new THREE.CylinderGeometry(1,1,1,16),cone:new THREE.ConeGeometry(1,1,16),ring:new THREE.RingGeometry(.7,1,20),disc:new THREE.CircleGeometry(1,20),face:new THREE.SphereGeometry(1,24,16,Math.PI/2-.85,1.7,Math.PI/2-.85,1.7)};
 const headZ=(x,y)=>{const dx=x/.19,dy=(y-1.68)/.22;return .2*Math.sqrt(Math.max(.02,1-dx*dx-dy*dy))*1.03+.004};
 function makeChar(ch,local){
