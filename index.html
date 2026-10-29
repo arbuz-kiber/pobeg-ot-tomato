@@ -655,9 +655,9 @@ function buildVents(){const VH=1.05,OW=.95,sw=(CS-OW)/2,mg=new THREE.MeshStandar
 function toggleCrouch(){P.crouchT=!P.crouchT;if(!P.crouchT&&P.ventNear){say('🕳 Тут не встать — слишком низко');return}say(P.crouchT?'🧎 Ты присел (C — встать)':'🚶 Ты встал',1.2);beep(P.crouchT?300:420,.05,'sine',.06)}
 function ventTick(){const cx=cell(P.pos.x),cy=cell(P.pos.z),r=.3,cs=[[cell(P.pos.x-r),cell(P.pos.z-r)],[cell(P.pos.x+r),cell(P.pos.z-r)],[cell(P.pos.x-r),cell(P.pos.z+r)],[cell(P.pos.x+r),cell(P.pos.z+r)]];
  P.ventNear=!P.hidden&&cs.some(([x,y])=>g[y]?.[x]===7);const iv=!P.hidden&&g[cy]?.[cx]===7;
- if(iv&&!P.inVent){if(!P.ventTip){P.ventTip=1;say('🕳 Ты в вентиляции. Егор не пролезет и не увидит тебя здесь.',3)}beep(180,.12,'triangle',.08,140);if(E&&E.state==='chase'&&E.target?.who==='player')egorSay(['Залез в вентиляцию, крыса?!','Вылезай оттуда!','Я подожду…'][Math.random()*3|0])}
+ if(iv&&!P.inVent){if(!P.ventTip){P.ventTip=1;say('🕳 Ты в вентиляции. Егор не пролезет и не увидит тебя здесь.',3)}beep(180,.12,'triangle',.08,140);if(E&&E.state==='chase'&&E.target?.who==='player'){P.ventEsc=true;egorSay(['Залез в вентиляцию, крыса?!','Вылезай оттуда!','Я подожду…'][Math.random()*3|0])}}
  P.inVent=iv;
- for(const rm of rooms)if(rm.secret&&!rm.found&&cx>=rm.x0&&cx<=rm.x1&&cy>=rm.y0&&cy<=rm.y1){rm.found=true;P.secrets=(P.secrets|0)+1;say('🗝 <b>СЕКРЕТНАЯ КОМНАТА!</b> «'+rm.name+'» — об этом месте мало кто знает. Обыщи сундуки!',5);beep(520,.25,'sine',.18,1040);setTimeout(()=>beep(780,.3,'sine',.16,1560),220);try{addChat('🗝','Кто-то нашёл секретную комнату…')}catch(e){}}}
+ for(const rm of rooms)if(rm.secret&&!rm.found&&cx>=rm.x0&&cx<=rm.x1&&cy>=rm.y0&&cy<=rm.y1){rm.found=true;P.secrets=(P.secrets|0)+1;try{ACH.u('detective')}catch(e){}say('🗝 <b>СЕКРЕТНАЯ КОМНАТА!</b> «'+rm.name+'» — об этом месте мало кто знает. Обыщи сундуки!',5);beep(520,.25,'sine',.18,1040);setTimeout(()=>beep(780,.3,'sine',.16,1560),220);try{addChat('🗝','Кто-то нашёл секретную комнату…')}catch(e){}}}
 // ================= RENDER =================
 const renderer=new THREE.WebGLRenderer({antialias:!TOUCH,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,TOUCH?1.25:1.75));renderer.setSize(innerWidth,innerHeight);
 renderer.shadowMap.enabled=false;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.45;document.body.prepend(renderer.domElement);
@@ -1160,7 +1160,7 @@ function closePanels(resume=true){try{renderer.domElement.style.visibility=''}ca
 function openChat(){if(mapOpen)return;chatOpen=true;clearKeys();$('chatPanel').classList.remove('hidden');$('chatForm').classList.remove('hidden');document.exitPointerLock();$('pause').classList.add('hidden');$('chatInput').focus();}
 function openRead(){if(!P.papers.length){say('У тебя нет записок. Ищи их по школе 📜');return}closePanels(false);readOpen=true;document.exitPointerLock();$('pause').classList.add('hidden');$('readList').innerHTML=P.papers.map(p=>`<article><h3>${p.title}</h3><p>${p.text}</p></article>`).join('');$('readPanel').classList.remove('hidden')}
 $('readClose').onclick=()=>closePanels();
-function addPaper(pp){ADD.paper(pp);P.papers.push(pp||{title:'📝 Записка Егора',text:'«'+EGOR_QUOTES[0]+'»'});P.inv.paper=P.papers.length;beep(700,.2,'sine',.15,1100);say((pp===EGOR_LORE?'📖 Найдена <b>предыстория Егора</b>!':'📝 Найдена записка Егора!')+' Прочитать: <b>R</b> (или выбери 📜 и брось)',4);updHUD()}
+function addPaper(pp){ADD.paper(pp||{title:'📝 Записка Егора',text:'«'+EGOR_QUOTES[0]+'»'});P.papers.push(pp||{title:'📝 Записка Егора',text:'«'+EGOR_QUOTES[0]+'»'});P.inv.paper=P.papers.length;beep(700,.2,'sine',.15,1100);say((pp===EGOR_LORE?'📖 Найдена <b>предыстория Егора</b>!':'📝 Найдена записка Егора!')+' Прочитать: <b>R</b> (или выбери 📜 и брось)',4);updHUD()}
 if(!CanvasRenderingContext2D.prototype.roundRect)CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){r=Array.isArray(r)?r[0]:(r||0);r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath()};
 let mapZ=1;function mapView(){if(!TOUCH)return;const mc=$('mapCanvas'),pn=$('mapPanel'),G=mapG(),fit=(innerWidth-16)/(W*G.u+16),k=[fit,1,1.7][mapZ];mc.style.width=Math.round(mc.width*k)+'px';mc.style.height=Math.round(mc.height*k)+'px';mc.style.maxWidth='none';mc.style.maxHeight='none';const[px,py]=mapPt(P.pos.x/CS,P.pos.z/CS,G);pn.scrollLeft=mc.offsetLeft+px*k-pn.clientWidth/2;pn.scrollTop=mc.offsetTop+py*k-pn.clientHeight/2}
 let _mapFirst=true;
@@ -1421,7 +1421,7 @@ function onHit(p,h){
  else{const b=h.c;if(NET.on&&!NET.host)return;if(p.t==='hammer')catchBot(b);else b.safeT=0}}
 function catchBot(b){if(b.carry&&b.carry.length){b.carry.forEach(k=>dropNote(b.pos.x,b.pos.z,k,'c:'+(b.id||b.name)+':'+k));say(`${b.name} уронил задание — подбери и отнеси!`,3);b.carry=[]}if(b.remote)NET.send({t:'caught',to:b.id});b.alive=false;b.mesh.visible=false;scream(b.pos.clone(),.8+Math.random()*.7);addChat(b.name,'А-А-А-А-А!!! Егор!!!');if(b.hidden){b.hidden.occupant=null;b.hidden=null}say(`💀 Егор поймал ${b.name}!`,3);beep(100,.5,'sawtooth',.2,40);updHUD()}
 function lose(t){if(!playing)return;rageOff();NET.finish(false);playing=false;scream(P.pos.clone(),.85);closePanels(false);document.exitPointerLock();sawG.gain.value=0;$('oT').textContent='ПОЙМАН!';lbLocalAdd(null,P.coinsFound||0);$('oP').innerHTML=t+`<br>Задания: ${taskHUD()} · Время: ${fmt(time)}`+(P.coinsFound?`<br>🪙 Найдено монет: ${P.coinsFound}`:'');$('over').classList.remove('hidden');boom()}
-function win(){if(!playing)return;ACH.u('escape');rageOff();NET.finish(true);playing=false;closePanels(false);document.exitPointerLock();sawG.gain.value=0;$('oT').textContent='ТЫ СБЕЖАЛ! 🎃';const nb=lbLocalAdd(time,P.coinsFound||0);$('oP').innerHTML=`Время: ${fmt(time)} · Здоровье: ${P.hp}/3 · Спасено ботов: ${bots.filter(b=>b.alive).length}/${bots.length}`+(P.coinsFound?`<br>🪙 Найдено монет: ${P.coinsFound}`:'')+(nb?'<br>🏆 Новый личный рекорд!':'');$('over').classList.remove('hidden');beep(600,.5,'sine',.2,1200)}
+function win(){if(!playing)return;ACH.u('escape');try{ACH.push(true)}catch(e){}rageOff();NET.finish(true);playing=false;closePanels(false);document.exitPointerLock();sawG.gain.value=0;$('oT').textContent='ТЫ СБЕЖАЛ! 🎃';const nb=lbLocalAdd(time,P.coinsFound||0);$('oP').innerHTML=`Время: ${fmt(time)} · Здоровье: ${P.hp}/3 · Спасено ботов: ${bots.filter(b=>b.alive).length}/${bots.length}`+(P.coinsFound?`<br>🪙 Найдено монет: ${P.coinsFound}`:'')+(nb?'<br>🏆 Новый личный рекорд!':'');$('over').classList.remove('hidden');beep(600,.5,'sine',.2,1200)}
 const fmt=s=>`${s/60|0}:${String(s%60|0).padStart(2,'0')}`;
 // --- path follow shared by Egor & bots
 function goTo(a,goal,speed,dt,r=.35){a.pathT-=dt;const gx=cell(goal.x),gy=cell(goal.z);
@@ -1596,7 +1596,7 @@ addEventListener('keyup',e=>{if(e.code==='Tab'){e.preventDefault();sbShow(false)
 addEventListener('blur',()=>sbShow(false));
 // ================= LOOP =================
 const clock=new THREE.Clock();
-function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.05);try{GP.tick(dt)}catch(e){}try{ADD.tick(dt)}catch(e){}blkLight(dt);exitGuide(dt);const tt=performance.now()/1000;
+function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.05);try{GP.tick(dt)}catch(e){}try{ADD.tick(dt)}catch(e){}try{ADD.watch(dt)}catch(e){}blkLight(dt);exitGuide(dt);const tt=performance.now()/1000;
  if(playing&&(NET.on||(locked()&&!panelOpen()))){time+=dt;deliverCheck();blkTick(dt);
   // player
   P.moving=false;
@@ -1769,13 +1769,19 @@ const LV=(()=>{
  const reward=l=>({coins:l%5===0?100+l*10:15+l*3,title:(TITLES.find(t=>t[0]===l)||[])[1]||''});
  const key=()=>PROF?'egorLv:'+(PROF.id||PROF.username):null;
  const load=()=>{try{const o=JSON.parse(localStorage.getItem(key())||'{}');return{xp:+o.xp||0,rounds:+o.rounds||0,pend:+o.pend||0}}catch(e){return{xp:0,rounds:0,pend:0}}};
-  const save=o=>{try{localStorage.setItem(key(),JSON.stringify(o))}catch(e){}
-  if(sb&&PROF?.token)sb.rpc('save_level',{p_token:PROF.token,p_xp:o.xp,p_rounds:o.rounds,p_pend:o.pend}).then(()=>{},()=>{})};
+  let cloud=null;
+  const put=async o=>{if(!sb||!PROF?.token)return;try{const{error}=await sb.rpc('egor_level_save',{p_token:PROF.token,p_xp:o.xp,p_rounds:o.rounds,p_pend:o.pend});if(error)throw error;cloud=true}catch(e){cloud=false;console.warn('level save',e)}};
+  const save=o=>{try{localStorage.setItem(key(),JSON.stringify(o))}catch(e){}put(o)};
+  const sync=async()=>{if(!sb||!PROF?.token)return;try{const{data,error}=await sb.rpc('egor_level_get',{p_token:PROF.token});if(error)throw error;
+   const l=load(),sv={xp:+data?.xp||0,rounds:+data?.rounds||0,pend:+data?.pend||0},m={xp:Math.max(l.xp,sv.xp),rounds:Math.max(l.rounds,sv.rounds),pend:l.xp>=sv.xp?l.pend:sv.pend};
+   try{localStorage.setItem(key(),JSON.stringify(m))}catch(e){}
+   cloud=true;if(m.xp!==sv.xp||m.rounds!==sv.rounds||m.pend!==sv.pend)await put(m)}catch(e){cloud=false;console.warn('level sync',e)}};
+  const cloudNote=()=>`<p class="hn">${cloud===true?'☁ Уровень сохранён в облаке (Supabase)':cloud===false?'⚠ Облако недоступно — прогресс пока только на этом устройстве (выполни <b>egor_progress.sql</b> в Supabase)':'☁ Синхронизация…'}</p>`;
  const info=xp=>{let l=1,r=xp;while(r>=need(l)){r-=need(l);l++}return{l,cur:r,nd:need(l)}};
  const multi=()=>!!(NET.on&&NET.live&&(REM.length>0||(NET.players||[]).length>1));
  const bar=(a,b)=>`<div style="width:100%;max-width:300px;height:10px;background:#333;border-radius:6px;overflow:hidden;margin:4px auto"><div style="height:100%;width:${Math.min(100,a/b*100)|0}%;background:linear-gradient(90deg,#ff9a2a,#ffd23a)"></div></div>`;
  return{
-  info,title,reward,multi,
+  info,title,reward,multi,sync,
   rescue(p){if(p.owner!=='player'||!multi()||time-(P._resT||-99)<10)return;
    if(REM.some(r=>r.alive&&r.pos&&Math.hypot(r.pos.x-E.pos.x,r.pos.z-E.pos.z)<10)){P._resT=time;P.rescues=(P.rescues|0)+1;say('🛟 Ты спас напарника от Егора! <b>+50 XP</b>',3)}},
   round(won){const m=multi(),myD=P.myDlv|0,rs=P.rescues|0,tT=myD*30,sv=Math.min(60,Math.floor(time/12))+(won?40:0),rv=rs*50;return{m,won,myD,rs,tT,sv,rv,coins:won&&m?40:0,xp:tT+sv+rv}},
@@ -1789,7 +1795,7 @@ const LV=(()=>{
    el.innerHTML+=`<div style="margin-top:10px;padding:10px 14px;border:1px solid #ff9a2a88;border-radius:10px;background:#0006;font-size:15px;line-height:1.6">🎖 <b>+${r.xp} XP</b><br><span style="color:#cfc8b6">📋 Задания: +${r.tT} (${r.myD} шт.) · 🏃 Выживание: +${r.sv} · 🛟 Спасения: +${r.rv} (${r.rs})</span>`+(r.coins?`<br>🏆 Победа: <b>+${r.coins} 🪙</b>`:'')+`<br>Уровень <b>${a.l}</b> · ${title(a.l)} (${a.cur}/${a.nd})${bar(a.cur,a.nd)}`+(a.l>b?`<br><b style="color:#ffd23a">⬆ НОВЫЙ УРОВЕНЬ ${a.l}!</b> Награда: <b>+${lv} 🪙</b>`:'')+(ttl.length?`<br>🏅 Новое звание: <b>${ttl.join(', ')}</b>`:'')+`</div>`},
   chip(){if(!PROF)return'';const i=info(load().xp);return`<div class="b" style="margin:4px auto">🎖 Ур. ${i.l} · ${title(i.l)}${bar(i.cur,i.nd)}<small>${i.cur}/${i.nd} XP</small></div>`},
   page(){const o=load(),i=info(o.xp);let rows='';for(let l=i.l+1;l<=i.l+10;l++){const w=reward(l);rows+=`<div class="it"><span>Ур. ${l}</span><b>+${w.coins} 🪙${w.title?' · 🏅 '+w.title:''}</b></div>`}
-   return`<h2>🎖 Уровни и награды</h2><div class="b">Ур. <b>${i.l}</b> · ${title(i.l)} · всего ${o.xp} XP · сетевых раундов: ${o.rounds}${bar(i.cur,i.nd)}${i.cur}/${i.nd} XP до следующего</div>
+   return`<h2>🎖 Уровни и награды</h2><div class="b">Ур. <b>${i.l}</b> · ${title(i.l)} · всего ${o.xp} XP · сетевых раундов: ${o.rounds}${bar(i.cur,i.nd)}${i.cur}/${i.nd} XP до следующего</div>${cloudNote()}
    <p class="hn">XP даётся только в игре по сети с другими игроками:<br>📋 +30 за каждое доставленное задание · 🏃 до +60 за выживание (+40, если сбежал) · 🛟 +50 за спасение напарника (попал в Егора, пока он рядом с игроком) · 🏆 +40 🪙 за победу.</p>
    <div style="display:flex;flex-direction:column;gap:6px;width:100%;max-width:420px">${rows}</div><p class="hn">Звания: ${TITLES.map(t=>'ур. '+t[0]+' — '+t[1]).join(' · ')}</p><button class="sm" data-a="back">← Назад</button>`}
  }})();
@@ -1877,10 +1883,7 @@ async function initSB(){if(!SUPABASE_URL||!SUPABASE_ANON_KEY)return;
   catch(e){console.warn('auto-login retry',i,e);await new Promise(r=>setTimeout(r,700*(i+1)))}}}}
 const SBP=initSB();
 async function afterLogin(pr,show=true){tokSet(pr.token);PROF=pr;try{ESG.sync()}catch(e){}NET.id=pr.id;NET.name=pr.username;
-   try{const{data}=await sb.rpc('get_level',{p_token:pr.token});
-  if(data){const k='egorLv:'+(pr.id||pr.username),l=JSON.parse(localStorage.getItem(k)||'{}');
-   if((+l.xp||0)>data.xp)sb.rpc('save_level',{p_token:pr.token,p_xp:+l.xp,p_rounds:+l.rounds||0,p_pend:+l.pend||0});
-   else localStorage.setItem(k,JSON.stringify(data))}}catch(e){}
+   try{await Promise.allSettled([LV.sync(),ACH.sync()])}catch(e){}
  const{data:sh}=await sb.from('shop_items').select('*').order('price');SHOP=sh||[];
  sb.channel('inv:'+pr.username).on('broadcast',{event:'inv'},({payload})=>{if(playing||NET.on)return;if(confirm(payload.from+' зовёт тебя в лобби. Принять?'))joinLobby(payload.code,false)}).subscribe();
  const c=new URLSearchParams(location.search).get('lobby');
@@ -2004,11 +2007,23 @@ function decorExtra(){const clk=new THREE.MeshBasicMaterial({map:ctex(64,64,x=>{
 const ACH={L:[['escape','🏃','Ноги в руки','Сбежать из лицея впервые'],['detective','🕵️','Детектив','Впервые зайти в секретную комнату'],['pirate','🏴‍☠️','Пират','Найти карту лицея, где всё помечено'],['lock','🔓','Взломщик','Впервые открыть запертую комнату отмычкой'],['dark','🌑','Во тьме','Выполнить задание во время блэкаута'],['arch','📚','Архивариус','Собрать все записки Егора'],['s100','🔎','Сыщик','Обыскать 100 нычек'],['s1000','🕶️','Опытный сыщик','Обыскать 1000 нычек'],['close','😰','Он был рядом…','Спрятаться в шкафу, пока Егор рядом, и дождаться, пока он уйдёт'],['rat','🐀','Крысиный ход','Впервые пройти через вентиляцию, спасаясь от Егора']],
  k(){return 'egorAch:'+(PROF?(PROF.id||PROF.username):'guest')},
  d(){try{const o=JSON.parse(localStorage.getItem(this.k())||'{}');return{u:o.u||{},n:+o.n||0,notes:o.notes||[]}}catch(e){return{u:{},n:0,notes:[]}}},
- w(o){try{localStorage.setItem(this.k(),JSON.stringify(o))}catch(e){}},
- u(id){const o=this.d();if(o.u[id])return;o.u[id]=Date.now();this.w(o);const a=this.L.find(x=>x[0]===id);if(a)ADD.toast(`🏆 Достижение!<br>${a[1]} ${a[2]}`)},
+ cloud:null,_t:null,
+ w(o,quiet){try{localStorage.setItem(this.k(),JSON.stringify(o))}catch(e){}if(!quiet)this.push()},
+ push(now){if(!sb||!PROF?.token)return;clearTimeout(this._t);if(now)this.flush();else this._t=setTimeout(()=>this.flush(),1500)},
+ async flush(){if(!sb||!PROF?.token)return;clearTimeout(this._t);try{const{data,error}=await sb.rpc('egor_ach_save',{p_token:PROF.token,p_data:this.d()});if(error)throw error;this.cloud=true;if(data)this.merge(data)}catch(e){this.cloud=false;console.warn('ach save',e)}},
+ // объединяем облако и локальные данные (ничего не теряем); true — локально есть то, чего нет в облаке
+ merge(sv){const o=this.d();sv=sv||{};let extra=false;const su=sv.u||{},sn=Array.isArray(sv.notes)?sv.notes:[];
+  for(const id of Object.keys(su))if(!o.u[id]||su[id]<o.u[id])o.u[id]=su[id];
+  for(const id of Object.keys(o.u))if(!su[id])extra=true;
+  for(const n of sn)if(!o.notes.includes(n))o.notes.push(n);
+  for(const n of o.notes)if(!sn.includes(n))extra=true;
+  const n=Math.max(o.n,+sv.n||0);if(o.n>(+sv.n||0))extra=true;o.n=n;
+  this.w(o,true);return extra},
+ async sync(){if(!sb||!PROF?.token)return;try{const{data,error}=await sb.rpc('egor_ach_get',{p_token:PROF.token});if(error)throw error;this.cloud=true;if(this.merge(data||{})||!data)await this.flush()}catch(e){this.cloud=false;console.warn('ach sync',e)}},
+ u(id){const o=this.d();if(o.u[id])return;o.u[id]=Date.now();this.w(o,true);this.push(true);const a=this.L.find(x=>x[0]===id);if(a)ADD.toast(`🏆 Достижение!<br>${a[1]} ${a[2]}`)},
  srch(){const o=this.d();o.n++;this.w(o);if(o.n>=100)this.u('s100');if(o.n>=1000)this.u('s1000')},
  page(){const o=this.d(),tot=EGOR_QUOTES.length+1,n=this.L.filter(x=>o.u[x[0]]).length,ex={arch:` · осталось ${Math.max(0,tot-o.notes.length)} из ${tot}`,s100:` · ${Math.min(o.n,100)}/100`,s1000:` · ${Math.min(o.n,1000)}/1000`};
-  return `<h2>🏅 Достижения</h2><p class="hn">Открыто ${n}/${this.L.length} · обыскано нычек: ${o.n}${PROF?'':' · (гость: прогресс хранится на этом устройстве)'}</p>`+this.L.map(([id,ic,nm,ds])=>{const d=!!o.u[id];return `<div class="it" style="opacity:${d?1:.6}"><span>${ic} <b>${nm}</b><br><small>${ds}${ex[id]||''}</small></span><b>${d?'✔':'🔒'}</b></div>`}).join('')+'<button data-a="lbback">Назад</button>'}};
+  return `<h2>🏅 Достижения</h2><p class="hn">Открыто ${n}/${this.L.length} · обыскано нычек: ${o.n}${PROF?'':' · (гость: прогресс хранится на этом устройстве)'}</p>`+(PROF?`<p class="hn">${this.cloud===true?'☁ Сохранено в облаке (Supabase)':this.cloud===false?'⚠ Облако недоступно — прогресс только на этом устройстве (выполни <b>egor_progress.sql</b> в Supabase)':'☁ Синхронизация…'}</p>`:'')+this.L.map(([id,ic,nm,ds])=>{const d=!!o.u[id];return `<div class="it" style="opacity:${d?1:.6}"><span>${ic} <b>${nm}</b><br><small>${ds}${ex[id]||''}</small></span><b>${d?'✔':'🔒'}</b></div>`}).join('')+'<button data-a="lbback">Назад</button>'}};
 ACT.ach=()=>hub('ach');$('achBtn').onclick=()=>hub('ach');
 const ADD=(()=>{
 const sty=document.createElement('style');sty.textContent='#achT{position:fixed;left:50%;top:70px;transform:translate(-50%,-30px);opacity:0;z-index:20;background:linear-gradient(#3a2a08,#1c1404);border:2px solid #ffd23a;border-radius:12px;padding:10px 22px;font:bold 16px sans-serif;color:#ffe9a0;pointer-events:none;transition:.5s;box-shadow:0 0 24px #ffd23a88;text-align:center}#achT.on{opacity:1;transform:translate(-50%,0)}';document.head.appendChild(sty);
@@ -2039,7 +2054,7 @@ return{
  getMap(){stashes.forEach(s=>s.seen=true);ACH.u('pirate');beep(1100,.25,'sine',.2,1700);say('🗺 <b>Карта лицея!</b> Все нычки отмечены на плане — нажми <b>M</b>.',5)},
  getHint(){const h=hist.filter(e=>e.t<=time-30),e=h.length?h[h.length-1]:hist[0];addPaper({title:'📍 Записка-подсказка',text:e?`≈${Math.round(time-e.t)} с назад Егор был здесь: <b>${e.r}</b> (${e.f} этаж).<br><br>Сейчас он уже мог уйти…`:'Егор пока нигде не замечен. Ночь только началась.',hint:1});say('📍 Записка с подсказкой! Прочитать: <b>R</b>',4)},
  paper(pp){if(!pp||pp.hint)return;let id=pp===EGOR_LORE?'lore':'q'+EGOR_QUOTES.findIndex(q=>pp.text&&pp.text.includes(q));if(id==='q-1')return;const o=ACH.d();if(!o.notes.includes(id)){o.notes.push(id);ACH.w(o);const left=EGOR_QUOTES.length+1-o.notes.length;if(left<=0)ACH.u('arch');else setTimeout(()=>say(`📚 Записок Егора в архиве: ${o.notes.length}/${EGOR_QUOTES.length+1}, осталось ${left}`,3.5),1800)}},
- build(){hist=[];fl=[];rains=[];pn=0;ns=0;vc=0;entry=null;sp=spots();const A=shellAssets();
+ build(){hist=[];fl=[];rains=[];pn=0;ns=0;vc=0;P.ventEsc=false;entry=null;sp=spots();const A=shellAssets();
   // rain behind windows
   world.traverse(o=>{if(o.isMesh&&o.material===A.win){const m=new THREE.Mesh(o.geometry,new THREE.MeshBasicMaterial({map:rainT,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));m.position.copy(o.position);m.position.z+=Math.cos(o.rotation.y)*.02;m.rotation.copy(o.rotation);rains.push(m)}});rains.forEach(m=>world.add(m));
   // kids' drawings and graffiti
@@ -2056,6 +2071,11 @@ return{
   // flickering entrance lamp
   {const z=CS*(exitY+1),X=wc(W-2);entry=new THREE.MeshBasicMaterial({color:0x66ff88});box(.5,.14,.5,entry,X,WH-.1,z,world);lampDefs.push({x:X,y:WH-.4,z,c:0x66ff88,i:10,r:14,flick:true})}},
  prog(n){const s=sp.pop();if(!s)return;wp(gtex(R(GP),'#b01010'),1.9,.72,wc(s.x),1.5,s.z,s.d,s.top);blood(s,2+Math.min(n,4));beep(70,.6,'sawtooth',.2,40)},
+ watch(dt){if(!playing||!E||!E.pos||!P||!P.pos)return;
+  if((ck-=dt)<=0){ck=.4;const cx=cell(P.pos.x),cy=cell(P.pos.z);if(rooms.some(r=>r.secret&&!r.locked&&cx>=r.x0&&cx<=r.x1&&cy>=r.y0&&cy<=r.y1))ACH.u('detective')}
+  const d=Math.hypot(E.pos.x-P.pos.x,E.pos.z-P.pos.z);
+  if(P.hidden&&!P.doomed){if(d<6)ns+=dt;if(ns>.8&&d>10){ACH.u('close');ns=0}}else ns=0;
+  if(P.inVent){if(P.ventEsc)vc=1}else if(vc){vc=0;P.ventEsc=false;ACH.u('rat')}},
  tick(dt){if(!playing||!E)return;const t=time;
   const on=!!P.flash&&P.inv.torch>0&&!P.hidden;beam.visible=dust.visible=on;
   if(on){bm.opacity=(blk.on?.15:.07)+Math.random()*.012;const a=dg.attributes.position.array;for(let i=0;i<N;i++){a[i*3]=base[i*3]+Math.sin(t*.7+i)*.12;a[i*3+1]=base[i*3+1]+Math.cos(t*.5+i*1.7)*.1;a[i*3+2]=base[i*3+2]}dg.attributes.position.needsUpdate=true}
@@ -2063,10 +2083,6 @@ return{
   if((dn-=dt)<=0){dn=18+Math.random()*18;dk=1.2}dk-=dt;const k=dk>0?.4:1;for(const f of fl)f.s.scale.set(.2*(.8+Math.random()*.4)*k,.34*(.8+Math.random()*.5)*k,1);
   if(entry)entry.color.setHex(Math.sin(t*23)*Math.sin(t*7.3)>.55?0x061a0c:0x66ff88);
   if((hT-=dt)<=0){hT=1;hist.push({t,r:roomAt({x:E.pos.x,z:E.pos.z}),f:E.pos.z>=FO*CS?2:1});if(hist.length>90)hist.shift()}
-  if((ck-=dt)<=0){ck=.4;const cx=cell(P.pos.x),cy=cell(P.pos.z);if(rooms.some(r=>r.secret&&!r.locked&&cx>=r.x0&&cx<=r.x1&&cy>=r.y0&&cy<=r.y1))ACH.u('detective')}
-  const d=Math.hypot(E.pos.x-P.pos.x,E.pos.z-P.pos.z);
-  if(P.hidden&&!P.doomed){if(d<4.5)ns+=dt;if(ns>1&&d>11){ACH.u('close');ns=0}}else ns=0;
-  if(P.inVent){if(E.state==='chase'&&E.target?.who==='player')vc=1}else if(vc){vc=0;ACH.u('rat')}
   if(P.notes!==pn){if(P.notes>pn)this.prog(P.notes);pn=P.notes}}}})();
 
 loop();
