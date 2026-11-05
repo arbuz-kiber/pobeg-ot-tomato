@@ -3778,6 +3778,14 @@ body:not(.touch) #inv>div.sel {
     5. <script>  — фоновая анимация меню (частицы и летучие мыши)
 -->
 <div id="blk"></div>
+<div id="rotateGate" role="dialog" aria-modal="true" aria-label="Поверните устройство">
+  <div class="rotateCard">
+    <div class="rotateIcon">📱↔️</div>
+    <h1>Поверни телефон</h1>
+    <p>Игра доступна только в горизонтальном режиме — так управление и обзор работают правильно.</p>
+    <div class="rotateHint">Поверни устройство боком</div>
+  </div>
+</div>
 <div id="hud" class="hidden">
  <span class="b" id="hRoom">Коридор</span>
  <span class="b">❤️ <span id="hHp"></span></span>
@@ -3921,6 +3929,75 @@ body.touch #over .mcard {
 body.touch #over .dscr { font-size: 12px; }
 body.touch #mapPanel { z-index: 70 !important; }
 #mapFab { font-family: system-ui, sans-serif; }
+</style>
+<style id="landscape-game-mode">
+/* Раунд на телефоне запускается только в landscape. */
+#rotateGate {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: radial-gradient(circle at 50% 20%, rgba(117,52,17,.96), rgba(16,7,4,.99) 70%);
+    color: #ffe7bd;
+    text-align: center;
+    pointer-events: auto;
+}
+body.rotate-required #rotateGate { display: flex; }
+.rotateCard {
+    width: min(520px, 92vw);
+    padding: 24px 26px 22px;
+    border: 1px solid rgba(255,180,80,.55);
+    border-radius: 24px;
+    background: linear-gradient(160deg, rgba(70,35,17,.96), rgba(26,12,7,.98));
+    box-shadow: 0 18px 60px #000b, 0 0 36px rgba(244,137,43,.22), inset 0 1px 0 #ffe3ad22;
+}
+.rotateIcon { font-size: clamp(44px, 13vw, 76px); line-height: 1; margin-bottom: 12px; filter: drop-shadow(0 0 12px #ff9a2a88); }
+.rotateCard h1 { font: 900 clamp(22px, 5vw, 34px)/1.15 'Unbounded', sans-serif; color: #f6c453; margin-bottom: 12px; }
+.rotateCard p { font-size: clamp(14px, 3vw, 18px); line-height: 1.45; color: #ecd8bd; }
+.rotateHint { margin-top: 18px; padding: 10px 14px; border-radius: 12px; color: #2a1000; font-weight: 800; background: linear-gradient(135deg,#e8801f,#f6c453); }
+@media (orientation: landscape) and (pointer: coarse) {
+    :root { --u: clamp(48px, 14vh, 64px); }
+    body.touch #hud {
+        flex-wrap: nowrap;
+        gap: clamp(4px, .8vw, 9px);
+        padding: max(5px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) 4px max(8px, env(safe-area-inset-left));
+        font-size: clamp(10px, 1.8vw, 14px);
+        white-space: nowrap;
+    }
+    body.touch #hud .b { min-height: 27px; padding: 4px 7px; }
+    body.touch #bar { width: clamp(58px, 10vw, 100px); }
+    body.touch #tbtns button { width: var(--u); height: var(--u); font-size: calc(var(--u)*.38); }
+    body.touch #tbtns button[data-a=use] { width: calc(var(--u)*1.12); height: calc(var(--u)*1.12); font-size: calc(var(--u)*.54); }
+    body.touch #tbtns button[data-a=throw] { width: calc(var(--u)*1.35); height: calc(var(--u)*1.35); font-size: calc(var(--u)*.68); }
+    body.touch #tbtns button[data-a=throw] { right: calc(var(--sr) + 10px); bottom: calc(var(--sb) + 10px); }
+    body.touch #tbtns button[data-a=use] { right: calc(var(--sr) + 10px); bottom: calc(var(--sb) + 24px + var(--u)*1.35); }
+    body.touch #tbtns button[data-a=drop] { right: calc(var(--sr) + 22px + var(--u)*1.35); bottom: calc(var(--sb) + 10px); }
+    body.touch #tbtns button[data-a=crouch] { right: calc(var(--sr) + 34px + var(--u)*2.1); bottom: calc(var(--sb) + 10px); }
+    body.touch #tbtns button[data-a=run], body.touch #tbtns button[data-a=light], body.touch #tbtns button[data-a=map], body.touch #tbtns button[data-a=chat], body.touch #tbtns button[data-a=mic] { top: calc(var(--st) + 48px); }
+    body.touch #tbtns button[data-a=run] { right: calc(var(--sr) + 8px); }
+    body.touch #tbtns button[data-a=light] { right: calc(var(--sr) + 8px + var(--u)*1.08); }
+    body.touch #tbtns button[data-a=map] { right: calc(var(--sr) + 8px + var(--u)*2.16); }
+    body.touch #tbtns button[data-a=chat] { right: calc(var(--sr) + 8px + var(--u)*3.24); }
+    body.touch #tbtns button[data-a=mic] { right: calc(var(--sr) + 8px + var(--u)*4.32); }
+    body.touch #joy { left: calc(var(--sl) + 14px); bottom: calc(var(--sb) + 10px); }
+    body.touch #look { bottom: 0; }
+    body.touch #inv { left: 23%; right: 23%; bottom: calc(var(--sb) + 7px); }
+    body.touch #inv .slots { max-width: 54vw; padding-top: 6px; }
+    body.touch #inv .slot { width: 52px; height: 52px; }
+    body.touch #inv .slot b { font-size: 22px; }
+    body.touch #inv .slot em { font-size: 9px; }
+    body.touch #inv .nav { width: 34px; height: 52px; font-size: 24px; }
+    body.touch #msg { top: auto; bottom: calc(var(--sb) + 76px); max-width: 44vw; font-size: 13px; padding: 5px 10px; }
+    body.touch #prompt { top: 57%; max-width: 42vw; font-size: 14px; }
+    body.touch #chatPanel { top: auto; bottom: calc(var(--sb) + 72px); width: min(280px, 32vw); }
+    body.touch #mapFab { display: none !important; }
+}
+@media (orientation: portrait) and (pointer: coarse) {
+    body.rotate-required #touch, body.rotate-required #hud, body.rotate-required #msg, body.rotate-required #prompt, body.rotate-required #inv { visibility: hidden; }
+}
 </style>
 <script type="importmap">
 {"imports": {"three": "https://unpkg.com/three@0.160.0/build/three.module.js"}}
@@ -4141,6 +4218,7 @@ function newSchool() {
    2. ОБЩИЕ КОНСТАНТЫ И СОСТОЯНИЕ КАРТЫ
    ====================================================================== */
 const IS_TOUCH_DEVICE = matchMedia('(pointer:coarse)').matches || matchMedia('(hover:none)').matches || (navigator.maxTouchPoints > 0 && Math.min(screen.width, screen.height) < 900) || location.search.includes('touch');
+let orientationBlocked = false;
 const FLOOR_HEIGHT = 3.4; // height of the 2nd floor above the 1st
 let notesNeeded = GAME_RULES.notesNeeded;
 const SECOND_FLOOR_ROW_OFFSET = GAME_RULES.floorOffset;
@@ -12325,7 +12403,7 @@ function loop() {
     blkLight(dt);
     exitGuide(dt);
     const tt = performance.now() / 1000;
-    if (playing) { // паузы нет: игра идёт всегда
+    if (playing && !orientationBlocked) { // portrait блокирует раунд до поворота
         time += dt;
         deliverCheck();
         blkTick(dt);
@@ -14765,13 +14843,52 @@ async function getLoadout() {
     catch (e) {
     }
 }
+let landscapeLaunchPending = false;
+function isPortraitTouch() {
+    return IS_TOUCH_DEVICE && innerHeight > innerWidth;
+}
+function showRotateGate() {
+    orientationBlocked = true;
+    document.body.classList.add('rotate-required');
+    clearKeys();
+    document.exitPointerLock?.();
+    $('pause')?.classList.add('hidden');
+}
+function hideRotateGate() {
+    orientationBlocked = false;
+    document.body.classList.remove('rotate-required');
+}
+function checkGameOrientation() {
+    if (isPortraitTouch()) {
+        const guideIsRoundReady = !!document.querySelector('#guide[data-ready]');
+        if (playing || landscapeLaunchPending || guideIsRoundReady)
+            showRotateGate();
+        return false;
+    }
+    hideRotateGate();
+    if (landscapeLaunchPending) {
+        landscapeLaunchPending = false;
+        launch();
+    }
+    return true;
+}
 function launch() {
+    if (isPortraitTouch()) {
+        landscapeLaunchPending = true;
+        showRotateGate();
+        return;
+    }
+    landscapeLaunchPending = false;
+    hideRotateGate();
     $('hub').classList.add('hidden');
-    if (IS_TOUCH_DEVICE)
-        document.documentElement.requestFullscreen?.().catch(() => {
+    if (IS_TOUCH_DEVICE) {
+        document.documentElement.requestFullscreen?.().then(() => screen.orientation?.lock?.('landscape')).catch(() => {
         });
+    }
     startGame();
 }
+addEventListener('resize', () => setTimeout(checkGameOrientation, 120));
+addEventListener('orientationchange', () => setTimeout(checkGameOrientation, 180));
 // ---------- lobby / matchmaking ----------
 function leaveGame() {
     clearInterval(network.qt);
