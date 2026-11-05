@@ -3533,6 +3533,240 @@ body.touch #mapView {
 #pause .mcard h1{font-size:16px;margin:0}
 #pause .mcard p{font-size:13px;margin:0}
 </style>
+
+<style id="atmosphere-refresh">
+/* ===== Осенний редизайн: меню + обычная школа ===== */
+:root {
+    --autumn-ink: #1a0e0a;
+    --autumn-coal: #24130e;
+    --autumn-amber: #f4b45d;
+    --autumn-copper: #c8642a;
+    --autumn-cream: #ffe7bd;
+    --autumn-muted: #c2a68b;
+}
+
+/* Меню: ощущение ночного школьного коридора, а не просто градиент */
+#menu {
+    isolation: isolate;
+    background:
+        radial-gradient(ellipse at 50% 14%, rgba(255,190,102,.18), transparent 34%),
+        radial-gradient(ellipse at 0% 100%, rgba(120,44,20,.36), transparent 54%),
+        linear-gradient(115deg, #120805 0%, #281207 48%, #0c0707 100%) !important;
+}
+#menu::after {
+    height: 42vh;
+    opacity: .72;
+    background:
+        linear-gradient(to top, rgba(109,40,19,.46), transparent 72%),
+        repeating-linear-gradient(90deg, transparent 0 13vw, rgba(246,177,85,.035) 13vw 13.12vw, transparent 13.12vw 26vw),
+        linear-gradient(to top, transparent 0 58%, rgba(247,192,117,.09) 58.2% 58.6%, transparent 58.8%);
+    -webkit-mask-image: linear-gradient(to top, #000, transparent 92%);
+    mask-image: linear-gradient(to top, #000, transparent 92%);
+}
+#menu::before {
+    top: 8%;
+    right: 12%;
+    opacity: .72;
+    box-shadow: 0 0 80px 22px rgba(255,174,69,.35), 0 0 160px 55px rgba(255,102,31,.12);
+}
+#menu .mcard {
+    max-width: 520px;
+    padding: 30px 28px 24px;
+    border-radius: 30px;
+    background:
+        linear-gradient(180deg, rgba(62,31,16,.92), rgba(31,14,9,.95) 48%, rgba(17,8,7,.98)),
+        radial-gradient(ellipse at 50% 0%, rgba(255,204,140,.08), transparent 55%);
+    box-shadow:
+        0 0 0 1px rgba(255,190,104,.22),
+        0 22px 60px rgba(0,0,0,.68),
+        0 0 90px rgba(199,85,27,.16),
+        inset 0 1px 0 rgba(255,236,195,.11);
+}
+#menu .mcard::after {
+    content: "NIGHT SHIFT  //  ЛИЦЕЙ НЕ СПИТ";
+    inset: 0 28px auto;
+    width: auto;
+    height: 22px;
+    border-radius: 0 0 10px 10px;
+    background: linear-gradient(90deg, transparent, rgba(255,183,90,.14), transparent) !important;
+    color: rgba(255,220,170,.56);
+    font: 700 9px/22px 'Inter', sans-serif;
+    letter-spacing: 2.4px;
+    text-align: center;
+    opacity: 1;
+    transform: none;
+    filter: none;
+}
+#menu .mcard > .spd { right: 42px; }
+#menu .mcard > .spd::after { content: "🍂"; }
+#menu .mcard h1 {
+    max-width: 440px;
+    margin-inline: auto;
+    text-shadow: 0 3px 0 rgba(75,25,8,.55);
+    filter: drop-shadow(0 0 18px rgba(255,143,38,.34));
+}
+#menu .mcard .sub {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #ddb489;
+}
+#menu .mcard .sub::after {
+    content: "  •  21:17  •  СЕКТОР ЗАКРЫТ";
+    display: block;
+    margin-top: 7px;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: rgba(255,215,163,.45);
+}
+#menu .mcard > p:nth-of-type(2) {
+    position: relative;
+    margin: 10px 2px 2px;
+    padding: 13px 16px 13px 18px;
+    text-align: left;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #d6bda2;
+    background: linear-gradient(90deg, rgba(255,177,82,.08), rgba(255,255,255,.018));
+    border-left: 2px solid rgba(244,180,93,.72);
+    border-radius: 0 12px 12px 0;
+}
+#menu .mcard > p:nth-of-type(2)::before {
+    content: "ДЕЛО № 031";
+    display: block;
+    margin-bottom: 5px;
+    color: rgba(255,199,120,.7);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+#menu .mcard .pk {
+    gap: 16px;
+    margin: 1px 0 0;
+    opacity: .86;
+}
+#menu .mcard .pk span { filter: drop-shadow(0 2px 8px rgba(229,105,25,.55)); }
+#menu .mcard button.btn-play {
+    margin-top: 4px;
+    min-height: 54px;
+    border-radius: 15px;
+    letter-spacing: 2px;
+    background: linear-gradient(105deg, #bd4f17, #eb8b2e 48%, #ffd06a) !important;
+    box-shadow: 0 0 0 1px rgba(255,205,120,.3), 0 10px 26px rgba(210,91,24,.3), inset 0 1px 0 rgba(255,255,255,.34);
+}
+#menu .mcard button.btn-play:hover {
+    background: linear-gradient(105deg, #d2601d, #f3a33e 48%, #ffe08b) !important;
+    box-shadow: 0 0 0 1px rgba(255,220,150,.42), 0 14px 34px rgba(215,93,24,.42);
+}
+#menu .mcard > button.ghost {
+    background: rgba(11,7,6,.38);
+    border-color: rgba(255,191,106,.16);
+    color: #cdb49a;
+}
+#menu .mcard .ng {
+    gap: 10px;
+    margin-top: 2px;
+}
+#menu .mcard .ng button {
+    min-height: 72px;
+    background: linear-gradient(180deg, rgba(255,192,111,.06), rgba(255,255,255,.018));
+    border-color: rgba(255,184,92,.2);
+}
+#menu .mcard .ng button:hover {
+    background: linear-gradient(180deg, rgba(233,113,34,.22), rgba(255,181,85,.06));
+    border-color: rgba(255,199,117,.58);
+}
+#menu .mcard details {
+    background: rgba(8,5,5,.27);
+    border-color: rgba(255,188,98,.14);
+}
+#menu .mcard details summary {
+    letter-spacing: 2.2px;
+    color: #cda987;
+}
+#menu .mcard details[open] summary { color: #ffe1ad; }
+
+/* Обычная школа: мягкая плёночная цветокоррекция поверх 3D */
+#atmoVig {
+    z-index: 1 !important;
+    mix-blend-mode: multiply;
+    background:
+        radial-gradient(ellipse at 50% 43%, rgba(0,0,0,0) 39%, rgba(5,5,14,.22) 72%, rgba(4,2,7,.78) 100%),
+        linear-gradient(180deg, rgba(17,25,51,.16), rgba(255,154,76,.025) 47%, rgba(44,8,4,.16));
+    opacity: .9 !important;
+}
+#atmoVig::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 5px);
+    opacity: .42;
+}
+#atmoVig::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% -18%, rgba(255,214,153,.14), transparent 46%);
+    mix-blend-mode: screen;
+}
+#hud {
+    z-index: 5;
+    gap: 7px;
+    padding: 14px 16px;
+}
+#hud::after { display: none !important; }
+#fxs {
+    top: 60px !important;
+    left: 16px !important;
+    background: linear-gradient(180deg, rgba(45,24,16,.92), rgba(15,9,10,.9)) !important;
+    border: 1px solid rgba(244,180,93,.28) !important;
+    border-radius: 10px !important;
+    color: #f0c786 !important;
+    box-shadow: 0 5px 16px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,231,190,.08);
+}
+#hud .b {
+    min-height: 30px;
+    background: linear-gradient(180deg, rgba(41,24,18,.9), rgba(13,10,12,.88));
+    border-color: rgba(244,180,93,.24);
+    box-shadow: 0 5px 16px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,231,190,.08);
+}
+#hud .b:first-child {
+    border-left: 3px solid #f2ac50;
+    color: #ffe0a8;
+}
+#hud .b:nth-child(2) { border-color: rgba(224,74,54,.42); }
+#hud .b:nth-child(3) { border-color: rgba(255,198,88,.34); }
+#hud .b:nth-child(4) { border-color: rgba(137,211,93,.32); }
+#hud .b:nth-child(5) { color: #e3cdb6; }
+#hud .b:nth-child(6) { border-color: rgba(163,140,225,.3); }
+#prompt, #nametag, #msg {
+    z-index: 5;
+    border-color: rgba(244,180,93,.38) !important;
+}
+#prompt { background: rgba(20,11,9,.88) !important; }
+#msg { background: rgba(20,11,9,.9) !important; }
+#inv { z-index: 5; }
+body:not(.touch) #inv>div {
+    background: linear-gradient(180deg, rgba(39,23,17,.9), rgba(12,9,10,.9));
+    border-color: rgba(244,180,93,.22);
+}
+body:not(.touch) #inv>div.sel {
+    border-color: #ffc569;
+    background: linear-gradient(180deg, rgba(105,44,15,.92), rgba(43,17,8,.94));
+}
+@media (max-width: 700px) {
+    #menu .mcard { max-width: 94vw; padding: 28px 18px 18px; }
+    #menu .mcard h1 { font-size: clamp(26px, 9vw, 36px); }
+    #menu .mcard > p:nth-of-type(2) { font-size: 12px; padding-inline: 13px; }
+    #hud { padding: max(8px, env(safe-area-inset-top)) 8px 8px; gap: 4px; flex-wrap: wrap; }
+    #hud .b { padding: 5px 8px; font-size: 11px; }
+    #hud::after { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    #menu .mcard::before, #menu .mcard .pk span, #menu .mcard>.spd { animation: none !important; }
+}
+</style>
 </head>
 <body>
 <!--
@@ -3670,6 +3904,24 @@ if (window.CanvasRenderingContext2D && !CanvasRenderingContext2D.prototype.round
     };
 }
 </script>
+<style id="mobile-quality-and-results">
+/* Mobile polish: smooth WebGL edges, readable overlays, and an always reachable map. */
+body.touch canvas:not(#mapCanvas) { image-rendering: auto; }
+body.touch #over {
+    z-index: 80 !important;
+    overflow: auto;
+    padding: max(14px, env(safe-area-inset-top)) 10px max(18px, env(safe-area-inset-bottom));
+}
+body.touch #over .mcard {
+    width: min(94vw, 560px);
+    max-height: calc(100dvh - 28px);
+    overflow: auto;
+    margin: auto;
+}
+body.touch #over .dscr { font-size: 12px; }
+body.touch #mapPanel { z-index: 70 !important; }
+#mapFab { font-family: system-ui, sans-serif; }
+</style>
 <script type="importmap">
 {"imports": {"three": "https://unpkg.com/three@0.160.0/build/three.module.js"}}
 </script>
@@ -5042,17 +5294,18 @@ function ventTick() {
 /* ======================================================================
    7. 3D-СЦЕНА: рендерер, камера, текстуры, материалы
    ====================================================================== */
-const renderer = new THREE.WebGLRenderer({ antialias: !IS_TOUCH_DEVICE, powerPreference: 'high-performance' });
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
 const ANISO = Math.min(8, renderer.capabilities.getMaxAnisotropy ? renderer.capabilities.getMaxAnisotropy() : 4);
-renderer.setPixelRatio(Math.min(devicePixelRatio || 1, IS_TOUCH_DEVICE ? 1.25 : 1.75));
+const MOBILE_RENDER_RATIO = IS_TOUCH_DEVICE ? Math.min(1.5, Math.max(1, devicePixelRatio || 1)) : null;
+renderer.setPixelRatio(IS_TOUCH_DEVICE ? MOBILE_RENDER_RATIO : Math.min(devicePixelRatio || 1, 1.75));
 renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = false;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.45;
+renderer.toneMappingExposure = 1.22;
 document.body.prepend(renderer.domElement);
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x241f2e);
-scene.fog = new THREE.FogExp2(0x332b3a, 0.011);
+scene.background = new THREE.Color(0x1a1b27);
+scene.fog = new THREE.FogExp2(0x2b2730, 0.014);
 const camera = new THREE.PerspectiveCamera(72, innerWidth / innerHeight, 0.05, 120);
 scene.add(camera);
 {
@@ -5070,8 +5323,8 @@ if (IS_TOUCH_DEVICE) {
     let last = t0;
     let pr = renderer.getPixelRatio();
     let bad = 0;
-    const cap = Math.min(devicePixelRatio || 1, 2);
-    const floor = Math.min(.9, cap);
+    const cap = MOBILE_RENDER_RATIO || Math.min(devicePixelRatio || 1, 1.5);
+    const floor = Math.min(1, cap);
     requestAnimationFrame(function f() {
         const t = performance.now();
         if (t - last > 400 || document.hidden || !playing) {
@@ -8038,11 +8291,16 @@ if (IS_TOUCH_DEVICE) {
     fab.id = 'mapFab';
     fab.textContent = '🗺';
     fab.setAttribute('aria-label', 'Карта');
-    fab.style.cssText = 'position:fixed;top:calc(10px + env(safe-area-inset-top));right:calc(76px + env(safe-area-inset-right));z-index:40;width:54px;height:54px;border-radius:50%;border:2px solid #ffb34799;background:#2a1a0fcc;color:#ffe2a8;font-size:26px;display:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;padding:0';
+    fab.style.cssText = 'position:fixed;top:calc(10px + env(safe-area-inset-top));right:calc(12px + env(safe-area-inset-right));z-index:40;width:58px;height:48px;border-radius:16px;border:2px solid #ffb347cc;background:linear-gradient(135deg,#3a2110f2,#1b0e09f2);color:#ffe2a8;font-size:24px;display:none;align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent;padding:0;box-shadow:0 6px 22px #0009';
     document.body.appendChild(fab);
+    let lastMapTap = 0;
     const go = e => {
         e.preventDefault();
         e.stopPropagation();
+        const now = performance.now();
+        if (now - lastMapTap < 280)
+            return;
+        lastMapTap = now;
         try {
             toggleMap();
         }
@@ -8050,13 +8308,12 @@ if (IS_TOUCH_DEVICE) {
             console.error(er);
         }
     };
-    fab.addEventListener('touchend', go, { passive: false });
-    fab.addEventListener('click', go);
+    fab.addEventListener('pointerup', go, { passive: false });
     setInterval(() => {
-        const tb = document.getElementById('tbtns');
-        const playing = tb && tb.getClientRects().length > 0 && getComputedStyle(tb).visibility !== 'hidden';
-        fab.style.display = playing && !mapOpen ? 'block' : 'none';
-    }, 400);
+        const over = document.getElementById('over');
+        const active = playing && (!over || over.classList.contains('hidden'));
+        fab.style.display = active && !mapOpen ? 'flex' : 'none';
+    }, 250);
 }
 function addChat(name, text, audioUrl) {
     if (RESUME_SILENT)
@@ -10959,6 +11216,14 @@ function killTick() {
         catch (e) {
             console.error(e);
             KILL.on = false;
+            // A renderer hiccup must never strand the player on a blank scene.
+            try {
+                playing = true;
+                lose('Егор тебя поймал. Раунд завершён.');
+            }
+            catch (finishError) {
+                console.error('death result fallback:', finishError);
+            }
         }
         return rr(s, c);
     };
@@ -11781,12 +12046,12 @@ setInterval(rdyCheck, 1000);
 const blackout = { on: false, t: 0, next: 80 };
 let hemisphereLight = null;
 let blackoutIntensity = 0;
-const _bgA = new THREE.Color(0x241f2e);
+const _bgA = new THREE.Color(0x1a1b27);
 const _bgB = new THREE.Color(0x040309);
-const _fgA = new THREE.Color(0x2a2434);
+const _fgA = new THREE.Color(0x332a2a);
 const _pnA = new THREE.Color(0xfff6e0);
 const _pnB = new THREE.Color(0x1d1a16);
-const _hA = new THREE.Color(0xc4bcd8);
+const _hA = new THREE.Color(0xd5b994);
 const _hB = new THREE.Color(0x7d8fd0);
 const _blkRed = new THREE.Color(0xff3a22);
 let guideArrow = null;
@@ -13604,7 +13869,7 @@ const accountLevels = (() => {
             console.warn('level sync', e);
         }
     };
-    const cloudNote = () => `<p class="hn">${cloud === true ? '☁ Уровень сохранён в облаке (Supabase)' : cloud === false ? '⚠ Облако недоступно — прогресс пока только на этом устройстве (выполни <b>egor_progress.sql</b> в Supabase)' + (cloudErr ? '<br><small style="word-break:break-word;color:#ff9a9a">Ошибка: ' + escapeHtml(cloudErr) + '</small>' : '') : '☁ Синхронизация…'}</p>`;
+    const cloudNote = () => `<p class="hn">${cloud === true ? '☁ Уровень сохранён в облаке (Supabase)' : cloud === false ? '⚠ Облако недоступно — прогресс пока только на этом устройстве (выполни <b>egor_progress_fix.sql</b> в Supabase)' + (cloudErr ? '<br><small style="word-break:break-word;color:#ff9a9a">Ошибка: ' + escapeHtml(cloudErr) + '</small>' : '') : '☁ Синхронизация…'}</p>`;
     const info = xp => {
         let l = 1;
         let r = xp;
@@ -14310,6 +14575,35 @@ function onMsg(m) {
    26. АККАУНТЫ, ВХОД, ЛОББИ, ПОИСК ИГРЫ, ТАБЛИЦА ЛИДЕРОВ
    ====================================================================== */
 const TOKEN_STORAGE_KEY = 'egor_tok';
+const PROFILE_STORAGE_KEY = 'egor_profile_v1';
+function profileCacheGet() {
+    try {
+        const v = JSON.parse(localStorage.getItem(PROFILE_STORAGE_KEY) || 'null');
+        return v && v.token ? v : null;
+    }
+    catch (e) {
+        return null;
+    }
+}
+function profileCacheSet(pr) {
+    if (!pr)
+        return;
+    const token = pr.token || tokGet();
+    if (!token)
+        return;
+    try {
+        localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify({ ...pr, token }));
+    }
+    catch (e) {
+    }
+}
+function profileCacheDel() {
+    try {
+        localStorage.removeItem(PROFILE_STORAGE_KEY);
+    }
+    catch (e) {
+    }
+}
 function tokGet() {
     let v = null;
     try {
@@ -14343,6 +14637,7 @@ function tokSet(v) {
     }
 }
 function tokDel() {
+    profileCacheDel();
     try {
         localStorage.removeItem(TOKEN_STORAGE_KEY);
     }
@@ -14357,8 +14652,9 @@ function tokDel() {
 function setProf(pr) {
     if (!pr)
         return;
-    const t = profile && profile.token;
-    profile = pr.token ? pr : { ...pr, token: t };
+    const t = pr.token || (profile && profile.token) || tokGet();
+    profile = t ? { ...pr, token: t } : { ...pr };
+    profileCacheSet(profile);
 }
 async function initSB() {
     if (!SUPABASE_URL || !SUPABASE_ANON_KEY)
@@ -14373,6 +14669,12 @@ async function initSB() {
         return;
     }
     const tk = tokGet();
+    const cached = profileCacheGet();
+    if (tk && cached && cached.token === tk) {
+        profile = cached;
+        network.id = cached.id;
+        network.name = cached.username;
+    }
     if (tk && supabase) {
         for (let i = 0; i < 3; i++) {
             try {
@@ -14395,8 +14697,13 @@ async function initSB() {
 }
 const supabaseReady = initSB();
 async function afterLogin(pr, show = true) {
-    tokSet(pr.token);
-    profile = pr;
+    if (!pr)
+        return;
+    const token = pr.token || tokGet();
+    if (!token)
+        return;
+    tokSet(token);
+    setProf({ ...pr, token });
     try {
         egorSkinStore.sync();
     }
@@ -15272,7 +15579,7 @@ const achievements = { L: [['escape', '🏃', 'Ноги в руки', 'Сбеж�
         const tot = EGOR_QUOTES.length + 1;
         const n = this.L.filter(x => o.u[x[0]]).length;
         const ex = { arch: ` · осталось ${Math.max(0, tot - o.notes.length)} из ${tot}`, s100: ` · ${Math.min(o.n, 100)}/100`, s1000: ` · ${Math.min(o.n, 1000)}/1000` };
-        return `<h2>🏅 Достижения</h2><p class="hn">Открыто ${n}/${this.L.length} · обыскано нычек: ${o.n}${profile ? '' : ' · (гость: прогресс хранится на этом устройстве)'}</p>` + (profile ? `<p class="hn">${this.cloud === true ? '☁ Сохранено в облаке (Supabase)' : this.cloud === false ? '⚠ Облако недоступно — прогресс только на этом устройстве (выполни <b>egor_progress.sql</b> в Supabase)' + (this.err ? '<br><small style="word-break:break-word;color:#ff9a9a">Ошибка: ' + escapeHtml(this.err) + '</small>' : '') : '☁ Синхронизация…'}</p>` : '') + this.L.map(([id, ic, nm, ds]) => {
+        return `<h2>🏅 Достижения</h2><p class="hn">Открыто ${n}/${this.L.length} · обыскано нычек: ${o.n}${profile ? '' : ' · (гость: прогресс хранится на этом устройстве)'}</p>` + (profile ? `<p class="hn">${this.cloud === true ? '☁ Сохранено в облаке (Supabase)' : this.cloud === false ? '⚠ Облако недоступно — прогресс только на этом устройстве (выполни <b>egor_progress_fix.sql</b> в Supabase)' + (this.err ? '<br><small style="word-break:break-word;color:#ff9a9a">Ошибка: ' + escapeHtml(this.err) + '</small>' : '') : '☁ Синхронизация…'}</p>` : '') + this.L.map(([id, ic, nm, ds]) => {
             const d = !!o.u[id];
             return `<div class="it" style="opacity:${d ? 1 : .6}"><span>${ic} <b>${nm}</b><br><small>${ds}${ex[id] || ''}</small></span><b>${d ? '✔' : '🔒'}</b></div>`;
         }).join('') + '<button class="ghost" data-a="lbback">← Назад</button>';
@@ -15697,7 +16004,7 @@ const updateExtraEffectsA = (() => {
         return e;
     };
     const st = document.createElement('style');
-    st.textContent = '#fxn,#fxf{position:fixed;inset:0;pointer-events:none;opacity:0;z-index:3;width:100%;height:100%}#fxn{mix-blend-mode:overlay;image-rendering:pixelated}#fxf{background:#000;z-index:4}#dng{position:fixed;left:50%;top:50%;width:0;height:0;pointer-events:none;z-index:4;opacity:0}#dng i{position:absolute;left:-26px;top:-36vh;width:0;height:0;border:26px solid transparent;border-bottom:52px solid #ff2a1a;border-top:0;filter:drop-shadow(0 0 14px #f00)}#fear{position:fixed;left:14px;bottom:16px;width:130px;pointer-events:none;font:bold 12px sans-serif;color:#ffb0a0;z-index:3;display:none}#fear b{display:block;height:8px;background:#2a1010;border-radius:4px;overflow:hidden;margin-top:3px;border:1px solid #ff3a2a55}#fear b i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff9a2a,#ff1a1a)}';
+    st.textContent = '#fxn,#fxf{position:fixed;inset:0;pointer-events:none;opacity:0;z-index:3;width:100%;height:100%}#fxn{mix-blend-mode:overlay;image-rendering:auto}#fxf{background:#000;z-index:4}#dng{position:fixed;left:50%;top:50%;width:0;height:0;pointer-events:none;z-index:4;opacity:0}#dng i{position:absolute;left:-26px;top:-36vh;width:0;height:0;border:26px solid transparent;border-bottom:52px solid #ff2a1a;border-top:0;filter:drop-shadow(0 0 14px #f00)}#fear{position:fixed;left:14px;bottom:16px;width:130px;pointer-events:none;font:bold 12px sans-serif;color:#ffb0a0;z-index:3;display:none}#fear b{display:block;height:8px;background:#2a1010;border-radius:4px;overflow:hidden;margin-top:3px;border:1px solid #ff3a2a55}#fear b i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff9a2a,#ff1a1a)}';
     document.head.appendChild(st);
     const nz = mk('canvas', 'fxn');
     nz.width = nz.height = 96;
@@ -16197,8 +16504,8 @@ const updateExtraEffectsB = (() => {
         const doorsCanvas = byId('dcv');
         const overlayUi = byId('dui');
         const hudEl = byId('dh');
-        const doorsRenderer = new THREE.WebGLRenderer({ canvas: doorsCanvas, antialias: !IS_TOUCH_DEVICE, logarithmicDepthBuffer: !IS_TOUCH_DEVICE, powerPreference: 'high-performance' });
-        doorsRenderer.setPixelRatio(IS_TOUCH_DEVICE ? 1 : Math.min(devicePixelRatio, 1.75));
+        const doorsRenderer = new THREE.WebGLRenderer({ canvas: doorsCanvas, antialias: true, logarithmicDepthBuffer: !IS_TOUCH_DEVICE, powerPreference: 'high-performance' });
+        doorsRenderer.setPixelRatio(IS_TOUCH_DEVICE ? Math.min(1.5, Math.max(1, devicePixelRatio || 1)) : Math.min(devicePixelRatio || 1, 1.75));
         doorsRenderer.toneMapping = THREE.ACESFilmicToneMapping;
         doorsRenderer.toneMappingExposure = 1.12;
         const doorsScene = new THREE.Scene();
