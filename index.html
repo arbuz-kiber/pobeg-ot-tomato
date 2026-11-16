@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Unbounded:wght@400;700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-<title>Побег от Егора 3D — Осень в лицее</title>
+<title>Побег от Егора 3D — Сокровища Егора</title>
 <style>
 * {
     box-sizing: border-box;
@@ -3624,7 +3624,7 @@ canvas {
     background: conic-gradient(from var(--a),rgba(255,150,50,.95),rgba(190,70,30,.75),rgba(205,165,55,.6),rgba(120,70,30,.8),rgba(255,150,50,.95));
 }
 .mcard::after {
-    content: "🍁";
+    content: "🏴‍☠️";
     background: none!important;
     width: auto;
     height: auto;
@@ -3640,7 +3640,7 @@ canvas {
     background: linear-gradient(rgba(255,220,170,.15),rgba(255,220,170,.6));
 }
 .mcard>.spd::after {
-    content: "🍂";
+    content: "🪙";
 }
 .mcard .pk span {
     filter: drop-shadow(0 0 10px rgba(255,150,40,.55));
@@ -3800,7 +3800,7 @@ body.touch #mapView {
     filter: none;
 }
 #menu .mcard > .spd { right: 42px; }
-#menu .mcard > .spd::after { content: "🍂"; }
+#menu .mcard > .spd::after { content: "🪙"; }
 #menu .mcard h1 {
     max-width: 440px;
     margin-inline: auto;
@@ -4232,6 +4232,131 @@ body.touch #lyLegend,body.touch #lyMapFoot{display:none}
 }
 </style>
 
+
+<style id="pirate-treasure-theme">
+/* ======================================================================
+   FULL PIRATE & TREASURE THEME OVERHAUL (СОКРОВИЩА ЕГОРА)
+   ====================================================================== */
+:root {
+    --pk: #f59e0b !important;
+    --pk2: #fbbf24 !important;
+    --pk3: #78350f !important;
+    --bone: #fef08a !important;
+    --text-muted: #cbd5e1 !important;
+    --text-dim: #94a3b8 !important;
+    --panel-bg: rgba(11, 20, 38, 0.95) !important;
+    --panel-border: rgba(245, 158, 11, 0.5) !important;
+}
+
+/* Фон экранов: ночной океан и бухта сокровищ */
+.scr, #menu, #hub {
+    background:
+        radial-gradient(ellipse at 50% -10%, rgba(245, 158, 11, 0.25), transparent 58%),
+        radial-gradient(ellipse at 10% 110%, rgba(14, 116, 144, 0.35), transparent 55%),
+        radial-gradient(ellipse at 95% 105%, rgba(217, 119, 6, 0.25), transparent 48%),
+        linear-gradient(135deg, #070d18 0%, #0f1c2e 50%, #0a111c 100%) !important;
+}
+
+#menu::after, #hub::after {
+    background: linear-gradient(to top, rgba(180, 83, 9, 0.28), rgba(245, 158, 11, 0.08) 55%, transparent) !important;
+}
+
+/* Карточки меню: сундук из тёмного морского дуба с золотой оковкой */
+.mcard, .settingsCard, #hub .mcard {
+    background: linear-gradient(165deg, rgba(13, 27, 42, 0.97) 0%, rgba(28, 20, 16, 0.97) 50%, rgba(10, 18, 30, 0.98) 100%) !important;
+    border: 2px solid #f59e0b !important;
+    box-shadow: 0 0 35px rgba(245, 158, 11, 0.35), 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 25px rgba(0, 0, 0, 0.8) !important;
+    border-radius: 24px !important;
+}
+
+.mcard::before {
+    background: conic-gradient(from var(--a, 0deg), rgba(245, 158, 11, 0.95), rgba(180, 83, 9, 0.75), rgba(251, 191, 36, 0.85), rgba(120, 53, 15, 0.8), rgba(245, 158, 11, 0.95)) !important;
+}
+
+.mcard h1, #hub h2 {
+    color: #fbbf24 !important;
+    text-shadow: 2px 2px 0 #78350f, 0 0 24px rgba(251, 191, 36, 0.6) !important;
+    letter-spacing: 0.6px !important;
+}
+
+.mcard .sub {
+    color: #fef08a !important;
+    text-shadow: 1px 1px 2px #000 !important;
+}
+
+.mcard .pk span {
+    filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.8)) !important;
+}
+
+/* Кнопки меню: золотой слиток / пиратская бронза */
+.btn-play, #play {
+    background: linear-gradient(180deg, #f59e0b 0%, #d97706 45%, #92400e 100%) !important;
+    color: #fff !important;
+    border: 1px solid #fef08a !important;
+    box-shadow: 0 4px 18px rgba(217, 119, 6, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+    text-shadow: 1px 1px 2px #451a03 !important;
+    font-weight: 800 !important;
+}
+.btn-play:hover, #play:hover {
+    background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 45%, #b45309 100%) !important;
+    box-shadow: 0 6px 24px rgba(245, 158, 11, 0.8) !important;
+}
+
+button:not(.btn-play):not(.ghost):not(.sm):not(.pirate-event-btn) {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+    border: 1px solid #d97706 !important;
+    color: #fef08a !important;
+}
+button:not(.btn-play):not(.ghost):not(.sm):not(.pirate-event-btn):hover {
+    border-color: #fbbf24 !important;
+    box-shadow: 0 0 14px rgba(245, 158, 11, 0.4) !important;
+}
+
+.pirate-event-btn {
+    background: linear-gradient(135deg, #78350f 0%, #b45309 45%, #d97706 100%) !important;
+    border: 2px solid #fef08a !important;
+    color: #fff !important;
+    font-weight: 800 !important;
+    text-shadow: 1px 1px 2px #000 !important;
+    box-shadow: 0 4px 16px rgba(180, 83, 9, 0.5) !important;
+    cursor: pointer !important;
+    transition: transform 0.15s, box-shadow 0.15s;
+    animation: piratePulse 2.8s infinite ease-in-out;
+}
+.pirate-event-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(245, 158, 11, 0.85) !important;
+}
+@keyframes piratePulse {
+    0%, 100% { box-shadow: 0 0 14px rgba(245, 158, 11, 0.4); }
+    50% { box-shadow: 0 0 28px rgba(251, 191, 36, 0.75); border-color: #ffffff; }
+}
+
+.happy-hours-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 800;
+    margin: 6px 0 10px 0;
+    border: 1px solid #ffd700;
+}
+.happy-active {
+    background: linear-gradient(90deg, #dc2626, #f59e0b, #ea580c);
+    color: #fff;
+    box-shadow: 0 0 18px rgba(245, 158, 11, 0.8);
+    animation: happyGlow 1.5s infinite alternate;
+}
+@keyframes happyGlow {
+    from { filter: drop-shadow(0 0 4px #f59e0b); }
+    to { filter: drop-shadow(0 0 14px #ff2200); }
+}
+.happy-inactive {
+    background: rgba(15, 23, 42, 0.85);
+    color: #fef08a;
+}
+</style>
+
 </head>
 <body>
 <!--
@@ -4275,10 +4400,13 @@ body.touch #lyLegend,body.touch #lyMapFoot{display:none}
 <div class="scr" id="menu"><div class="mcard"><i class="spd"></i>
  <img id="mface" alt="Егор">
  <h1>Побег от Егора 3D</h1>
- <p class="sub">Осень · Лицей «Профессионал»</p>
- <div class="pk"><span>🍂</span><span>🍁</span><span>🌰</span><span>🍁</span><span>🍂</span></div>
- <p>Ты и ещё 4 ученика заперты в школе. Выполни <b>случайные задания</b> раунда, найди нужные предметы в нычках и сбеги. Егор слышит бег, помнит, где тебя видел, и <b>проверяет шкафы</b>.</p>
- <button id="play" class="btn-play">▶&nbsp;НАЧАТЬ</button><button class="ghost" onclick="window.DOORS&&DOORS.open()">🚪 Коридор Егора · до 5 игроков</button>
+ <p class="sub">🏴‍☠️ Сезон Сокровищ · Лицей «Профессионал»</p>
+ <div class="pk"><span>🪙</span><span>🏴‍☠️</span><span>🗺️</span><span>💎</span><span>⚔️</span></div>
+ <div id="menuHappyBadge" class="happy-hours-badge happy-inactive">⚡ Счастливые часы: Пн, Ср, Пт 18:00–20:00 (дроп ×2)</div>
+ <p>Ты и ещё 4 ученика заперты в школе. Выполни <b>случайные задания</b> раунда, найди сокровища в сундуках и нужные предметы в нычках и сбеги.</p>
+ <button id="play" class="btn-play">▶&nbsp;НАЧАТЬ</button>
+ <button id="menuPirateBtn" class="pirate-event-btn" onclick="window.hub&&window.hub('pirate_event')" style="width:100%;margin-bottom:8px;">🏴‍☠️&nbsp;&nbsp;Ивент «Сокровища Егора» & Сундуки</button>
+ <button class="ghost" onclick="window.DOORS&&DOORS.open()">🚪 Коридор Егора · до 5 игроков</button>
  <button id="menuAltarBtn" class="altar-btn" style="width:100%;margin-bottom:8px;display:none;">⛩️&nbsp;&nbsp;Алтарь Егора — дары дня</button>
  <div class="ng">
  <button id="lbBtn"><span class="ic">🏆</span>Лидеры</button>
@@ -8289,8 +8417,229 @@ function buildShell() {
         }
     }
 }
+/* ======================================================================
+   FORTNITE CHESTS, PIRATE EVENT & HAPPY HOURS SYSTEM
+   ====================================================================== */
+function isHappyHours() {
+    try {
+        const now = new Date();
+        const d = now.getDay(); // 1 = Mon, 3 = Wed, 5 = Fri
+        const h = now.getHours(); // 18..19
+        return (d === 1 || d === 3 || d === 5) && (h >= 18 && h < 20);
+    } catch (e) {
+        return false;
+    }
+}
+
+function getHappyHoursMultiplier() {
+    return isHappyHours() ? 2 : 1;
+}
+
+function getHappyHoursStatus() {
+    if (isHappyHours()) {
+        return { active: true, text: '🔥 СЧАСТЛИВЫЕ ЧАСЫ АКТИВНЫ! Весь дроп ×2!' };
+    }
+    return { active: false, text: '⚡ Счастливые часы: Пн, Ср, Пт с 18:00 до 20:00 (дроп ×2)' };
+}
+
+function dropMultiplier(s) {
+    const chestMult = s && s.isChest ? (s.mult || 1) : 1;
+    return chestMult * getHappyHoursMultiplier();
+}
+
+function checkPirateEgorDrop(s) {
+    if (typeof egorSkinStore === 'undefined') return false;
+    const eo = egorSkinStore.load();
+    if (eo.own.includes('pirate')) return false;
+
+    const totalMult = dropMultiplier(s);
+    const baseChance = 1 / 5000;
+    if (Math.random() < Math.min(1, baseChance * totalMult)) {
+        eo.own.push('pirate');
+        eo.cur = 'pirate';
+        egorSkinStore.save(eo);
+        selectedEgorSkin = 'pirate';
+        try {
+            if (typeof cos !== 'undefined') {
+                const c = cos.get();
+                if (!c.eskins.includes('pirate')) c.eskins.push('pirate');
+                c.egor = 'pirate';
+                cos.put(c);
+            }
+        } catch (e) {}
+
+        const item = {
+            id: 'egor_pirate',
+            title: '🏴‍☠️ ЭКСКЛЮЗИВНЫЙ СКИН НА ЕГОРА!',
+            name: 'Капитан Егор',
+            desc: 'Пиратская треуголка с черепом, камзол, повязка на глаз и золотая аура!',
+            icon: '🏴‍☠️',
+            rarity: 'mythic',
+            rarityName: 'ЭКСКЛЮЗИВ ИВЕНТА',
+            chanceText: totalMult > 1 ? `1 из ${Math.round(5000 / totalMult)} (множитель ×${totalMult})` : '1 из 5 000',
+            color: '#f59e0b'
+        };
+
+        try {
+            if (typeof triggerRareDropCutscene === 'function') {
+                triggerRareDropCutscene(item);
+            } else if (typeof showLootPopup === 'function') {
+                showLootPopup({
+                    type: 'skin',
+                    title: '🏴‍☠️ ЭКСКЛЮЗИВНЫЙ СКИН НА ЕГОРА!',
+                    sub: 'Капитан Егор · Сокровища Егора',
+                    name: '🏴‍☠️ Капитан Егор',
+                    desc: item.desc,
+                    icon: '🏴‍☠️',
+                    rarityClass: 'rarity-mythic',
+                    chance: item.chanceText
+                });
+            }
+        } catch (e) {}
+
+        say(`🏴‍☠️ <b>ЭКСКЛЮЗИВНЫЙ ДРОП!</b> Ты выбил секретный скин «Капитан Егор»!`, 6);
+        addChat('Школа', `🏴‍☠️ ВЫБИЛ ЭКСКЛЮЗИВНЫЙ СКИН «Капитан Егор»! (${item.chanceText})`);
+        return true;
+    }
+    return false;
+}
+
+function renderPirateEventPage() {
+    const hh = isHappyHours();
+    const hhBadge = hh
+        ? `<div class="happy-hours-badge happy-active" style="font-size:14px;padding:8px 16px;">🔥 <b>СЧАСТЛИВЫЕ ЧАСЫ АКТИВНЫ ПРЯМО СЕЙЧАС!</b><br><span style="font-size:12px;opacity:.95">Шанс на весь дроп удвоен (×2) до 20:00!</span></div>`
+        : `<div class="happy-hours-badge happy-inactive" style="font-size:13px;padding:8px 16px;">⚡ <b>Счастливые часы:</b> Понедельник, Среда, Пятница с 18:00 до 20:00<br><span style="font-size:12px;opacity:.85">В это время весь дроп падает <b>в 2 раза чаще (×2)</b>!</span></div>`;
+
+    const eo = typeof egorSkinStore !== 'undefined' ? egorSkinStore.load() : { own: [] };
+    const hasPirate = eo.own.includes('pirate');
+    const isEquipped = typeof egorSkinStore !== 'undefined' && egorSkinStore.cur() === 'pirate';
+
+    return `
+    <div style="max-width:620px;margin:0 auto;text-align:center;">
+        <div style="font-size:38px;margin-bottom:2px;">🏴‍☠️ ⚓ 🪙</div>
+        <h2 style="color:#fbbf24;margin-bottom:6px;font-size:26px;">Ивент «Сокровища Егора»</h2>
+        <p class="hn" style="color:#fef08a;margin-bottom:12px;">Ограниченное пиратское событие в обычном режиме</p>
+        ${hhBadge}
+
+        <div style="background:rgba(0,0,0,0.55);border:1px solid #d97706;border-radius:12px;padding:14px;margin:12px 0;text-align:left;line-height:1.55;font-size:14px;">
+            <div style="color:#ffd700;font-weight:bold;font-size:16px;margin-bottom:6px;">🗺️ Пиратские сундуки в школе</div>
+            <p style="margin:0 0 8px 0;">В каждом раунде обычного режима по всей школе прячутся <b>от 3 до 6 сундуков</b> в стиле Fortnite! Обыскивай их точно так же, как обычные нычки (удерживай <kbd style="background:#334155;padding:2px 6px;border-radius:4px;border:1px solid #64748b;color:#fff;">E</kbd>).</p>
+            <p style="margin:0;color:#94a3b8;font-size:12.5px;">⚠️ <i>Важно: деталей для побега в сундуках быть не может — только сокровища, монеты и косметика!</i></p>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;margin:12px 0;text-align:left;">
+            <div style="background:linear-gradient(90deg, rgba(128,80,33,0.35), rgba(0,0,0,0.4));border-left:4px solid #f59e0b;padding:10px 14px;border-radius:6px;">
+                <b style="color:#f59e0b;font-size:15px;">🧰 Обычный сундук</b> <span style="background:#78350f;color:#fff;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:bold;">Дроп ×3</span>
+                <div style="font-size:13px;color:#e2e8f0;margin-top:4px;">Деревянный корпус с золотой оковкой. Шанс на всю косметику <b>в 3 раза выше</b> (в счастливые часы <b>×6</b>)! +25–50 монет и полезный предмет.</div>
+            </div>
+
+            <div style="background:linear-gradient(90deg, rgba(74,29,150,0.35), rgba(0,0,0,0.4));border-left:4px solid #c084fc;padding:10px 14px;border-radius:6px;">
+                <b style="color:#c084fc;font-size:15px;">🧰 Эпический сундук</b> <span style="background:#581c87;color:#fff;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:bold;">Дроп ×5</span>
+                <div style="font-size:13px;color:#e2e8f0;margin-top:4px;">Королевский аметист и фиолетовый неон. Шанс на дроп <b>в 5 раз выше</b> (в счастливые часы <b>×10</b>)! +60–120 монет и редкие вещи.</div>
+            </div>
+
+            <div style="background:linear-gradient(90deg, rgba(234,179,8,0.35), rgba(0,0,0,0.4));border-left:4px solid #ffd700;padding:10px 14px;border-radius:6px;">
+                <b style="color:#ffd700;font-size:15px;">🧰 Легендарный сундук</b> <span style="background:#854d0e;color:#fff;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:bold;">Дроп ×10</span>
+                <div style="font-size:13px;color:#e2e8f0;margin-top:4px;">Чистое сияющее золото и лазурные огни. Шанс на дроп <b>в 10 раз выше</b> (в счастливые часы <b>×20</b>)! +150–300 монет и лучший лут.</div>
+            </div>
+        </div>
+
+        <div style="background:rgba(0,0,0,0.55);border:1px solid #38bdf8;border-radius:12px;padding:12px;margin:12px 0;text-align:left;font-size:13px;line-height:1.5;">
+            <b style="color:#38bdf8;font-size:14px;">🗺️ Карта всех сундуков</b>
+            <div style="margin-top:4px;color:#e2e8f0;">При обыске любой обычной нычки может выпасть <b>«Карта сундуков»</b>. Она сразу подсвечивает все несобранные сундуки светящимися значками на миникарте и на плане школы (<kbd style="background:#334155;padding:1px 5px;border-radius:3px;color:#fff;">M</kbd>), а сами сундуки начинают бить лучом света в потолок!</div>
+        </div>
+
+        <div style="background:linear-gradient(135deg, rgba(88,28,135,0.4), rgba(120,53,15,0.4));border:2px solid #fbbf24;border-radius:12px;padding:14px;margin:14px 0;text-align:left;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <span style="font-size:24px;">🏴‍☠️</span> <b style="color:#fbbf24;font-size:16px;">Эксклюзив: «Капитан Егор»</b>
+                    <div style="font-size:12px;color:#cbd5e1;margin-top:2px;">Шанс дропа: <b>1 из 5 000</b> (с сундуков и в счастливые часы до 1 из 250!)</div>
+                </div>
+                <div>
+                    ${hasPirate 
+                        ? (isEquipped 
+                            ? '<span style="color:#4ade80;font-weight:bold;">✔ Надето</span>' 
+                            : '<button class="sm" data-a="esequip" data-v="pirate">Надеть</button>') 
+                        : '<span style="color:#f59e0b;font-size:12px;font-weight:bold;">🔒 Не открыт</span>'}
+                </div>
+            </div>
+            <div style="font-size:12.5px;color:#cbd5e1;margin-top:8px;">
+                Особая 3D-модель Егора: капитанская треуголка с черепом, камзол, повязка на глаз, золотые эполеты, ботфорты и ослепительная золотая аура! Падает навсегда.
+            </div>
+        </div>
+
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;">
+            <button class="ghost" data-a="back" style="min-width:140px;">← Назад</button>
+            <button class="btn-play" data-a="solo" style="min-width:160px;">▶ В игру</button>
+        </div>
+    </div>
+    `;
+}
+
+let chestsMapFound = false;
+function chestMultiplier(s) { return s && s.isChest ? (s.mult || 1) : 1; }
+function spawnFortniteChests() {
+    stashes = stashes.filter(s => !s.isChest);
+    chestsMapFound = false;
+    const candidates = floorCells.filter(([x,y]) => grid[y]?.[x] === 1
+        && !(spawnCell && Math.hypot(x-spawnCell[0], y-spawnCell[1]) < 4)
+        && !stashes.some(s => s.cx === x && s.cy === y));
+    const count = 3 + Math.floor(Math.random() * 4);
+    const chosen = [];
+    for (const [x,y] of candidates.sort(() => Math.random() - .5)) {
+        if (chosen.length >= count) break;
+        if (chosen.some(([cx,cy]) => Math.hypot(x-cx,y-cy) < 4)) continue;
+        chosen.push([x,y]);
+    }
+    if (chosen.length < count) {
+        for (const [x,y] of candidates) {
+            if (chosen.length >= count) break;
+            if (!chosen.some(([cx,cy]) => cx === x && cy === y)) chosen.push([x,y]);
+        }
+    }
+    for (const [x,y] of chosen) {
+        const roll = Math.random();
+        const tier = roll < .12 ? 'legendary' : roll < .42 ? 'epic' : 'common';
+        const mult = tier === 'legendary' ? 10 : tier === 'epic' ? 5 : 3;
+        stashes.push({
+            name: tier === 'legendary' ? 'Легендарный сундук' : tier === 'epic' ? 'Эпический сундук' : 'Обычный сундук',
+            isChest: true, chestTier: tier, mult, kind: 'chest', searched: false,
+            content: null, cx:x, cy:y, seen:false,
+            pos: new THREE.Vector3(cellCenter(x), .05, cellCenter(y))
+        });
+    }
+}
+function makeChestMesh(s) {
+    const g = new THREE.Group();
+    const colors = { common: [0x805021,0xe4a72c], epic: [0x352044,0xb34cff], legendary: [0x9b6500,0xffdf52] };
+    const [bodyColor, trimColor] = colors[s.chestTier] || colors.common;
+    const bodyMat = new THREE.MeshStandardMaterial({color:bodyColor, roughness:.45, metalness:.25});
+    const trimMat = new THREE.MeshStandardMaterial({color:trimColor, roughness:.3, metalness:.7, emissive:trimColor, emissiveIntensity:.25});
+    const add = (w,h,d,mat,x,y,z) => { const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat); m.position.set(x,y,z); g.add(m); return m; };
+    const body=add(.82,.40,.54,bodyMat,0,.22,0);
+    add(.08,.43,.58,trimMat,-.25,.22,0); add(.08,.43,.58,trimMat,.25,.22,0);
+    add(.16,.17,.035,trimMat,0,.27,.285);
+    const lid=add(.86,.16,.58,bodyMat,0,.49,0);
+    add(.09,.18,.60,trimMat,-.25,.49,0); add(.09,.18,.60,trimMat,.25,.49,0);
+    const light=new THREE.PointLight(trimColor,.65,4); light.position.set(0,.8,0); g.add(light);
+    g.position.copy(s.pos);
+    g.traverse(o => { if (o.isMesh) { o.userData={kind:'stash',ref:s}; interactables.push(o); } });
+    body.userData={kind:'stash',ref:s};
+    g.userData={kind:'stash',ref:s};
+    g.openChest=()=>{ lid.rotation.x=-.65; light.intensity=.15; };
+    s.mesh=g;
+    return g;
+}
+function foundChestMap() {
+    if (chestsMapFound) return;
+    chestsMapFound=true;
+    say('🗺️ <b>Карта сундуков найдена!</b> Все оставшиеся сундуки отмечены на карте.',5);
+    try { beep(1100,.22,'sine',.2,1700); } catch(e) {}
+}
+
 // Строит весь 3D-мир: комнаты, мебель, двери, лампы, предметы.
 function buildWorld() {
+    spawnFortniteChests();
     rePaint();
     if (world)
         scene.remove(world);
@@ -8429,7 +8778,11 @@ function buildWorld() {
     // stashes
     for (const s of stashes) {
         let m;
-        if (s.kind === 'pumpkin') {
+        if (s.isChest) {
+            m = makeChestMesh(s);
+            world.add(m);
+        }
+        else if (s.kind === 'pumpkin') {
             m = pumpkin(s.pos.x, 0, s.pos.z, .4, true).children[0];
         }
         else if (s.kind === 'wall') {
@@ -9281,9 +9634,10 @@ const itemSkinsStore = {
     },
 
     onStashSearch(s) {
+        const mult = dropMultiplier(s);
         // Altar Key (1 in 10,000)
         if (!this.hasAltarKey()) {
-            if (Math.random() < 1 / 10000) {
+            if (Math.random() < Math.min(1, mult / 10000)) {
                 this.unlockAltarKey();
                 triggerRareDropCutscene({
                     id: 'altar_key',
@@ -9304,7 +9658,7 @@ const itemSkinsStore = {
 
         // Golden Tomato (1 in 5,000)
         if (!this.isOwned('tomato_gold')) {
-            if (Math.random() < 1 / 5000) {
+            if (Math.random() < Math.min(1, mult / 5000)) {
                 this.unlock('tomato_gold');
                 this.equip('tomato', 'tomato_gold');
                 triggerRareDropCutscene(ITEM_SKINS.tomato_gold);
@@ -9318,7 +9672,7 @@ const itemSkinsStore = {
         // Other skins
         const unowned = Object.values(ITEM_SKINS).filter(k => k.id !== 'tomato_gold' && !this.isOwned(k.id));
         for (const sk of unowned) {
-            if (Math.random() < sk.chance) {
+            if (Math.random() < Math.min(1, sk.chance * mult)) {
                 this.unlock(sk.id);
                 this.equip(sk.item, sk.id);
                 // Check if rare drop cutscene (chance <= 1 / 750)
@@ -13316,6 +13670,11 @@ function finishSearch(s) {
     } catch (e) {
         console.error('stash skin drop error', e);
     }
+    try {
+        checkPirateEgorDrop(s);
+    } catch (e) {
+        console.error('pirate drop error', e);
+    }
     if (IS_TOUCH_DEVICE)
         try {
             navigator.vibrate && navigator.vibrate([20, 40, 20]);
@@ -13323,8 +13682,32 @@ function finishSearch(s) {
         catch (e) {
         }
     network.srch(s);
+    if (s.isChest) {
+        if (s.mesh && s.mesh.openChest) s.mesh.openChest();
+        try { beep(s.chestTier === 'legendary' ? 880 : s.chestTier === 'epic' ? 660 : 520, .28, 'triangle'); } catch(e) {}
+        noise(s.pos, 5);
+        const hh = getHappyHoursMultiplier();
+        const totalMult = s.mult * hh;
+        const coinsN = s.chestTier === 'legendary' ? rnd(150, 300) : s.chestTier === 'epic' ? rnd(60, 120) : rnd(25, 50);
+        player.coinsFound += coinsN;
+        const pool = s.chestTier === 'legendary'
+            ? ['energy', 'phone', 'petarda', 'tomato', 'speaker']
+            : s.chestTier === 'epic'
+                ? ['energy', 'petarda', 'tomato', 'roll', 'torch']
+                : ['tomato', 'petarda', 'roll', 'energy'];
+        const bonusItem = pool[Math.random() * pool.length | 0];
+        const nBonus = bonusItem === 'tomato' ? 3 : bonusItem === 'petarda' ? 2 : 1;
+        player.inv[bonusItem] += nBonus;
+        setHeld();
+        const tierColor = s.chestTier === 'legendary' ? '#ffd700' : s.chestTier === 'epic' ? '#b046ff' : '#ffaa00';
+        say(`🧰 <b style="color:${tierColor}">${s.name} открыт!</b> 🪙 +${coinsN} монет, ${ITEMS[bonusItem]} ×${nBonus} (дроп ×${totalMult}${hh > 1 ? ' 🔥 Счастливые часы!' : ''})`, 4);
+        addChat('Школа', `🧰 Открыл ${s.name} (шанс дропа ×${totalMult})!`);
+        updateHud();
+        return;
+    }
     beep(500, .1, 'triangle');
     noise(s.pos, 4);
+    if (s.content === 'chest_map') { foundChestMap(); updateHud(); return; }
     if (s.content === 'note') {
         beep(1000, .25, 'sine', .2, 1600);
         say(`«${s.name}»: ` + taskFound(s, true), 4);
@@ -13335,6 +13718,8 @@ function finishSearch(s) {
     }
     else if (s.content === 'paper')
         addPaper(s.paper);
+    else if (s.content === 'chest_map')
+        foundChestMap();
     else if (s.content === 'map')
         additions.getMap();
     else if (s.content === 'hint')
@@ -15691,7 +16076,7 @@ function loop() {
             if (u.kind === 'locker')
                 pr = u.ref.occupant ? 'Занято' : '[E] спрятаться в шкаф';
             else if (u.kind === 'stash')
-                pr = u.ref.searched ? 'Обыскано' : '[держать E] обыскать';
+                pr = u.ref.isChest ? (u.ref.searched ? 'Сундук открыт' : `[держать E] открыть ${u.ref.name} (×${u.ref.mult})`) : (u.ref.searched ? 'Обыскано' : '[держать E] обыскать');
             else if (u.kind === 'pickup')
                 pr = '[E] подобрать ' + (ITEMS[u.ref.item] || taskDesc(u.ref));
             else if (u.kind === 'cam')
@@ -17851,6 +18236,11 @@ function lyMark(ctx, x, y, s) {
 function lyDrawMarkers(ctx, tf, k, floorOnly, opt = {}) {
     const fl = y => y >= SECOND_FLOOR_ROW_OFFSET ? 1 : 0;
     const ok = y => floorOnly == null || fl(y) === floorOnly;
+    for (const s of (stashes || []).filter(s => s.isChest && !s.searched && (chestsMapFound || Math.hypot(player.pos.x-s.pos.x, player.pos.z-s.pos.z) < 14))) {
+        if (!ok(s.cy)) continue;
+        const q=tf(s.cx+.5,s.cy+.5);
+        if (q) { const c=s.chestTier==='legendary'?'#ffd700':s.chestTier==='epic'?'#c084fc':'#ffae36'; lyGlyph(ctx,'▣',q[0],q[1],16*k,c,c); }
+    }
     if (!opt.noPOI)
     for (const p of lyPOIs())
         if (ok(p.y)) {
@@ -18310,6 +18700,7 @@ const randCode = () => Array.from({ length: 5 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ
 let selectedEgorSkin = 'classic';
 let SHOPTAB = 'main';
 const EGOR_SKINS = [
+    { id: 'pirate', name: 'Капитан Егор', price: 0, ic: '🏴‍☠️', d: 'Эксклюзив ивента «Сокровища Егора»: капитанская треуголка с черепом, камзол, повязка на глаз и золотая аура (дроп 1/5000)' },
     { id: 'classic', name: 'Классический', price: 0, ic: '🎩', d: 'Цилиндр, оранжевый шарф и красная аура' },
     { id: 'pumpkin', name: 'Майкл Майерс', price: 180, ic: '🔪', d: '«Хэллоуин»: белая безликая маска, синий комбинезон и кухонный нож' },
     { id: 'clown', name: 'Пеннивайз', price: 150, ic: '🤡', d: '«Оно»: танцующий клоун с рыжими прядями, гофрированным воротником и жуткой улыбкой' },
@@ -18672,6 +19063,59 @@ function applyEgorSkin(em, fm) {
         sph(mt(0xa01020, { emissive: 0x300000 }), .035, .04, .02, 0, 1.5, .205);
         for (const a of [U.armL, U.armR])
             addBox(.15, .12, .16, pale, 0, -.62, 0, a);
+    }
+    else if (id === 'pirate') {
+        // КАПИТАН ЕГОР (Пиратский капитан)
+        const coatColor = 0x1a233a;
+        const goldTrim = mt(0xf59e0b, { metalness: .85, roughness: .25, emissive: 0x805000, emissiveIntensity: .3 });
+        const leather = mt(0x4a2a18, { roughness: .8 });
+        const whiteLace = mt(0xf8fafc, { roughness: .7 });
+        body(0x1e293b, 0x0f172a);
+        setCoat(coatColor);
+        reds.forEach(r => r.visible = false);
+        hairOff();
+        col(0xffaa00);
+        
+        // 1. Треуголка капитана
+        const hatMat = mt(0x111827, { roughness: .85 });
+        cyl(hatMat, .38, .03, .38, 0, 2.12, -.01);
+        cyl(hatMat, .22, .16, .22, 0, 2.22, -.01);
+        addBox(.42, .14, .04, hatMat, 0, 2.22, .18, em);
+        addBox(.04, .14, .38, hatMat, -.20, 2.22, -.05, em).rotation.z = -.15;
+        addBox(.04, .14, .38, hatMat, .20, 2.22, -.05, em).rotation.z = .15;
+        sph(goldTrim, .04, .04, .02, 0, 2.24, .21);
+        addBox(.07, .015, .01, goldTrim, 0, 2.22, .215, em);
+        
+        // 2. Повязка на глаз
+        const blkPatch = mt(0x0a0a0a, { roughness: .9 });
+        addBox(.06, .05, .02, blkPatch, -.075, 1.94, .25, em);
+        tilt(addBox(.34, .012, .015, blkPatch, 0, 1.96, .24, em), .12);
+        
+        // 3. Золотые эполеты и нарукавники
+        for (const sd of [-1, 1]) {
+            sph(goldTrim, .09, .04, .09, sd * .32, 1.62, 0);
+            addBox(.16, .03, .17, goldTrim, 0, -.45, 0, sd === -1 ? U.armL : U.armR);
+        }
+        [1.52, 1.40, 1.28, 1.16].forEach(y => sph(goldTrim, .025, .025, .02, 0, y, .21));
+        
+        // 4. Белое кружевное жабо
+        addBox(.16, .18, .025, whiteLace, 0, 1.56, .205, em);
+        
+        // 5. Кожаный кушак с золотой пряжкой
+        addBox(.63, .10, .37, leather, 0, .96, 0, em);
+        addBox(.12, .12, .03, goldTrim, 0, .96, .20, em);
+        
+        // 6. Ботфорты
+        shoes.forEach(sh => {
+            sh.material = leather;
+            sh.scale.y *= 2.2;
+            sh.position.y += .1;
+        });
+        
+        // 7. Золотое сияние сокровищ
+        const pl = new THREE.PointLight(0xffb700, 2.2, 5.0, 1.5);
+        pl.position.set(0, 1.8, .4);
+        em.add(pl);
     }
 }
 
@@ -20063,7 +20507,9 @@ let lobbyChatLastSentAt = 0;
 /* ======================================================================
    27. ГЛАВНОЕ МЕНЮ («хаб»): экраны входа, магазина, лидеров
    ====================================================================== */
+window.hub = (v, note) => hub(v, note);
 function hub(v, note = '') {
+    window.hub = hub;
     const keep = $('hi')?.value || '';
     const lcKeep = $('lcIn') ? { v: $('lcIn').value, f: document.activeElement === $('lcIn') } : null;
     hubView = v;
@@ -20072,17 +20518,26 @@ function hub(v, note = '') {
     h.classList.remove('hidden');
     const me = profile ? `<div class="b">👤 ${escapeHtml(profile.username)} · 🪙 ${egorSkinStore.bal()}</div>` + accountLevels.chip() : '';
     let b = '';
-    if (v === 'auth')
-        b = `<h2>Аккаунт</h2><input id="hu" placeholder="Ник (a-z, 0-9, _)" maxlength="16" autocomplete="username"><input id="hp" type="password" placeholder="Пароль (от 6 символов)" autocomplete="current-password"><div class="row"><button class="btn-play" data-a="login">Войти</button><button class="ghost" data-a="signup">Регистрация</button></div><p id="hm" class="hn">${escapeHtml(note)}</p><div class="ng"><button class="sm" data-a="char"><span class="ic">🧍</span>Персонаж</button><button class="sm" data-a="lb"><span class="ic">🏆</span>Лидеры</button><button class="sm" data-a="ach"><span class="ic">🏅</span>Достижения</button><button class="sm" data-a="guide"><span class="ic">📖</span>Гайд</button><button class="sm wide" data-a="solo0"><span class="ic">🎃</span>Играть офлайн (без монет)</button></div>`;
-    else if (v === 'main')
-        b = `<h2>Главное меню</h2>${me}<p class="hn">${escapeHtml(note)}</p>${resumeBanner()}${(typeof itemSkinsStore !== 'undefined' && itemSkinsStore.hasAltarKey())
+    if (v === 'auth') {
+        const hhStatus = getHappyHoursStatus();
+        const hhHtml = `<div class="happy-hours-badge ${hhStatus.active ? 'happy-active' : 'happy-inactive'}">${hhStatus.text}</div>`;
+        b = `<h2>Аккаунт</h2>${hhHtml}<button class="pirate-event-btn" data-a="pirate_event" style="width:100%;margin-bottom:12px;">🏴‍☠️&nbsp;&nbsp;Ивент «Сокровища Егора» & Сундуки</button><input id="hu" placeholder="Ник (a-z, 0-9, _)" maxlength="16" autocomplete="username"><input id="hp" type="password" placeholder="Пароль (от 6 символов)" autocomplete="current-password"><div class="row"><button class="btn-play" data-a="login">Войти</button><button class="ghost" data-a="signup">Регистрация</button></div><p id="hm" class="hn">${escapeHtml(note)}</p><div class="ng"><button class="sm" data-a="char"><span class="ic">🧍</span>Персонаж</button><button class="sm" data-a="lb"><span class="ic">🏆</span>Лидеры</button><button class="sm" data-a="ach"><span class="ic">🏅</span>Достижения</button><button class="sm" data-a="guide"><span class="ic">📖</span>Гайд</button><button class="sm wide" data-a="solo0"><span class="ic">⚔️</span>Играть офлайн (без монет)</button></div>`;
+    }
+    else if (v === 'main') {
+        const hhStatus = getHappyHoursStatus();
+        const hhHtml = `<div class="happy-hours-badge ${hhStatus.active ? 'happy-active' : 'happy-inactive'}">${hhStatus.text}</div>`;
+        b = `<h2>Главное меню</h2>${me}<p class="hn">${escapeHtml(note)}</p>${resumeBanner()}${hhHtml}<button class="pirate-event-btn" data-a="pirate_event" style="width:100%;margin-bottom:10px;">🏴‍☠️&nbsp;&nbsp;Ивент «Сокровища Егора» & Сундуки</button>${(typeof itemSkinsStore !== 'undefined' && itemSkinsStore.hasAltarKey())
     ? '<button class="btn-altar" data-a="altar">⛩️&nbsp;&nbsp;Алтарь Егора — дары дня</button>'
-    : ''}<div class="row">Ботов: <input id="bn" type="number" min="0" max="50" value="4" style="width:72px"><button class="sm" data-a="nobots">Без ботов</button></div><button class="btn-play" data-a="solo">🎃&nbsp;&nbsp;Один с ботами</button><button data-a="find">🔎 Найти игру (5 игроков)</button><button class="ghost" data-a="create">👥 Создать лобби</button><div class="row"><input id="hc" placeholder="Код лобби" maxlength="5"><button class="sm" data-a="joinc">Войти по коду</button></div><div class="ng"><button class="sm" data-a="char"><span class="ic">🧍</span>Персонаж</button><button class="sm" data-a="shop"><span class="ic">🛒</span>Магазин</button><button class="sm" data-a="lvl"><span class="ic">🎖</span>Уровни</button><button class="sm" data-a="lb"><span class="ic">🏆</span>Лидеры</button><button class="sm" data-a="ach"><span class="ic">🏅</span>Достижения</button><button class="sm" data-a="guide"><span class="ic">📖</span>Гайд</button></div><button class="btn-play" data-a="doors">🚪&nbsp;&nbsp;Коридор Егора · до 5 игроков</button><button class="ghost" data-a="logout">Выйти из аккаунта</button>`;
+    : ''}<div class="row">Ботов: <input id="bn" type="number" min="0" max="50" value="4" style="width:72px"><button class="sm" data-a="nobots">Без ботов</button></div><button class="btn-play" data-a="solo">⚔️&nbsp;&nbsp;Один с ботами</button><button data-a="find">🔎 Найти игру (5 игроков)</button><button class="ghost" data-a="create">👥 Создать лобби</button><div class="row"><input id="hc" placeholder="Код лобби" maxlength="5"><button class="sm" data-a="joinc">Войти по коду</button></div><div class="ng"><button class="sm" data-a="char"><span class="ic">🧍</span>Персонаж</button><button class="sm" data-a="shop"><span class="ic">🛒</span>Магазин</button><button class="sm" data-a="lvl"><span class="ic">🎖</span>Уровни</button><button class="sm" data-a="lb"><span class="ic">🏆</span>Лидеры</button><button class="sm" data-a="ach"><span class="ic">🏅</span>Достижения</button><button class="sm" data-a="guide"><span class="ic">📖</span>Гайд</button></div><button class="btn-play" data-a="doors">🚪&nbsp;&nbsp;Коридор Егора · до 5 игроков</button><button class="ghost" data-a="logout">Выйти из аккаунта</button>`;
+    }
     else if (v === 'queue')
         b = `<h2>Подбор игроков</h2><p>Найдено: <b id="qn">1/5</b>. Через <b id="qs">${QUEUE_WAIT_SECONDS}</b> с свободные места займут боты.</p><button class="sm" data-a="cancelq">Отмена</button>`;
     else if (v === 'lobby') {
         const L = network.players;
         b = `<h2>Лобби <span style="letter-spacing:4px">${escapeHtml(network.code)}</span></h2><p class="hn">${network.auto ? 'Матч найден! Старт через пару секунд…' : 'Отправь код или ссылку друзьям. Свободные места займут боты.'}</p><div class="pl">${L.map(p => `<div><span style="color:${escapeHtml(p.col || '#fff')}">●</span> ${escapeHtml(p.name)}${p.h ? ' ★' : ''}</div>`).join('')}</div><div class="lc"><div class="lch">💬 Чат лобби</div><div id="lcLog"></div><form id="lcForm" autocomplete="off"><input id="lcIn" maxlength="200" placeholder="Написать в лобби…" autocomplete="off"><button class="sm" type="submit" aria-label="Отправить">➤</button></form></div>${network.host && !network.auto ? `<div class="row">Ботов (0–50): <input id="bn" type="number" min="0" max="50" value="${LBN ?? Math.max(0, 5 - L.length)}" style="width:72px"><button class="sm" data-a="nobots">Без ботов</button></div>` : `<p>Ботов в партии: ${network.auto ? Math.max(0, 5 - L.length) : 'задаёт хост'}</p>`}${network.auto ? '' : `<div class="row"><input id="hi" placeholder="Ник друга"><button class="sm" data-a="inv">Пригласить</button><button class="sm" data-a="copy">Копировать ссылку</button></div>`}${network.host && !network.auto ? '<button data-a="start">▶ Старт</button>' : network.auto ? '' : '<p>Ждём старта от хоста…</p>'}<button class="sm" data-a="leave">Выйти</button>`;
+    }
+    else if (v === 'pirate_event') {
+        b = renderPirateEventPage();
     }
     else if (v === 'altar') {
         b = itemSkinsStore.renderAltarPage(note);
@@ -20098,7 +20553,7 @@ function hub(v, note = '') {
         const esRows = EGOR_SKINS.map(k => {
             const own = k.id === 'classic' || eo.own.includes(k.id);
             const on = egorSkinStore.cur() === k.id;
-            const act = on ? '✔ надето' : own ? `<button class="sm" data-a="esequip" data-v="${k.id}">Надеть</button>` : `<button class="sm" data-a="esbuy" data-v="${k.id}">Купить</button>`;
+            const act = on ? '✔ надето' : own ? `<button class="sm" data-a="esequip" data-v="${k.id}">Надеть</button>` : (k.price === 0 ? `<span style="color:#f59e0b;font-size:12px;font-weight:bold;">🔒 Дроп 1/5000</span>` : `<button class="sm" data-a="esbuy" data-v="${k.id}">Купить</button>`);
             return `<div class="it" style="text-align:left"><span style="flex:1">${k.ic} <b>${escapeHtml(k.name)}</b><br><small style="opacity:.75">${escapeHtml(k.d)}</small></span><span style="white-space:nowrap">${own ? '' : '🪙 ' + k.price + ' '}${act}</span></div>`;
         }).join('');
         const tabs = `<div class="row"><button class="${SHOPTAB === 'main' ? '' : 'sm'}" data-a="shoptab" data-v="main">🛒 Вещи</button><button class="${SHOPTAB === 'egor' ? '' : 'sm'}" data-a="shoptab" data-v="egor">🎩 Скины Егорика</button>${(typeof itemSkinsStore !== 'undefined' && itemSkinsStore.hasAltarKey()) ? `<button class="${SHOPTAB === 'altar' ? '' : 'sm'} altar-btn" data-a="altar">⛩️ Алтарь</button>` : ''}</div>`;
@@ -20122,6 +20577,7 @@ function hub(v, note = '') {
         lcRender(lcKeep);
 }
 const hubActions = {
+    pirate_event() { hub('pirate_event'); },
     altar() {
         if (!itemSkinsStore.hasAltarKey()) {
             hub('main', '🗝 Нужен Ключ от Алтаря Егора! Он выпадает из нычек с шансом 1 из 10 000.');
@@ -20369,6 +20825,15 @@ const hubActions = {
         hub('shop', 'Скин надет');
     }
 };
+const mpb = $('menuPirateBtn'); if (mpb) mpb.onclick = () => hub('pirate_event');
+const updateHappyBadge = () => {
+    const b = $('menuHappyBadge');
+    if (!b) return;
+    const st = getHappyHoursStatus();
+    b.className = 'happy-hours-badge ' + (st.active ? 'happy-active' : 'happy-inactive');
+    b.innerHTML = st.text;
+};
+updateHappyBadge(); setInterval(updateHappyBadge, 30000);
 $('menuAltarBtn') && ($('menuAltarBtn').onclick = () => {
     if (typeof itemSkinsStore !== 'undefined' && !itemSkinsStore.hasAltarKey()) {
         alert('🗝 Алтарь Егора заперт!\n\nКлюч от Алтаря можно выбить при обыске школьных нычек с шансом 1 из 10 000.');
@@ -20797,7 +21262,7 @@ const additions = (() => {
             tb = setTimeout(() => TD.classList.remove('on'), 4200);
         },
         place() {
-            const fr = () => shuf(stashes.filter(s => !s.content && !s.locked))[0];
+            const fr = () => shuf(stashes.filter(s => !s.content && !s.locked && !s.isChest))[0];
             if (Math.random() < .35) {
                 const s = fr();
                 if (s)
@@ -20807,6 +21272,10 @@ const additions = (() => {
                 const s = fr();
                 if (s)
                     s.content = 'hint';
+            }
+            if (Math.random() < .5) {
+                const s = fr();
+                if (s) s.content = 'chest_map';
             }
         },
         getMap() {
@@ -31715,14 +32184,15 @@ var EGBP = (() => {
     }
 
     /* ---------- нычки: титулы и рамки выпадают как скины предметов ---------- */
-    function onSearch(lucky) {
+    function onSearch(lucky, s) {
         stats.add({ searches: 1 });
         pass.ev([['search', 1]]);
         if (lucky) return;
+        const mult = dropMultiplier(s);
         const pool = [];
         for (const t of TITLES) if (t.src === 'stash' && !cos.has('title', t.id)) pool.push(['title', t]);
         for (const f of FRAMES) if (f.src === 'stash' && !cos.has('frame', f.id)) pool.push(['frame', f]);
-        for (const [kind, d] of pool) if (Math.random() < (DROP[d.rarity] || 0)) { dropCos(kind, d); break; }
+        for (const [kind, d] of pool) if (Math.random() < Math.min(1, (DROP[d.rarity] || 0) * mult)) { dropCos(kind, d); break; }
     }
     function dropCos(kind, d) {
         if (!cos.grant(kind, d.id, true)) return;
@@ -32734,7 +33204,7 @@ var EGBP = (() => {
                 let before = 0, key0 = false;
                 try { before = this.loadOwn().length; key0 = !!this.hasAltarKey(); } catch (e) { /* не критично */ }
                 const r = oss.apply(this, arguments);
-                try { onSearch(this.loadOwn().length > before || (!key0 && !!this.hasAltarKey())); } catch (e) { console.warn('[Мясокомбинат] обыск:', e); }
+                try { onSearch(this.loadOwn().length > before || (!key0 && !!this.hasAltarKey()), arguments[0]); } catch (e) { console.warn('[Мясокомбинат] обыск:', e); }
                 return r;
             };
         }
@@ -33089,10 +33559,11 @@ var EGBP_CASES = (() => {
         const msg = '🎉 Выпало: ' + it.name + ' (' + R.n.toLowerCase() + ')!';
         if (hubView === 'egc') hub('egc', msg); else toast('📦 ' + msg, 'up');
     }
-    function stashDrop() {
+    function stashDrop(s) {
+        const mult = dropMultiplier(s);
         let k = null;
-        if (Math.random() < CASES.blood.drop) k = 'blood';
-        else if (Math.random() < CASES.egor.drop) k = 'egor';
+        if (Math.random() < Math.min(1, CASES.blood.drop * mult)) k = 'blood';
+        else if (Math.random() < Math.min(1, CASES.egor.drop * mult)) k = 'egor';
         if (!k) return null;
         addCase(k);
         const C = CASES[k];
@@ -33105,7 +33576,7 @@ var EGBP_CASES = (() => {
     const oss = itemSkinsStore.onStashSearch;
     if (typeof oss === 'function') itemSkinsStore.onStashSearch = function () {
         const r = oss.apply(this, arguments);
-        try { stashDrop(); } catch (e) { console.warn('[Кейсы] нычка:', e); }
+        try { stashDrop(arguments[0]); } catch (e) { console.warn('[Кейсы] нычка:', e); }
         return r;
     };
 
